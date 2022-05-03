@@ -4,12 +4,12 @@ import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Request } from 'express'
 
-import { AccountsService } from 'src/accounts/accounts.service'
+import { UsersService } from 'src/users/users.service'
 import { JwtTokenPayload } from './types'
 
 @Injectable()
 export class JwtRefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refresh-token') {
-  constructor(private readonly configService: ConfigService, private readonly accountsService: AccountsService) {
+  constructor(private readonly configService: ConfigService, private readonly usersService: UsersService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: configService.get('JWT_REFRESH_SECRET'),
@@ -19,7 +19,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-ref
   }
 
   async validate(request: Request, payload: JwtTokenPayload) {
-    return this.accountsService.getUserIfRefreshTokenMatches(
+    return this.usersService.getUserIfRefreshTokenMatches(
       ExtractJwt.fromAuthHeaderAsBearerToken()(request),
       payload.userId
     )

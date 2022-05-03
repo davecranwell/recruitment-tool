@@ -12,13 +12,13 @@ import {
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiOkResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Request, Response } from 'express'
-import { Auth as AuthModel } from '@prisma/client'
+import { User } from '@prisma/client'
 
 import { AuthenticationService } from './authentication.service'
 import { LocalAuthenticationGuard } from './guards/localAuthentication.guard'
 import JwtAuthenticationGuard from './guards/jwtAuthentication.guard'
-import { AccountEntity } from 'src/accounts/account.entity'
-import { AccountsService } from 'src/accounts/accounts.service'
+import { UserEntity } from 'src/users/entities/user.entity'
+import { UsersService } from 'src/users/users.service'
 import JwtRefreshGuard from './guards/jwtRefresh.guard'
 import { LowerCasePipe } from 'src/app.pipes'
 import RegisterDto from './dto/register.dto'
@@ -26,7 +26,7 @@ import { LoginResponseDto, LoginDto, MagicLoginDto } from './dto/login.dto'
 import { MagicLinkGuard } from './guards/magiclink.guard'
 import { ThrottlerGuard } from '@nestjs/throttler'
 export interface RequestWithUser extends Request {
-  user: AuthModel
+  user: User
 }
 @ApiTags('Authentication')
 // @UseGuards(ThrottlerGuard)
@@ -34,19 +34,19 @@ export interface RequestWithUser extends Request {
 export class AuthenticationController {
   constructor(
     private readonly authenticationService: AuthenticationService,
-    private readonly accountsService: AccountsService
+    private readonly usersService: UsersService
   ) {}
 
   private async registerAccount(registrationData: RegisterDto) {
     return this.authenticationService.register(registrationData)
   }
 
-  @ApiOkResponse({ type: AccountEntity })
+  @ApiOkResponse({ type: UserEntity })
   @UsePipes(new LowerCasePipe('body', ['email']))
   @Post('register')
   @UseInterceptors(ClassSerializerInterceptor)
   async register(@Body() registrationData: RegisterDto) {
-    return new AccountEntity(await this.registerAccount(registrationData))
+    return new UserEntity(await this.registerAccount(registrationData))
   }
 
   @ApiOkResponse({ type: LoginResponseDto })
@@ -61,7 +61,7 @@ export class AuthenticationController {
     const { token: accessToken, cookie: accessTokenCookie } = this.authenticationService.getJwtToken(user.id)
     const { token: refreshToken, cookie: refreshTokenCookie } = this.authenticationService.getJwtRefreshToken(user.id)
 
-    await this.accountsService.setRefreshToken(refreshToken, user.id)
+    await this.usersService.setRefreshToken(refreshToken, user.id)
 
     request.res.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie])
 
@@ -74,7 +74,7 @@ export class AuthenticationController {
   @Post('log-out')
   async logOut(@Req() request: RequestWithUser, @Res() response: Response) {
     const { user } = request
-    await this.accountsService.removeRefreshToken(user.id)
+    await this.usersService.removeRefreshToken(user.id)
     const cookie = this.authenticationService.getCookiesForLogOut()
 
     request.res.setHeader('Set-Cookie', cookie)
@@ -99,12 +99,12 @@ export class AuthenticationController {
   }
 
   @ApiBearerAuth('access-token')
-  @ApiOkResponse({ type: AccountEntity })
+  @ApiOkResponse({ type: UserEntity })
   @UseGuards(JwtAuthenticationGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   authenticate(@Req() { user }: RequestWithUser) {
-    return new AccountEntity(user)
+    return new UserEntity(user)
   }
 
   @Post('log-in/magic')
@@ -114,7 +114,7 @@ export class AuthenticationController {
 
   @UseGuards(MagicLinkGuard)
   @ApiQuery({ name: 'token', type: 'string' })
-  @ApiOkResponse({ type: AccountEntity })
+  @ApiOkResponse({ type: UserEntity })
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('log-in/magic/callback')
   async magicLoginCallback(@Req() request: RequestWithUser) {

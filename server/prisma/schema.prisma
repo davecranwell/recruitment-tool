@@ -11,10 +11,32 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Auth {
-  id               Int     @id @default(autoincrement())
+model User {
+  id               Int                   @id @default(autoincrement())
   name             String?
-  email            String  @unique(map: "Auth_email_unique_constraint")
+  email            String                @unique(map: "Auth_email_unique_constraint")
   password         String?
   refreshTokenHash String?
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @default(now())
+  organisations    UsersInOrganisation[]
+}
+
+model Organisation {
+  id        Int                   @id @default(autoincrement())
+  name      String?
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @default(now())
+  users     UsersInOrganisation[]
+}
+
+model UsersInOrganisation {
+  user           User         @relation(fields: [userId], references: [id])
+  userId         Int
+  organisation   Organisation @relation(fields: [organisationId], references: [id])
+  organisationId Int
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now())
+
+  @@id([userId, organisationId])
 }

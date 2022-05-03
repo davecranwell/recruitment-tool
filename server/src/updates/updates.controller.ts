@@ -1,5 +1,5 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common'
-import { Auth as AuthModel } from '@prisma/client'
+import { User } from '@prisma/client'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 
 import JwtAuthenticationGuard from 'src/authentication/guards/jwtAuthentication.guard'
@@ -13,12 +13,12 @@ export class UpdatesController {
   constructor(private readonly updateService: UpdatesService) {}
 
   @Get(':id')
-  async getUpdate(@Param('id') id: string): Promise<AuthModel> {
+  async getUpdate(@Param('id') id: string): Promise<User> {
     return this.updateService.getUpdate(Number(id))
   }
 
   @Get()
-  getUpdates(): Promise<AuthModel[]> {
+  getUpdates(): Promise<User[]> {
     return this.updateService.getUpdates()
   }
 }

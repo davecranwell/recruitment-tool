@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { Auth } from '@prisma/client'
+import { User } from '@prisma/client'
 import { Exclude } from 'class-transformer'
 import { IsOptional } from 'class-validator'
 
-export class AccountEntity implements Auth {
+export class UserEntity implements User {
   @ApiProperty({ required: true })
   id: number
 
@@ -22,7 +22,7 @@ export class AccountEntity implements Auth {
   @Exclude()
   refreshTokenHash: string
 
-  constructor(partial: Partial<AccountEntity>) {
+  constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial)
   }
 }
