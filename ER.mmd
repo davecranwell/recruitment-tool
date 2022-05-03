@@ -1,0 +1,82 @@
+erDiagram
+    ORGANISATION ||--o{ USER: Employs
+    ORGANISATION {
+        int id
+        string name
+        dateTime createdAt
+        dateTime updatedAt
+    }
+    ORGANISATION || --|{ ROLE: Has
+    ROLE {
+        int id
+        string name
+        dateTime createdAt
+        dateTime updatedAt
+    }
+    USER ||--o{ POSITION: Creates
+    USER {
+        int id
+        string email
+        string password
+        string profileId
+        enum profileType
+        dateTime createdAt
+        dateTime updatedAt
+    }
+    USER ||--o{ ROLE : Assumes
+    POSITION ||--|{ ROLE: Has
+    APPLICANT ||--o{ INTERVIEW : Attends
+    APPLICANT {
+        int id
+        string name
+        string askingSalary
+        string cvLinkUrl
+        dateTime availableStartDate
+        dateTime createdAt
+        dateTime updatedAt
+    }
+    APPLICANT || --o{ POSITION : "Applies for"
+    USER ||--o{ INTERVIEW : Attends
+    POSITION||--o{ INTERVIEW: "Comprises many"
+    POSITION {
+        int id
+        string name
+        dateTime createdAt
+        dateTime updatedAt
+        int ownerUserId
+    }
+    POSITION || --|{ STAGE: "Goes through"
+    INTERVIEW||--o{ UPDATE: Generates
+    INTERVIEW {
+        int id
+        string name
+        dateTime startDateTime
+        dateTime endDateTime
+        dateTime createdAt
+        dateTime updatedAt
+        int stageId
+        int applicantId
+        int positionId
+        
+    }
+    APPLICANT ||--o{ UPDATE: Receives
+    UPDATE ||--|| UPDATETYPE: "Is one of"
+    UPDATE {
+        int id
+        string description
+        dateTime createdAt
+        dateTime updatedAt
+        int userId
+        int positionId
+        int applicantId
+        int interviewId
+    }
+    UPDATE ||--o{ STAGE: Updates
+    STAGE {
+        int id
+        string name
+        string description
+        dateTime createdAt
+        dateTime updatedAt
+    }
+    

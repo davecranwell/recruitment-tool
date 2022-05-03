@@ -1,6 +1,5 @@
 import classNames from 'classnames'
 import { useForm } from 'react-hook-form'
-import { DateTime } from 'luxon'
 
 export default function AddPopup({ open, onSubmit }) {
   const {

@@ -1,7 +1,5 @@
 import { useMemo, useState, useEffect } from 'react'
-
 import { useOnWindowResize } from 'rooks'
-
 import { DateTime, Duration } from 'luxon'
 
 import { MILLIS_IN_DAY, MILLIS_IN_MINUTE } from './constants'
@@ -48,10 +46,6 @@ export const bucketMap = (events, bucket) => {
   })
 
   return buckets
-}
-
-export function useGetComputedStyle(element, property) {
-  return useMemo(() => element && getComputedStyle(element).getPropertyValue(property), [element])
 }
 
 export function useElementHeight(ref) {
@@ -113,7 +107,7 @@ export const useIsKeyActive = (key) => {
       window.removeEventListener('keydown', downHandler)
       window.removeEventListener('keyup', upHandler)
     }
-  }, [])
+  }, [key])
 
   return keyActive
 }
