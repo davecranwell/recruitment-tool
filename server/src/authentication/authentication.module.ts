@@ -3,7 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { PassportModule } from '@nestjs/passport'
 import { JwtModule } from '@nestjs/jwt'
 
-import { UsersModule } from 'src/users/users.module'
+import { UserModule } from 'src/user/user.module'
 import { AuthenticationService } from './authentication.service'
 import { AuthenticationController } from './authentication.controller'
 import { LocalStrategy } from './strategies/local.strategy'
@@ -13,7 +13,7 @@ import { MagicLinkStrategy } from './strategies/magicLink.strategy'
 
 @Module({
   imports: [
-    UsersModule,
+    UserModule,
     PassportModule,
     ConfigModule,
     JwtModule.registerAsync({

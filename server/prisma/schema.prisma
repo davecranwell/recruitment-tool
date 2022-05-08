@@ -6,28 +6,84 @@ generator client {
   defaultTake = 10
 }
 
+generator erd {
+  provider = "prisma-erd-generator"
+  output   = "ER.md"
+  theme    = "neutral"
+}
+
+// generator nestjsDto {
+//   provider                        = "prisma-generator-nestjs-dto"
+//   output                          = "../src"
+//   outputToNestJsResourceStructure = "true"
+// }
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id               Int                   @id @default(autoincrement())
-  name             String?
-  email            String                @unique(map: "Auth_email_unique_constraint")
-  password         String?
-  refreshTokenHash String?
-  createdAt        DateTime              @default(now())
-  updatedAt        DateTime              @default(now())
-  organisations    UsersInOrganisation[]
+  id                Int                   @id @default(autoincrement())
+  name              String?
+  email             String                @unique(map: "Auth_email_unique_constraint")
+  password          String?
+  refreshTokenHash  String?
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @default(now())
+  organisations     UsersInOrganisation[]
+  userRoles         UserRolesOfUser[]
+  positionRoles     PositionUserRole[]
+  applicantProfiles ApplicantProfile[]
+}
+
+model ApplicantProfile {
+  id            Int                               @id @default(autoincrement())
+  profileName   String
+  askingSalary  Int
+  createdAt     DateTime                          @default(now())
+  updatedAt     DateTime                          @default(now())
+  user          User                              @relation(fields: [userId], references: [id])
+  userId        Int
+  positions     ApplicantProfileForPosition[]
+  organisations ApplicantProfileForOrganisation[]
 }
 
 model Organisation {
-  id        Int                   @id @default(autoincrement())
-  name      String?
-  createdAt DateTime              @default(now())
-  updatedAt DateTime              @default(now())
-  users     UsersInOrganisation[]
+  id                Int                               @id @default(autoincrement())
+  name              String
+  machineName       String                            @unique
+  createdAt         DateTime                          @default(now())
+  updatedAt         DateTime                          @default(now())
+  users             UsersInOrganisation[]
+  positions         Position[]
+  roles             UserRole[]
+  applicantProfiles ApplicantProfileForOrganisation[]
+}
+
+model ApplicantProfileForOrganisation {
+  applicantProfile   ApplicantProfile @relation(fields: [applicantProfileId], references: [id])
+  applicantProfileId Int
+  organisation       Organisation     @relation(fields: [organisationId], references: [id])
+  organisationId     Int
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @default(now())
+
+  @@id([applicantProfileId, organisationId])
+}
+
+model Position {
+  id                Int                           @id @default(autoincrement())
+  name              String
+  description       String?                       @db.Text
+  openingDate       DateTime?                     @default(now())
+  closingDate       DateTime?
+  createdAt         DateTime                      @default(now())
+  updatedAt         DateTime                      @default(now())
+  organisation      Organisation                  @relation(fields: [organisationId], references: [id])
+  organisationId    Int
+  applicantProfiles ApplicantProfileForPosition[]
+  userRoles         PositionUserRole[]
 }
 
 model UsersInOrganisation {
@@ -39,4 +95,73 @@ model UsersInOrganisation {
   updatedAt      DateTime     @default(now())
 
   @@id([userId, organisationId])
+}
+
+model ApplicantProfileForPosition {
+  applicantProfile   ApplicantProfile @relation(fields: [applicantProfileId], references: [id])
+  applicantProfileId Int
+  position           Position         @relation(fields: [positionId], references: [id])
+  positionId         Int
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @default(now())
+
+  @@id([applicantProfileId, positionId])
+}
+
+enum UserRoleType {
+  RECRUITER
+  APPLICANT
+  ORGANISATION_OWNER
+  ORGANISATION_MEMBER
+}
+
+model UserRole {
+  id             Int               @id @default(autoincrement())
+  name           String            @unique
+  type           UserRoleType
+  organisation   Organisation      @relation(fields: [organisationId], references: [id])
+  organisationId Int
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @default(now())
+  users          UserRolesOfUser[]
+}
+
+model UserRolesOfUser {
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  role      UserRole @relation(fields: [roleId], references: [id])
+  roleId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@id([userId, roleId])
+}
+
+enum PositionRoleType {
+  HIRING_MANAGER
+  INTERVIEWER
+}
+
+// Position Roles dictate what role people take within the hiring process of a specific position.
+// e.g an Interviewer for one position may be the hiring manager in another
+model PositionRole {
+  id           Int                @id @default(autoincrement())
+  name         String             @unique
+  type         PositionRoleType
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @default(now())
+  userPosition PositionUserRole[]
+}
+
+model PositionUserRole {
+  position   Position     @relation(fields: [positionId], references: [id])
+  positionId Int
+  user       User         @relation(fields: [userId], references: [id])
+  userId     Int
+  role       PositionRole @relation(fields: [roleId], references: [id])
+  roleId     Int
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @default(now())
+
+  @@id([userId, positionId, roleId])
 }

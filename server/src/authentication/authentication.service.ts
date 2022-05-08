@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 
 import { JwtTokenPayload, MagicTokenPayload } from './strategies/types'
-import { UsersService } from '../users/users.service'
+import { UserService } from '../user/user.service'
 
 enum PostgresErrorCode {
   UniqueViolation = 'P2002',
@@ -13,7 +13,7 @@ enum PostgresErrorCode {
 @Injectable()
 export class AuthenticationService {
   constructor(
-    private readonly usersService: UsersService,
+    private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService
   ) {}
@@ -22,7 +22,7 @@ export class AuthenticationService {
     const hashedPassword = registrationData.password ? await bcrypt.hash(registrationData.password, 10) : null
 
     try {
-      return await this.usersService.create({
+      return await this.userService.create({
         ...registrationData,
         password: hashedPassword,
       })
@@ -62,7 +62,7 @@ export class AuthenticationService {
 
   public async getAuthenticatedUser(email: string, plainTextPassword: string) {
     try {
-      const user = await this.usersService.getByEmail(email)
+      const user = await this.userService.getByEmail(email)
       await this.verifyPassword(plainTextPassword, user.password)
       user.password = undefined
       return user

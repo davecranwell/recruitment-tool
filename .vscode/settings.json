@@ -9,5 +9,6 @@
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   },
-  "mermaid.theme": "neutral"
+  "mermaid.theme": "neutral",
+  "markdown-preview-github-styles.colorTheme": "light"
 }

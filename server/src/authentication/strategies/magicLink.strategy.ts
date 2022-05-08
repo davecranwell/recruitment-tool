@@ -4,12 +4,12 @@ import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Request } from 'express'
 
-import { UsersService } from 'src/users/users.service'
+import { UserService } from 'src/user/user.service'
 import { MagicTokenPayload } from './types'
 
 @Injectable()
 export class MagicLinkStrategy extends PassportStrategy(Strategy, 'magic-link') {
-  constructor(private readonly configService: ConfigService, private readonly usersService: UsersService) {
+  constructor(private readonly configService: ConfigService, private readonly userService: UserService) {
     super({
       jwtFromRequest: ExtractJwt.fromUrlQueryParameter('token'),
       ignoreExpiration: false,
@@ -21,7 +21,7 @@ export class MagicLinkStrategy extends PassportStrategy(Strategy, 'magic-link') 
     const { email } = payload
 
     try {
-      return await this.usersService.getByEmail(email)
+      return await this.userService.getByEmail(email)
     } catch {
       return { email }
     }

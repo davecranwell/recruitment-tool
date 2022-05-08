@@ -22,6 +22,9 @@ export class UserEntity implements User {
   @Exclude()
   refreshTokenHash: string
 
+  createdAt: Date
+  updatedAt: Date
+
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial)
   }

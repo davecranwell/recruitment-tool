@@ -17,8 +17,8 @@ import { User } from '@prisma/client'
 import { AuthenticationService } from './authentication.service'
 import { LocalAuthenticationGuard } from './guards/localAuthentication.guard'
 import JwtAuthenticationGuard from './guards/jwtAuthentication.guard'
-import { UserEntity } from 'src/users/entities/user.entity'
-import { UsersService } from 'src/users/users.service'
+import { UserEntity } from 'src/user/entities/user.entity'
+import { UserService } from 'src/user/user.service'
 import JwtRefreshGuard from './guards/jwtRefresh.guard'
 import { LowerCasePipe } from 'src/app.pipes'
 import RegisterDto from './dto/register.dto'
@@ -34,7 +34,7 @@ export interface RequestWithUser extends Request {
 export class AuthenticationController {
   constructor(
     private readonly authenticationService: AuthenticationService,
-    private readonly usersService: UsersService
+    private readonly userService: UserService
   ) {}
 
   private async registerAccount(registrationData: RegisterDto) {
@@ -61,7 +61,7 @@ export class AuthenticationController {
     const { token: accessToken, cookie: accessTokenCookie } = this.authenticationService.getJwtToken(user.id)
     const { token: refreshToken, cookie: refreshTokenCookie } = this.authenticationService.getJwtRefreshToken(user.id)
 
-    await this.usersService.setRefreshToken(refreshToken, user.id)
+    await this.userService.setRefreshToken(refreshToken, user.id)
 
     request.res.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie])
 
@@ -74,7 +74,7 @@ export class AuthenticationController {
   @Post('log-out')
   async logOut(@Req() request: RequestWithUser, @Res() response: Response) {
     const { user } = request
-    await this.usersService.removeRefreshToken(user.id)
+    await this.userService.removeRefreshToken(user.id)
     const cookie = this.authenticationService.getCookiesForLogOut()
 
     request.res.setHeader('Set-Cookie', cookie)

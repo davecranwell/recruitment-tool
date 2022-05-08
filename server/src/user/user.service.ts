@@ -5,7 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service'
 import { UserEntity } from './entities/user.entity'
 
 @Injectable()
-export class UsersService {
+export class UserService {
   constructor(private prisma: PrismaService) {}
 
   async getById(id: number) {
