@@ -3,12 +3,10 @@ import { HttpException, BadRequestException, HttpStatus, Injectable, Unauthorize
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 
-import { JwtTokenPayload, MagicTokenPayload } from './strategies/types'
+import { PostgresErrorCode } from '../util/db-types'
 import { UserService } from '../user/user.service'
 
-enum PostgresErrorCode {
-  UniqueViolation = 'P2002',
-}
+import { JwtTokenPayload, MagicTokenPayload } from './strategies/types'
 
 @Injectable()
 export class AuthenticationService {

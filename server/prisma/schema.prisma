@@ -12,11 +12,11 @@ generator erd {
   theme    = "neutral"
 }
 
-// generator nestjsDto {
-//   provider                        = "prisma-generator-nestjs-dto"
-//   output                          = "../src"
-//   outputToNestJsResourceStructure = "true"
-// }
+generator nestjsDto {
+  provider                        = "prisma-generator-nestjs-dto"
+  output                          = "../tmp"
+  outputToNestJsResourceStructure = "true"
+}
 
 datasource db {
   provider = "postgresql"
@@ -40,13 +40,15 @@ model User {
 model ApplicantProfile {
   id            Int                               @id @default(autoincrement())
   profileName   String
-  askingSalary  Int
+  askingSalary  Int?
   createdAt     DateTime                          @default(now())
   updatedAt     DateTime                          @default(now())
   user          User                              @relation(fields: [userId], references: [id])
   userId        Int
   positions     ApplicantProfileForPosition[]
   organisations ApplicantProfileForOrganisation[]
+
+  @@index([userId])
 }
 
 model Organisation {
@@ -84,6 +86,8 @@ model Position {
   organisationId    Int
   applicantProfiles ApplicantProfileForPosition[]
   userRoles         PositionUserRole[]
+
+  @@index([organisationId])
 }
 
 model UsersInOrganisation {
@@ -124,6 +128,8 @@ model UserRole {
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @default(now())
   users          UserRolesOfUser[]
+
+  @@index([organisationId])
 }
 
 model UserRolesOfUser {

@@ -3,6 +3,9 @@
   "editor.wordWrap": "on",
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.quickSuggestions": {
+    "strings": true
+  },
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
@@ -10,5 +13,14 @@
     "editor.defaultFormatter": "Prisma.prisma"
   },
   "mermaid.theme": "neutral",
-  "markdown-preview-github-styles.colorTheme": "light"
+  "markdown-preview-github-styles.colorTheme": "light",
+  "sonarlint.disableTelemetry": true,
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/build": true,
+    "**/dist": true
+  },
+  "files.associations": {
+    "*.css": "tailwindcss"
+  }
 }

@@ -1,4 +1,4 @@
-import { NestFactory } from '@nestjs/core'
+import { HttpAdapterHost, NestFactory } from '@nestjs/core'
 import { ConfigService } from '@nestjs/config'
 import { ValidationPipe, Logger } from '@nestjs/common'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
@@ -10,6 +10,7 @@ import { PrismaService } from './prisma/prisma.service'
 import { AppModule } from './app.module'
 import getLogLevels from './getLogLevels'
 import { exit } from 'process'
+import { PrismaClientExceptionFilter } from './prisma-client-exception.filter'
 
 const logger = new Logger()
 
@@ -34,7 +35,11 @@ async function bootstrap() {
   app.use(helmet.hsts({ maxAge: 63072000 })) // Two years
   app.enableShutdownHooks()
   app.use(cookieParser())
-  app.useGlobalPipes(new ValidationPipe())
+  app.useGlobalPipes(
+    new ValidationPipe({ whitelist: true, transform: true, transformOptions: { enableImplicitConversion: true } })
+  )
+  const { httpAdapter } = app.get(HttpAdapterHost)
+  app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter))
 
   const configService = app.get(ConfigService)
   const swaggerConfig = configService.get<SwaggerConfig>('swagger')
@@ -55,6 +60,8 @@ async function bootstrap() {
         persistAuthorization: true,
       },
     })
+
+    logger.log(`Open API documentation available on path: ${swaggerConfig.path}`)
   }
 
   const prismaService: PrismaService = app.get(PrismaService)

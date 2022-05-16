@@ -3,30 +3,27 @@ const prisma = new PrismaClient()
 
 async function main() {
   const vocovoOrganisation = await prisma.organisation.upsert({
-    where: { id: 1 },
+    where: {},
     update: {},
     create: {
-      id: 1,
       name: 'VoCoVo Ltd',
       machineName: 'vocovotld',
     },
   })
 
   const strongbyteOrganisation = await prisma.organisation.upsert({
-    where: { id: 2 },
+    where: {},
     update: {},
     create: {
-      id: 2,
       name: 'Strongbyte Ltd',
       machineName: 'strongbyteltd',
     },
   })
 
   const humandRecruiter = await prisma.organisation.upsert({
-    where: { id: 3 },
+    where: {},
     update: {},
     create: {
-      id: 3,
       name: 'Humand',
       machineName: 'humand',
       // applicants: {
@@ -36,10 +33,9 @@ async function main() {
   })
 
   const corriculoRecruiter = await prisma.organisation.upsert({
-    where: { id: 4 },
+    where: {},
     update: {},
     create: {
-      id: 4,
       name: 'Corriculo',
       machineName: 'corriculo',
       // applicants: {
@@ -49,10 +45,9 @@ async function main() {
   })
 
   const recruiterUser = await prisma.user.upsert({
-    where: { id: 1 },
+    where: {},
     update: {},
     create: {
-      id: 1,
       name: 'Recruiter user',
       email: 'foo@bar3.com',
       password: '$2a$10$Cer44Qb/fNW3flIcCEd.bONiYvyFwQtTewCGvZoeBlby78m94iwF.', // test
@@ -63,10 +58,9 @@ async function main() {
   })
 
   const applicantUser = await prisma.user.upsert({
-    where: { id: 2 },
+    where: {},
     update: {},
     create: {
-      id: 2,
       name: 'Applicant user',
       email: 'foo@bar2.com',
       password: '$2a$10$Cer44Qb/fNW3flIcCEd.bONiYvyFwQtTewCGvZoeBlby78m94iwF.', // test
@@ -77,10 +71,9 @@ async function main() {
   })
 
   const humanRecruiternUser = await prisma.user.upsert({
-    where: { id: 3 },
+    where: {},
     update: {},
     create: {
-      id: 3,
       name: 'Human recruiter user',
       email: 'foo@bar6.com',
       password: '$2a$10$Cer44Qb/fNW3flIcCEd.bONiYvyFwQtTewCGvZoeBlby78m94iwF.', // test
@@ -91,10 +84,9 @@ async function main() {
   })
 
   const vocovoOrganisationUser = await prisma.user.upsert({
-    where: { id: 4 },
+    where: {},
     update: {},
     create: {
-      id: 4,
       name: 'Vocovo org user',
       email: 'foo@bar4.com',
       password: '$2a$10$Cer44Qb/fNW3flIcCEd.bONiYvyFwQtTewCGvZoeBlby78m94iwF.', // test
@@ -105,10 +97,9 @@ async function main() {
   })
 
   const bothOrganisationsUser = await prisma.user.upsert({
-    where: { id: 5 },
+    where: {},
     update: {},
     create: {
-      id: 5,
       name: 'Both org user',
       email: 'foo@bar5.com',
       password: '$2a$10$Cer44Qb/fNW3flIcCEd.bONiYvyFwQtTewCGvZoeBlby78m94iwF.', // test
@@ -119,10 +110,9 @@ async function main() {
   })
 
   const user1ApplicantProfile = await prisma.applicantProfile.upsert({
-    where: { id: 1 },
+    where: {},
     update: {},
     create: {
-      id: 1,
       profileName: 'General profile',
       askingSalary: 100000,
       userId: applicantUser.id,
@@ -133,10 +123,9 @@ async function main() {
   })
 
   const position = await prisma.position.upsert({
-    where: { id: 1 },
+    where: {},
     update: {},
     create: {
-      id: 1,
       name: 'Lead Software Engineer',
       description: 'A description of this role is as follows',
       openingDate: new Date(),

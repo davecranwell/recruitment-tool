@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsEmail, IsString, IsNotEmpty, MinLength } from 'class-validator'
+import { Exclude, Type } from 'class-transformer'
+import { IsEmail, IsString, IsNotEmpty, MinLength, ValidateNested } from 'class-validator'
+import { UserEntity as User } from 'src/user/entities/user.entity'
 
 export class LoginDto {
   @ApiProperty({ required: true })
@@ -10,11 +12,15 @@ export class LoginDto {
   @ApiProperty({ required: true })
   @IsString()
   @IsNotEmpty()
-  @MinLength(8)
+  // @MinLength(8)
   password: string
 }
 
 export class LoginResponseDto {
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => User)
+  user: User
   @ApiProperty()
   accessToken: string
   @ApiProperty()

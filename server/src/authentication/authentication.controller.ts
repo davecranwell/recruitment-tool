@@ -14,6 +14,8 @@ import { ApiBearerAuth, ApiOkResponse, ApiQuery, ApiResponse, ApiTags } from '@n
 import { Request, Response } from 'express'
 import { User } from '@prisma/client'
 
+import { PrismaClassSerializerInterceptorPaginated } from 'src/class-serializer-paginated.interceptor'
+
 import { AuthenticationService } from './authentication.service'
 import { LocalAuthenticationGuard } from './guards/localAuthentication.guard'
 import JwtAuthenticationGuard from './guards/jwtAuthentication.guard'
@@ -51,6 +53,7 @@ export class AuthenticationController {
 
   @ApiOkResponse({ type: LoginResponseDto })
   @UseGuards(LocalAuthenticationGuard)
+  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(LoginResponseDto))
   @Post('log-in')
   async logIn(
     @Req() request: RequestWithUser,
@@ -63,9 +66,9 @@ export class AuthenticationController {
 
     await this.userService.setRefreshToken(refreshToken, user.id)
 
-    request.res.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie])
+    //request.res.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie])
 
-    return <LoginResponseDto>{ accessToken, refreshToken }
+    return <LoginResponseDto>{ user, accessToken, refreshToken }
   }
 
   @ApiOkResponse()
@@ -77,7 +80,7 @@ export class AuthenticationController {
     await this.userService.removeRefreshToken(user.id)
     const cookie = this.authenticationService.getCookiesForLogOut()
 
-    request.res.setHeader('Set-Cookie', cookie)
+    //request.res.setHeader('Set-Cookie', cookie)
 
     return response.sendStatus(200)
   }
