@@ -19,5 +19,5 @@ export async function api(request: Request, url: string, method: string = 'GET',
     body: JSON.stringify(body),
   })
 
-  return json(await apiRes.json(), { headers })
+  return json(await apiRes.json(), { status: apiRes.status, headers })
 }

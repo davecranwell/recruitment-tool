@@ -8,6 +8,14 @@ import { UserEntity } from './entities/user.entity'
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
+  async findOne(id: number) {
+    const record = await this.prisma.organisation.findUnique({ where: { id } })
+    if (!record) throw new NotFoundException('Organisation with this ID does not exist')
+
+    return record
+  }
+
+  // TODO deprecate this
   async getById(id: number) {
     const user = await this.prisma.user.findUnique({ where: { id } })
     if (user) {
@@ -51,5 +59,12 @@ export class UserService {
     const isRefreshTokenMatching = await bcrypt.compare(refreshToken, user.refreshTokenHash)
 
     if (isRefreshTokenMatching) return new UserEntity(user)
+  }
+
+  async findOrganisations(userId: number) {
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { organisations: { include: { organisation: { select: { id: true, name: true } } } } },
+    })
   }
 }

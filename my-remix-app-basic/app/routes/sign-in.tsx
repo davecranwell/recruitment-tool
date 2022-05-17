@@ -1,32 +1,27 @@
 import { Form, useActionData, useTransition, useSearchParams } from '@remix-run/react'
-import { LockClosedIcon } from '@heroicons/react/solid'
-
-import Layout from 'app/components/layout'
 
 import { createSession } from 'app/sessions.server'
 import { api } from 'app/utils/api.server'
-
 import { safeRedirect } from 'app/utils/utils'
+import Alert from 'app/components/alert'
 
 export async function action({ request }: { request: Request }) {
   const body = await request.formData()
 
   const redirectTo = safeRedirect(body.get('redirectTo'), '/')
 
-  const res = await api(request, '/authentication/log-in', 'POST', {
+  const authentication = await api(request, '/authentication/log-in', 'POST', {
     email: body.get('email'),
     password: body.get('password'),
   })
 
-  if (res) {
-    return createSession(await res.json(), redirectTo)
-  }
+  const orgnisations = await api(request, '/organisations', 'GET')
 
-  return null
+  return authentication.ok ? createSession(await authentication.json(), redirectTo) : authentication
 }
 
 const SignIn = () => {
-  const data = useActionData()
+  const errors = useActionData()
   const transition = useTransition()
   const [searchParams] = useSearchParams()
 
@@ -51,8 +46,13 @@ const SignIn = () => {
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            <form className="space-y-6" action="#" method="POST">
-              <input type="hidden" name="redirectTo" value={redirectTo} />
+            <Form className="space-y-6" method="post">
+              {errors && (
+                <Alert
+                  message={{ title: 'An error occured while signing in', description: errors.message }}
+                  type="error"
+                />
+              )}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                   Email address
@@ -113,8 +113,9 @@ const SignIn = () => {
                 >
                   {transition.state !== 'idle' ? 'One second...' : 'Sign in'}
                 </button>
+                <input type="hidden" name="redirectTo" value={redirectTo} />
               </div>
-            </form>
+            </Form>
 
             {/* <div className="mt-6">
               <div className="relative">

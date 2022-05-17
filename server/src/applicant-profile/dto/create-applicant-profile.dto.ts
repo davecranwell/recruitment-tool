@@ -1,7 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsEmail, IsString, IsNotEmpty, MinLength, MaxLength, IsNumber } from 'class-validator'
-// import { ConnectUserDto } from 'tmp/user/dto/connect-user.dto'
-// import { CreateUserDto } from 'tmp/user/dto/create-user.dto'
 
 export class CreateApplicantProfileDto {
   @ApiProperty({ required: true })

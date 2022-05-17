@@ -89,6 +89,7 @@ export async function requireAuth(request: Request, redirectTo: string = new URL
 
 export async function logout(request: Request) {
   const session = await getUserSession(request)
+  console.log('destroying')
   return redirect('/', {
     headers: {
       'Set-Cookie': await destroySession(session),

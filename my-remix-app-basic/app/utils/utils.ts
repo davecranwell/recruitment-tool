@@ -9,3 +9,7 @@ export function safeRedirect(to: FormDataEntryValue | string | null | undefined,
 
   return to
 }
+
+export function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(' ')
+}

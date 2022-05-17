@@ -1,8 +1,7 @@
 import { Injectable, BadRequestException, HttpException, HttpStatus, NotFoundException } from '@nestjs/common'
-import { ApplicantProfileForPosition, Prisma } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
 import { PrismaService } from 'src/prisma/prisma.service'
-import { PostgresErrorCode } from 'src/util/db-types'
 import { createPaginator } from 'src/util/pagination'
 import { PaginationArgsDto, PaginatedDto } from 'src/page/pagination-args.dto'
 

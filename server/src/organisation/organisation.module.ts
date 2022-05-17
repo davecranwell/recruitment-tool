@@ -9,5 +9,6 @@ import { OrganisationController } from './organisation.controller'
   imports: [PrismaModule],
   controllers: [OrganisationController],
   providers: [OrganisationService],
+  exports: [OrganisationService],
 })
 export class OrganisationModule {}
