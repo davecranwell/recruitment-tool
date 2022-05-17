@@ -3,8 +3,8 @@ import type { LoaderFunction } from '@remix-run/node'
 import { redirect } from '@remix-run/node'
 
 import { createSession, hasSession } from 'app/sessions.server'
-import { api } from 'app/utils/api.server'
-import { safeRedirect } from 'app/utils/utils'
+import { api } from 'app/api.server'
+import { safeRedirect } from 'app/utils'
 import Alert from 'app/components/alert'
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -22,11 +22,12 @@ export async function action({ request }: { request: Request }) {
 
   const authentication = await api(request, '/authentication/log-in', 'POST', {
     email: body.get('email'),
-    password: body.get('password')
+    password: body.get('password'),
   })
 
   if (authentication.ok) {
     const authRecord = await authentication.json()
+    console.log({ authRecord })
     return createSession(authRecord, redirectTo)
   }
 

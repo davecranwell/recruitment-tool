@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react'
 import * as React from 'react'
 import { Form, useTransition, NavLink } from '@remix-run/react'
+import classNames from 'classnames'
 
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import {
@@ -15,7 +16,6 @@ import {
   XIcon,
 } from '@heroicons/react/outline'
 import { SearchIcon } from '@heroicons/react/solid'
-import { classNames } from 'app/utils/utils'
 
 const navigation = [
   { name: 'Home', href: '/start', icon: HomeIcon },
@@ -94,21 +94,19 @@ const Layout: React.FC = ({ children }) => {
                         key={item.name}
                         to={item.href}
                         className={({ isActive }) =>
-                          classNames(
-                            isActive
-                              ? 'bg-gray-100 text-gray-900'
-                              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
-                            'group flex items-center rounded-md py-2 px-2 text-base font-medium'
-                          )
+                          classNames('group flex items-center rounded-md py-2 px-2 text-base font-medium', {
+                            'bg-gray-100 text-gray-900': isActive,
+                            'text-gray-600 hover:bg-gray-50 hover:text-gray-900': !isActive,
+                          })
                         }
                       >
                         {({ isActive }) => (
                           <>
                             <item.icon
-                              className={classNames(
-                                isActive ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500',
-                                'mr-4 h-6 w-6 flex-shrink-0'
-                              )}
+                              className={classNames('mr-4 h-6 w-6 flex-shrink-0', {
+                                'text-gray-500': isActive,
+                                'text-gray-400 group-hover:text-gray-500': !isActive,
+                              })}
                               aria-hidden="true"
                             />
                             {item.name}
@@ -143,19 +141,19 @@ const Layout: React.FC = ({ children }) => {
                   key={item.name}
                   to={item.href}
                   className={({ isActive }) =>
-                    classNames(
-                      isActive ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
-                      'group flex items-center rounded-md py-2 px-2 text-sm font-medium'
-                    )
+                    classNames('group flex items-center rounded-md py-2 px-2 text-sm font-medium', {
+                      'bg-gray-100 text-gray-900': isActive,
+                      'text-gray-600 hover:bg-gray-50 hover:text-gray-900': !isActive,
+                    })
                   }
                 >
                   {({ isActive }) => (
                     <>
                       <item.icon
-                        className={classNames(
-                          isActive ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500',
-                          'mr-3 h-6 w-6 flex-shrink-0'
-                        )}
+                        className={classNames('mr-3 h-6 w-6 flex-shrink-0', {
+                          'text-gray-500': isActive,
+                          'text-gray-400 group-hover:text-gray-500': !isActive,
+                        })}
                         aria-hidden="true"
                       />
                       {item.name}
@@ -235,10 +233,7 @@ const Layout: React.FC = ({ children }) => {
                           {({ active }) => (
                             <a
                               href={item.href}
-                              className={classNames(
-                                active ? 'bg-gray-100' : '',
-                                'block py-2 px-4 text-sm text-gray-700'
-                              )}
+                              className={classNames('block py-2 px-4 text-sm text-gray-700', { 'bg-gray-100': active })}
                             >
                               {item.name}
                             </a>

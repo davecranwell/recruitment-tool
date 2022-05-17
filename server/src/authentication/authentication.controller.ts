@@ -55,7 +55,7 @@ export class AuthenticationController {
   @UseGuards(LocalAuthenticationGuard)
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(LoginResponseDto))
   @Post('log-in')
-  async logIn(@Req() request: RequestWithUser): Promise<{ accessToken: string; refreshToken: string }> {
+  async logIn(@Req() request: RequestWithUser) {
     const { user } = request
 
     const { token: accessToken, cookie: accessTokenCookie } = this.authenticationService.getJwtToken(user.id)
@@ -63,6 +63,7 @@ export class AuthenticationController {
 
     await this.userService.setRefreshToken(refreshToken, user.id)
 
+    // TODO disabled until we understand how to use it better
     //request.res.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie])
 
     return <LoginResponseDto>{ user, accessToken, refreshToken }

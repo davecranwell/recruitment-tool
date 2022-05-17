@@ -11,6 +11,7 @@ type SessionData = {
     id: number
     name: string
     email: string
+    organisations: any[]
   }
   accessToken: string
   refreshToken: string
@@ -30,11 +31,16 @@ const { getSession, commitSession, destroySession } = createCookieSessionStorage
   },
 })
 
-export async function createSession(authRecord: any, redirectTo: string) {
+export async function createSession(authRecord: SessionData, redirectTo: string) {
   const session = await getSession()
 
   const redirectChoice = authRecord.user.organisations.length > 1 ? '/choose-organisation' : redirectTo
 
+  if (authRecord.user.organisations.length === 1) {
+    authRecord.activeOrganisationId = authRecord.user.organisations[0].organisationId
+  }
+
+  console.log('about to write', authRecord.user.organisations[0])
   session.set('user', authRecord)
 
   return redirect(redirectChoice, {

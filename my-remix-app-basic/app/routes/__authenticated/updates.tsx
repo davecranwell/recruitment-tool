@@ -1,7 +1,7 @@
 import { json } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 
-import { api } from 'app/utils/api.server'
+import { api } from 'app/api.server'
 
 import Content from 'app/components/content'
 

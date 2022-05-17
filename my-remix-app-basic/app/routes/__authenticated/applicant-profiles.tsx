@@ -3,7 +3,7 @@ import { useLoaderData, Link } from '@remix-run/react'
 import { LocationMarkerIcon, UsersIcon } from '@heroicons/react/solid'
 import { CurrencyPoundIcon, CalendarIcon } from '@heroicons/react/outline'
 
-import { api } from 'app/utils/api.server'
+import { api } from 'app/api.server'
 import { requireAuth } from 'app/sessions.server'
 
 import Content from 'app/components/content'

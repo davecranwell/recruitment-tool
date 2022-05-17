@@ -27,7 +27,7 @@ export class PositionController {
   @Post()
   @ApiCreatedResponse({ type: Position })
   create(@Body() data: CreatePositionDto) {
-    // TODO hook in orgId properly
+    // TODO hook in orgId properly to check for ownership and also for existence of org
     return this.positionService.create(data)
   }
 
