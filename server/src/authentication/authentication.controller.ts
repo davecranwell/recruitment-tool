@@ -55,10 +55,7 @@ export class AuthenticationController {
   @UseGuards(LocalAuthenticationGuard)
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(LoginResponseDto))
   @Post('log-in')
-  async logIn(
-    @Req() request: RequestWithUser,
-    @Body() loginData?: LoginDto
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  async logIn(@Req() request: RequestWithUser): Promise<{ accessToken: string; refreshToken: string }> {
     const { user } = request
 
     const { token: accessToken, cookie: accessTokenCookie } = this.authenticationService.getJwtToken(user.id)

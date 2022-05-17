@@ -10,6 +10,7 @@ import { UserEntity } from 'src/user/entities/user.entity'
 import { Organisation } from './entities/organisation.entity'
 import { CreateOrganisationDto } from './dto/create-organisation.dto'
 import { UpdateOrganisationDto } from './dto/update-organisation.dto'
+import { Position } from 'src/position/entities/position.entity'
 
 const paginate = createPaginator({ perPage: 20 })
 
@@ -47,6 +48,14 @@ export class OrganisationService {
     ;(userOrgs as unknown as PaginatedDto<UserEntity>).data = userOrgs.data.map((userOrg) => ({ ...userOrg.user }))
 
     return userOrgs
+  }
+
+  async findPositions(organisationId: number, paginationArgs: PaginationArgsDto) {
+    return paginate<Position, Prisma.PositionFindManyArgs>(
+      this.prisma.position,
+      { where: { organisationId } },
+      { ...paginationArgs }
+    )
   }
 
   async findOne(id: number) {

@@ -3,6 +3,7 @@ import * as bcrypt from 'bcrypt'
 
 import { PrismaService } from 'src/prisma/prisma.service'
 import { UserEntity } from './entities/user.entity'
+import { FindOneDto } from 'src/util/shared.dto'
 
 @Injectable()
 export class UserService {
@@ -27,6 +28,17 @@ export class UserService {
   async getByEmail(email: string): Promise<UserEntity> {
     const user = await this.prisma.user.findUnique({
       where: { email: email.toLowerCase() },
+    })
+    if (user) {
+      return new UserEntity(user)
+    }
+    throw new NotFoundException('User with this email does not exist')
+  }
+
+  async getByEmailExtended(email: string): Promise<UserEntity> {
+    const user = await this.prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+      include: { organisations: true },
     })
     if (user) {
       return new UserEntity(user)
@@ -61,10 +73,11 @@ export class UserService {
     if (isRefreshTokenMatching) return new UserEntity(user)
   }
 
-  async findOrganisations(userId: number) {
-    return this.prisma.user.findUnique({
-      where: { id: userId },
-      include: { organisations: { include: { organisation: { select: { id: true, name: true } } } } },
+  async findOrganisations(params: FindOneDto) {
+    const { id } = params
+
+    return this.prisma.organisation.findMany({
+      where: { users: { some: { userId: id } } },
     })
   }
 }

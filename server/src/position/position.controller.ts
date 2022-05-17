@@ -19,29 +19,22 @@ import { UpdatePositionDto } from './dto/update-position.dto'
 import { Position } from './entities/position.entity'
 
 @ApiTags('Positions')
-@Controller('organisation/:orgId/position')
+@Controller('position')
 @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Position))
 export class PositionController {
   constructor(private readonly positionService: PositionService) {}
 
   @Post()
   @ApiCreatedResponse({ type: Position })
-  create(@Param('orgId') orgId: number, @Body() data: CreatePositionDto) {
+  create(@Body() data: CreatePositionDto) {
     // TODO hook in orgId properly
     return this.positionService.create(data)
   }
 
-  @Get()
-  @ApiExtraModels(PaginatedDto)
-  @ApiPaginatedResponse(Position)
-  findAll(@Param('orgId') orgId: number, @Query() paginationArgs: PaginationArgsDto) {
-    return this.positionService.findByOrg(+orgId, paginationArgs)
-  }
-
   @Get(':id')
   @ApiOkResponse({ type: Position })
-  findOne(@Param('orgId') orgId: number, @Param('id') id: string) {
-    return this.positionService.findOne(+orgId, +id)
+  findOne(@Param('id') id: number) {
+    return this.positionService.findOne(+id)
   }
 
   // @Patch(':id')

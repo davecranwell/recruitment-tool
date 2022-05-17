@@ -1,9 +1,19 @@
 import { Form, useActionData, useTransition, useSearchParams } from '@remix-run/react'
+import type { LoaderFunction } from '@remix-run/node'
+import { redirect } from '@remix-run/node'
 
-import { createSession } from 'app/sessions.server'
+import { createSession, hasSession } from 'app/sessions.server'
 import { api } from 'app/utils/api.server'
 import { safeRedirect } from 'app/utils/utils'
 import Alert from 'app/components/alert'
+
+export const loader: LoaderFunction = async ({ request }) => {
+  if (await hasSession(request)) {
+    return redirect('/')
+  }
+
+  return request
+}
 
 export async function action({ request }: { request: Request }) {
   const body = await request.formData()
@@ -12,12 +22,15 @@ export async function action({ request }: { request: Request }) {
 
   const authentication = await api(request, '/authentication/log-in', 'POST', {
     email: body.get('email'),
-    password: body.get('password'),
+    password: body.get('password')
   })
 
-  const orgnisations = await api(request, '/organisations', 'GET')
+  if (authentication.ok) {
+    const authRecord = await authentication.json()
+    return createSession(authRecord, redirectTo)
+  }
 
-  return authentication.ok ? createSession(await authentication.json(), redirectTo) : authentication
+  return authentication
 }
 
 const SignIn = () => {

@@ -34,22 +34,8 @@ export class PositionService {
   //   return this.prisma.position.findMany()
   // }
 
-  async findByOrg(organisationId: number, paginationArgs: PaginationArgsDto) {
-    // find if userId exsits first
-    await this.organisationService.findOne(organisationId)
-
-    return paginate<Position, Prisma.PositionFindManyArgs>(
-      this.prisma.position,
-      { where: { organisationId } },
-      { ...paginationArgs }
-    )
-  }
-
-  async findOne(organisationId: number, id: number) {
-    // find if userId exsits first
-    await this.organisationService.findOne(organisationId)
-
-    const record = await this.prisma.position.findFirst({ where: { id, organisationId } })
+  async findOne(id: number) {
+    const record = await this.prisma.position.findFirst({ where: { id } })
     if (!record) throw new NotFoundException('Position with this ID does not exist')
 
     return record

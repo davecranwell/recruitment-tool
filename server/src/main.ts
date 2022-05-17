@@ -1,7 +1,7 @@
 import { HttpAdapterHost, NestFactory } from '@nestjs/core'
 import { ConfigService } from '@nestjs/config'
 import { ValidationPipe, Logger } from '@nestjs/common'
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import { DocumentBuilder, SwaggerDocumentOptions, SwaggerModule } from '@nestjs/swagger'
 import helmet from 'helmet'
 import * as cookieParser from 'cookie-parser'
 
@@ -44,30 +44,37 @@ async function bootstrap() {
   const configService = app.get(ConfigService)
   const swaggerConfig = configService.get<SwaggerConfig>('swagger')
 
+  const prismaService: PrismaService = app.get(PrismaService)
+  prismaService.enableShutdownHooks(app)
+
   // Swagger Api
   if (swaggerConfig.enabled) {
-    const options = new DocumentBuilder()
+    const config = new DocumentBuilder()
       .setTitle(swaggerConfig.title)
       .setDescription(swaggerConfig.description)
       .setVersion(swaggerConfig.version)
       .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }, 'access-token')
       .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }, 'refresh-token')
       .build()
-    const document = SwaggerModule.createDocument(app, options)
+
+    const options: SwaggerDocumentOptions = {
+      operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
+    }
+
+    const document = SwaggerModule.createDocument(app, config, options)
 
     SwaggerModule.setup(swaggerConfig.path, app, document, {
       swaggerOptions: {
         persistAuthorization: true,
       },
+      customSiteTitle: swaggerConfig.title,
     })
-
-    logger.log(`Open API documentation available on path: ${swaggerConfig.path}`)
   }
 
-  const prismaService: PrismaService = app.get(PrismaService)
-  prismaService.enableShutdownHooks(app)
-
   await app.listen(configService.get('port'))
+  if (swaggerConfig.enabled) {
+    logger.log(`Open API documentation available on path: /${swaggerConfig.path}`)
+  }
   logger.log(`Ready on port ${configService.get('port')}`)
 }
 bootstrap()

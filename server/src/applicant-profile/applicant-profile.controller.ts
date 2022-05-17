@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Query, Param, Delete, UseInterceptors, HttpCode } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Query,
+  Param,
+  Delete,
+  UseInterceptors,
+  HttpCode,
+  ParseIntPipe,
+} from '@nestjs/common'
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -39,27 +51,30 @@ export class ApplicantProfileController {
   @Get('by-user/:userId')
   @ApiExtraModels(PaginatedDto)
   @ApiPaginatedResponse(ApplicantProfile)
-  async findByUser(@Param('userId') userId: number, @Query() paginationArgs: PaginationArgsDto) {
+  async findByUser(@Param('userId', ParseIntPipe) userId: number, @Query() paginationArgs: PaginationArgsDto) {
     return this.applicantProfileService.findByUser(+userId, paginationArgs)
   }
 
   @Get('with-user/:userId')
   @ApiExtraModels(PaginatedDto)
   @ApiPaginatedResponse(ApplicantProfile)
-  async findWithUser(@Param('userId') userId: number, @Query() paginationArgs: PaginationArgsDto) {
+  async findWithUser(@Param('userId', ParseIntPipe) userId: number, @Query() paginationArgs: PaginationArgsDto) {
     return this.applicantProfileService.findWithUser(+userId, paginationArgs)
   }
 
   @Get('by-position/:positionId')
   @ApiExtraModels(PaginatedDto)
   @ApiPaginatedResponse(ApplicantProfile)
-  async findByPosition(@Param('positionId') positionId: number, @Query() paginationArgs: PaginationArgsDto) {
+  async findByPosition(
+    @Param('positionId', ParseIntPipe) positionId: number,
+    @Query() paginationArgs: PaginationArgsDto
+  ) {
     return this.applicantProfileService.findByPosition(+positionId, paginationArgs)
   }
 
   @Get(':id')
   @ApiOkResponse({ type: ApplicantProfile })
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id', ParseIntPipe) id: string) {
     return this.applicantProfileService.findOne(+id)
   }
 

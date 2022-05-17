@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Query, Param, Delete, UseInterceptors } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Query, Param, Delete, UseInterceptors, ParseIntPipe } from '@nestjs/common'
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -6,6 +6,9 @@ import {
   ApiOkResponse,
   ApiExtraModels,
   ApiTags,
+  ApiParam,
+  ApiOperation,
+  ApiSecurity,
 } from '@nestjs/swagger'
 
 import { PaginationArgsDto, PaginatedDto, ApiPaginatedResponse } from 'src/page/pagination-args.dto'
@@ -25,7 +28,8 @@ export class OrganisationController {
   constructor(private readonly organisationService: OrganisationService) {}
 
   @Post()
-  @ApiCreatedResponse({ type: Organisation })
+  @ApiOperation({ summary: 'Create a new organisation' })
+  @ApiCreatedResponse({ type: Organisation, description: 'Organisation created' })
   create(@Body() createOrganisationDto: CreateOrganisationDto) {
     return this.organisationService.create(createOrganisationDto)
   }
@@ -40,13 +44,28 @@ export class OrganisationController {
   @ApiExtraModels(PaginatedDto)
   @ApiPaginatedResponse(UserEntity)
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(UserEntity))
-  async findUsers(@Param('id') id: number, @Query() paginationArgs: PaginationArgsDto) {
+  async findUsers(@Param('id', ParseIntPipe) id: number, @Query() paginationArgs: PaginationArgsDto) {
     return this.organisationService.findUsers(+id, paginationArgs)
+  }
+
+  // @Get()
+  // @ApiExtraModels(PaginatedDto)
+  // @ApiPaginatedResponse(Position)
+  // findAll(@Param('orgId') orgId: number, @Query() paginationArgs: PaginationArgsDto) {
+  //   return this.positionService.findByOrg(+orgId, paginationArgs)
+  // }
+
+  @Get(':id/positions')
+  @ApiExtraModels(PaginatedDto)
+  @ApiPaginatedResponse(UserEntity)
+  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(UserEntity))
+  async findPositions(@Param('id', ParseIntPipe) id: number, @Query() paginationArgs: PaginationArgsDto) {
+    return this.organisationService.findPositions(id, paginationArgs)
   }
 
   @Get(':id')
   @ApiOkResponse({ type: Organisation })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: string) {
     return this.organisationService.findOne(+id)
   }
 

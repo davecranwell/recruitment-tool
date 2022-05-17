@@ -13,3 +13,7 @@ export function safeRedirect(to: FormDataEntryValue | string | null | undefined,
 export function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
+
+export function titleCase(string:string) {
+  return string.charAt(0).toUpperCase() + string.slice(1)
+}

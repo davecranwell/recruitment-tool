@@ -14,7 +14,6 @@
   },
   "mermaid.theme": "neutral",
   "markdown-preview-github-styles.colorTheme": "light",
-  "sonarlint.disableTelemetry": true,
   "search.exclude": {
     "**/node_modules": true,
     "**/build": true,
@@ -22,5 +21,15 @@
   },
   "files.associations": {
     "*.css": "tailwindcss"
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/.cache": true,
+    "**/node_modules": true
   }
 }

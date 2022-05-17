@@ -6,6 +6,17 @@ import invariant from 'tiny-invariant'
 
 invariant(process.env.SESSION_SECRET, 'SESSION_SECRET must be set')
 
+type SessionData = {
+  user: {
+    id: number
+    name: string
+    email: string
+  }
+  accessToken: string
+  refreshToken: string
+  activeOrganisationId: number
+}
+
 const { getSession, commitSession, destroySession } = createCookieSessionStorage({
   // a Cookie from `createCookie` or the CookieOptions to create one
   cookie: {
@@ -19,9 +30,26 @@ const { getSession, commitSession, destroySession } = createCookieSessionStorage
   },
 })
 
-export async function createSession(tokens: any, redirectTo: string) {
+export async function createSession(authRecord: any, redirectTo: string) {
   const session = await getSession()
-  session.set('user', tokens)
+
+  const redirectChoice = authRecord.user.organisations.length > 1 ? '/choose-organisation' : redirectTo
+
+  session.set('user', authRecord)
+
+  return redirect(redirectChoice, {
+    headers: {
+      'Set-Cookie': await commitSession(session),
+    },
+  })
+}
+
+export async function setSessionOrganisation(request: Request, organisationId: number, redirectTo: string) {
+  const session = await getUserSession(request)
+  const user = session.get('user')
+
+  user.activeOrganisationId = organisationId
+  session.set('user', user)
 
   return redirect(redirectTo, {
     headers: {
@@ -65,14 +93,14 @@ export async function refreshTokensInHeaders(request: Request) {
   })
 }
 
-export async function requireUser(request: Request, callback: Function, redirectTo: string = '/') {
-  return getUserSession(request).then((session) => {
-    if (!session.get('user')) {
-      return redirect(redirectTo)
-    }
+export async function getSessionData(request: Request): Promise<SessionData> {
+  const session = await getUserSession(request)
+  return session.get('user')
+}
 
-    return callback()
-  })
+export async function hasSession(request: Request) {
+  const session = await getUserSession(request)
+  return session.has('user')
 }
 
 export async function requireAuth(request: Request, redirectTo: string = new URL(request.url).pathname) {
@@ -84,12 +112,17 @@ export async function requireAuth(request: Request, redirectTo: string = new URL
     throw redirect(`/sign-in?${searchParams}`)
   }
 
+  const url = new URL(request.url)
+
+  if (url.pathname !== '/choose-organisation' && !user.activeOrganisationId) {
+    throw redirect(`/choose-organisation`)
+  }
+
   return user
 }
 
 export async function logout(request: Request) {
   const session = await getUserSession(request)
-  console.log('destroying')
   return redirect('/', {
     headers: {
       'Set-Cookie': await destroySession(session),
