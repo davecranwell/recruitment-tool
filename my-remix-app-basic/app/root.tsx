@@ -5,14 +5,14 @@ import { getUserSession } from 'app/sessions.server'
 
 import styles from './tailwind.css'
 
-import Layout from 'app/components/layout'
+import Layout from 'app/components/Layout'
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: styles },
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
   { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous' },
   {
-    href: 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600&display=swap',
+    href: 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap',
     rel: 'stylesheet',
   },
 ]
@@ -32,7 +32,7 @@ export default function App() {
   const hasSession = useLoaderData()
 
   return (
-    <html lang="en" className={`h-full ${!hasSession ? 'bg-gray-50' : ''}`}>
+    <html lang="en" className={`h-full ${!hasSession ? 'bg-gray-50' : 'bg-gray-100'}`}>
       <head>
         <Meta />
         <Links />

@@ -35,10 +35,12 @@ export class UserService {
     throw new NotFoundException('User with this email does not exist')
   }
 
-  async getByEmailExtended(email: string): Promise<UserEntity> {
+  async getByEmailWithOrgs(email: string): Promise<UserEntity> {
     const user = await this.prisma.user.findUnique({
       where: { email: email.toLowerCase() },
-      include: { organisations: true },
+      // This double inclusion is ugly but saves a query, so stays for now.
+      // If this is changed, the session processing in remix needs changes too.
+      include: { organisations: { include: { organisation: true } } },
     })
     if (user) {
       return new UserEntity(user)

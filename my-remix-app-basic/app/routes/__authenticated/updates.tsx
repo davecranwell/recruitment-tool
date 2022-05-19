@@ -3,7 +3,7 @@ import { useLoaderData } from '@remix-run/react'
 
 import { api } from 'app/api.server'
 
-import Content from 'app/components/content'
+import Content from 'app/components/Content'
 
 export async function loader({ request }: { request: Request }) {
   return await api(request, '/updates')

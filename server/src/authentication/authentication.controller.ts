@@ -99,14 +99,14 @@ export class AuthenticationController {
     return this.logIn(request)
   }
 
-  @ApiBearerAuth('access-token')
-  @ApiOkResponse({ type: UserEntity })
-  @UseGuards(JwtAuthenticationGuard)
-  @UseInterceptors(ClassSerializerInterceptor)
-  @Get()
-  authenticate(@Req() { user }: RequestWithUser) {
-    return new UserEntity(user)
-  }
+  // @ApiBearerAuth('access-token')
+  // @ApiOkResponse({ type: UserEntity })
+  // @UseGuards(JwtAuthenticationGuard)
+  // @UseInterceptors(ClassSerializerInterceptor)
+  // @Get()
+  // authenticate(@Req() { user }: RequestWithUser) {
+  //   return new UserEntity(user)
+  // }
 
   @Post('log-in/magic')
   async magicLogin(@Body() { email }: MagicLoginDto) {

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsEmail, IsString, IsNotEmpty, MinLength, MaxLength, IsNumber } from 'class-validator'
+import { IsEmail, IsString, IsNotEmpty, MinLength, MaxLength, IsNumber, IsDateString, IsDate } from 'class-validator'
 
 export class CreatePositionDto {
   @ApiProperty({ required: true })
@@ -11,9 +11,11 @@ export class CreatePositionDto {
   description?: string
 
   @ApiProperty()
+  @IsDate()
   openingDate?: Date
 
   @ApiProperty()
+  @IsDate()
   closingDate?: Date
 
   @ApiProperty({ required: true })

@@ -4,11 +4,11 @@ import classNames from 'classnames'
 
 type MessageBody = {
   title: string
-  description?: string
+  description?: string | string[]
 }
 
 type Props = {
-  message: string | MessageBody
+  message: string | string[] | MessageBody
   type: 'success' | 'info' | 'warning' | 'error'
 }
 
@@ -38,9 +38,13 @@ const Alert: React.FC<Props> = ({ message, type }) => {
               'text-red-800': type === 'error',
             })}
           >
-            {typeof message !== 'string' ? message.title : message}
+            {!Array.isArray(message) && typeof message !== 'string'
+              ? message.title
+              : Array.isArray(message)
+              ? message.map((msg) => <div key={msg}>{msg}</div>)
+              : message}
           </h3>
-          {typeof message !== 'string' && message.description && (
+          {!Array.isArray(message) && typeof message !== 'string' && message.description && (
             <div
               className={classNames('mt-2 text-sm', {
                 'text-green-700': type === 'success',
@@ -49,7 +53,9 @@ const Alert: React.FC<Props> = ({ message, type }) => {
                 'text-red-700': type === 'error',
               })}
             >
-              {message.description}
+              {Array.isArray(message.description)
+                ? message.description.map((desc) => <div key={desc}>{desc}</div>)
+                : message.description}
             </div>
           )}
         </div>

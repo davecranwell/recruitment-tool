@@ -1,6 +1,6 @@
 import { HttpAdapterHost, NestFactory } from '@nestjs/core'
 import { ConfigService } from '@nestjs/config'
-import { ValidationPipe, Logger } from '@nestjs/common'
+import { ValidationPipe, Logger, BadRequestException, ValidationError } from '@nestjs/common'
 import { DocumentBuilder, SwaggerDocumentOptions, SwaggerModule } from '@nestjs/swagger'
 import helmet from 'helmet'
 import * as cookieParser from 'cookie-parser'
@@ -36,7 +36,16 @@ async function bootstrap() {
   app.enableShutdownHooks()
   app.use(cookieParser())
   app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, transform: true, transformOptions: { enableImplicitConversion: true } })
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      // this provides better structured error objects which are more
+      // attributable to the field(s) on error
+      exceptionFactory: (validationErrors: ValidationError[] = []) => {
+        return new BadRequestException(validationErrors)
+      },
+      transformOptions: { enableImplicitConversion: true },
+    })
   )
   const { httpAdapter } = app.get(HttpAdapterHost)
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter))

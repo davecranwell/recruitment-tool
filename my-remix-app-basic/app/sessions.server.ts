@@ -4,6 +4,8 @@ import type { JwtPayload } from 'jsonwebtoken'
 import jwt from 'jsonwebtoken'
 import invariant from 'tiny-invariant'
 
+import type { Organisation } from './routes/__authenticated/choose-organisation'
+
 invariant(process.env.SESSION_SECRET, 'SESSION_SECRET must be set')
 
 type SessionData = {
@@ -15,7 +17,7 @@ type SessionData = {
   }
   accessToken: string
   refreshToken: string
-  activeOrganisationId: number
+  activeOrganisation: Organisation
 }
 
 const { getSession, commitSession, destroySession } = createCookieSessionStorage({
@@ -32,15 +34,14 @@ const { getSession, commitSession, destroySession } = createCookieSessionStorage
 })
 
 export async function createSession(authRecord: SessionData, redirectTo: string) {
-  const session = await getSession()
+  const session = await getSession() // empty session
 
   const redirectChoice = authRecord.user.organisations.length > 1 ? '/choose-organisation' : redirectTo
 
   if (authRecord.user.organisations.length === 1) {
-    authRecord.activeOrganisationId = authRecord.user.organisations[0].organisationId
+    authRecord.activeOrganisation = authRecord.user.organisations[0].organisation
   }
 
-  console.log('about to write', authRecord.user.organisations[0])
   session.set('user', authRecord)
 
   return redirect(redirectChoice, {
@@ -50,11 +51,11 @@ export async function createSession(authRecord: SessionData, redirectTo: string)
   })
 }
 
-export async function setSessionOrganisation(request: Request, organisationId: number, redirectTo: string) {
+export async function setSessionOrganisation(request: Request, organisation: Organisation, redirectTo: string) {
   const session = await getUserSession(request)
   const user = session.get('user')
 
-  user.activeOrganisationId = organisationId
+  user.activeOrganisation = organisation
   session.set('user', user)
 
   return redirect(redirectTo, {
@@ -82,21 +83,32 @@ export function sessionAccessTokenHasExpired(session: Session) {
 
 export async function refreshTokensInHeaders(request: Request) {
   const session = await getUserSession(request)
-  const { refreshToken, accessToken } = session.get('user')
+  const currentSession = session.get('user')
 
   // no processing of the json can occur here for reasons I can't explain
   // we have to pass the whole response back
   const refreshRes = await fetch(`${process.env.BACKEND_ROOT_URL}/authentication/refresh`, {
     method: 'GET',
     headers: {
-      Authorization: `Bearer ${refreshToken}`,
+      Authorization: `Bearer ${currentSession.refreshToken}`,
     },
   })
 
-  session.set('user', await refreshRes.json())
-  return new Headers({
-    'Set-Cookie': await commitSession(session),
-  })
+  if (refreshRes.ok) {
+    const { accessToken, refreshToken } = await refreshRes.json()
+
+    // replace only the tokens.
+    currentSession.accessToken = accessToken
+    currentSession.refreshToken = refreshToken
+
+    session.set('user', currentSession)
+
+    return new Headers({
+      'Set-Cookie': await commitSession(session),
+    })
+  }
+
+  throw redirect(`/`)
 }
 
 export async function getSessionData(request: Request): Promise<SessionData> {
@@ -104,32 +116,31 @@ export async function getSessionData(request: Request): Promise<SessionData> {
   return session.get('user')
 }
 
-export async function hasSession(request: Request) {
+export async function hasSession(request: Request): Promise<boolean> {
   const session = await getUserSession(request)
   return session.has('user')
 }
 
 export async function requireAuth(request: Request, redirectTo: string = new URL(request.url).pathname) {
-  const session = await getUserSession(request)
-  const user = session.get('user')
+  const sessionData: SessionData = await getSessionData(request)
 
-  if (!user) {
+  if (!sessionData) {
     const searchParams = new URLSearchParams([['redirectTo', redirectTo]])
     throw redirect(`/sign-in?${searchParams}`)
   }
 
   const url = new URL(request.url)
 
-  if (url.pathname !== '/choose-organisation' && !user.activeOrganisationId) {
+  if (!sessionData.activeOrganisation && url.pathname !== '/choose-organisation') {
     throw redirect(`/choose-organisation`)
   }
 
-  return user
+  return sessionData
 }
 
 export async function logout(request: Request) {
   const session = await getUserSession(request)
-  return redirect('/', {
+  return redirect('/start', {
     headers: {
       'Set-Cookie': await destroySession(session),
     },

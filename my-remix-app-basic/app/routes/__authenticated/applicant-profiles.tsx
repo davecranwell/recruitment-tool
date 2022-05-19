@@ -6,7 +6,10 @@ import { CurrencyPoundIcon, CalendarIcon } from '@heroicons/react/outline'
 import { api } from 'app/api.server'
 import { requireAuth } from 'app/sessions.server'
 
-import Content from 'app/components/content'
+import { StackedList, StackedListItem } from '~/components/StackedList'
+import Content from 'app/components/Content'
+
+import { dateTimeFormat } from 'app/utils'
 
 export async function loader({ request }: { request: Request }) {
   const user = await requireAuth(request)
@@ -18,54 +21,47 @@ export type ApplicantProfile = {
   id: number
   askingSalary: string
   profileName: string
-  updatedAt: string
+  updatedAt: Date
 }
 
 const ApplicantProfiles = () => {
   const profiles = useLoaderData()
 
   return (
-    <Content title={'Applicant Profiles'}>
-      <div className="overflow-hidden border border-gray-200 bg-white shadow sm:rounded-md">
-        <ul className="divide-y divide-gray-200">
-          {profiles.data.map((profile: ApplicantProfile) => (
-            <li key={profile.id}>
-              <Link to={`/applicant-profiles/${profile.id}`} className="block hover:bg-gray-50">
-                <div className="px-4 py-4 sm:px-6">
-                  <div className="flex items-center justify-between">
-                    <p className="truncate text-sm font-medium text-indigo-600">{profile.profileName}</p>
-                    <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0" title={profile.updatedAt}>
-                      <CalendarIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                      <p>
-                        Last updated{' '}
-                        <time dateTime={profile.updatedAt}>
-                          {new Intl.DateTimeFormat('en-GB', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: '2-digit',
-                          }).format(new Date(profile.updatedAt))}
-                        </time>
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mt-2 sm:flex sm:justify-between">
-                    <div className="sm:flex">
-                      <p className="flex items-center text-sm text-gray-500">
-                        <CurrencyPoundIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                        {profile.askingSalary}
-                      </p>
-                      {/* <p className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 sm:ml-6">
+    <Content
+      title={'Applicant Profiles'}
+      primaryAction={profiles.data.length && { label: 'Create', link: '/profile/new' }}
+    >
+      <StackedList>
+        {profiles.data.map((profile: ApplicantProfile) => (
+          <StackedListItem key={profile.id} link={`/applicant-profiles/${profile.id}`}>
+            <div className="flex items-center justify-between">
+              <p className="truncate text-sm font-medium text-indigo-600">{profile.profileName}</p>
+              <div
+                className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0"
+                title={profile.updatedAt.toString()}
+              >
+                <CalendarIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+                <p>
+                  Last updated <time dateTime={profile.updatedAt.toString()}>{dateTimeFormat(profile.updatedAt)}</time>
+                </p>
+              </div>
+            </div>
+            <div className="mt-2 sm:flex sm:justify-between">
+              <div className="sm:flex">
+                <p className="flex items-center text-sm text-gray-500">
+                  <CurrencyPoundIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+                  {profile.askingSalary}
+                </p>
+                {/* <p className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 sm:ml-6">
                         <LocationMarkerIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
                         {position.location}
                       </p> */}
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
+              </div>
+            </div>
+          </StackedListItem>
+        ))}
+      </StackedList>
     </Content>
   )
 }

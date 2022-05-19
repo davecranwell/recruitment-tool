@@ -6,11 +6,10 @@ import { CurrencyPoundIcon, CalendarIcon } from '@heroicons/react/outline'
 import { api } from 'app/api.server'
 import { requireAuth } from 'app/sessions.server'
 
-import Content from 'app/components/content'
+import Content from 'app/components/Content'
 
 export async function loader({ request }: { request: Request }) {
   const auth = await requireAuth(request)
-
   return await api(request, `/user/${auth.user.id}/organisations`)
 }
 

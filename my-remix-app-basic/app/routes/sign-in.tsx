@@ -5,7 +5,7 @@ import { redirect } from '@remix-run/node'
 import { createSession, hasSession } from 'app/sessions.server'
 import { api } from 'app/api.server'
 import { safeRedirect } from 'app/utils'
-import Alert from 'app/components/alert'
+import Alert from 'app/components/Alert'
 
 export const loader: LoaderFunction = async ({ request }) => {
   if (await hasSession(request)) {
@@ -26,9 +26,7 @@ export async function action({ request }: { request: Request }) {
   })
 
   if (authentication.ok) {
-    const authRecord = await authentication.json()
-    console.log({ authRecord })
-    return createSession(authRecord, redirectTo)
+    return createSession(await authentication.json(), redirectTo)
   }
 
   return authentication
