@@ -108,7 +108,7 @@ export async function refreshTokensInHeaders(request: Request) {
     })
   }
 
-  throw redirect(`/`)
+  return false
 }
 
 export async function getSessionData(request: Request): Promise<SessionData> {
