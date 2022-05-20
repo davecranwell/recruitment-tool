@@ -1,13 +1,14 @@
-import { json } from '@remix-run/node'
+import { json, redirect } from '@remix-run/node'
 
-import { getSession, refreshTokensInHeaders, sessionAccessTokenHasExpired } from 'app/sessions.server'
+import { getSession, getRefreshTokenHeadersAsNecessary } from 'app/sessions.server'
 import { formDataToJson } from 'app/utils'
 
 export async function api(request: Request, url: string, method: string = 'GET', body?: any): Promise<any> {
   const session = await getSession(request.headers.get('Cookie'))
 
   // Refresh token of existing session first before attempting API request
-  const headers = (sessionAccessTokenHasExpired(session) && (await refreshTokensInHeaders(request))) || undefined
+  const headers = await getRefreshTokenHeadersAsNecessary(request)
+  if (!headers) return redirect('/sign-out')
 
   // We won't have accessToken or a session if we're not logging in.
   // NB: the accessToken may have just this instant been refreshed by sessionAccessTokenHasExpired()

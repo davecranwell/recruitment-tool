@@ -81,9 +81,12 @@ export function sessionAccessTokenHasExpired(session: Session) {
   return false
 }
 
-export async function refreshTokensInHeaders(request: Request) {
+export async function getRefreshTokenHeadersAsNecessary(request: Request) {
   const session = await getUserSession(request)
   const currentSession = session.get('user')
+
+  // if session stilla ctive, send empty headers to tack onto next appropriate request
+  if (!sessionAccessTokenHasExpired(session)) return new Headers()
 
   // no processing of the json can occur here for reasons I can't explain
   // we have to pass the whole response back
@@ -107,8 +110,6 @@ export async function refreshTokensInHeaders(request: Request) {
       'Set-Cookie': await commitSession(session),
     })
   }
-
-  return false
 }
 
 export async function getSessionData(request: Request): Promise<SessionData> {
