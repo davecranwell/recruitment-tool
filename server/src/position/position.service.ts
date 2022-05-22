@@ -1,5 +1,5 @@
 import { Injectable, BadRequestException, HttpException, HttpStatus, NotFoundException } from '@nestjs/common'
-import { ApplicantProfileForPosition, Prisma } from '@prisma/client'
+import { ApplicantProfile, Prisma } from '@prisma/client'
 
 import { PrismaService } from 'src/prisma/prisma.service'
 import { createPaginator } from 'src/util/pagination'
@@ -10,6 +10,7 @@ import { CreatePositionDto } from './dto/create-position.dto'
 import { UpdatePositionDto } from './dto/update-position.dto'
 
 import { Position } from './entities/position.entity'
+import { ApplicantProfileForPosition } from 'src/applicant-profile-for-position/entities/applicant-profile-for-position.entity'
 
 const paginate = createPaginator({ perPage: 20 })
 @Injectable()
@@ -39,6 +40,20 @@ export class PositionService {
     if (!record) throw new NotFoundException('Position with this ID does not exist')
 
     return record
+  }
+
+  async findApplicantProfiles(positionId: number, paginationArgs: PaginationArgsDto) {
+    const profiles = await paginate<ApplicantProfileForPosition, Prisma.ApplicantProfileForPositionFindManyArgs>(
+      this.prisma.applicantProfileForPosition,
+      { where: { positionId }, include: { applicantProfile: { include: { user: { select: { name: true } } } } } },
+      { ...paginationArgs }
+    )
+
+    ;(profiles as unknown as PaginatedDto<ApplicantProfile>).data = profiles.data.map((prof) => ({
+      ...prof.applicantProfile,
+    }))
+
+    return profiles
   }
 
   // update(id: number, updatePositionDto: UpdatePositionDto) {

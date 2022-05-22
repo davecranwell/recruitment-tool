@@ -58,10 +58,14 @@ export class AuthenticationController {
   async logIn(@Req() request: RequestWithUser) {
     const { user } = request
 
-    const { token: accessToken, cookie: accessTokenCookie } = this.authenticationService.getJwtToken(user.id)
-    const { token: refreshToken, cookie: refreshTokenCookie } = this.authenticationService.getJwtRefreshToken(user.id)
+    const { token: accessToken, cookie: accessTokenCookie } = this.authenticationService.generateJwtToken(user.id)
+    const {
+      token: refreshToken,
+      jwtid,
+      cookie: refreshTokenCookie,
+    } = this.authenticationService.generateJwtRefreshToken(user.id)
 
-    await this.userService.setRefreshToken(refreshToken, user.id)
+    await this.userService.setRefreshToken(jwtid, user.id)
 
     // TODO disabled until we understand how to use it better
     //request.res.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie])

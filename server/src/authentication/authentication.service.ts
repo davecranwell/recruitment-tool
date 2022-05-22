@@ -1,4 +1,5 @@
 import * as bcrypt from 'bcrypt'
+import { v4 as uuidv4 } from 'uuid'
 import { HttpException, BadRequestException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
@@ -32,7 +33,7 @@ export class AuthenticationService {
     }
   }
 
-  public getJwtToken(userId: number) {
+  public generateJwtToken(userId: number) {
     const payload: JwtTokenPayload = { userId }
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_SECRET'),
@@ -45,8 +46,10 @@ export class AuthenticationService {
     }
   }
 
-  public getJwtRefreshToken(userId: number) {
-    const payload: JwtTokenPayload = { userId }
+  public generateJwtRefreshToken(userId: number) {
+    // give it a unique property that we hash in the DB for comparison later
+    const jwtid = uuidv4()
+    const payload: JwtTokenPayload = { userId, jwtid }
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_REFRESH_SECRET'),
       expiresIn: `${this.configService.get('JWT_REFRESH_EXPIRATION_TIME')}s`,
@@ -54,6 +57,7 @@ export class AuthenticationService {
 
     return {
       token,
+      jwtid,
       cookie: `Refresh=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get('JWT_REFRESH_EXPIRATION_TIME')}`,
     }
   }

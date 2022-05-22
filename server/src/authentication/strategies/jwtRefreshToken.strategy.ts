@@ -14,14 +14,10 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-ref
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: configService.get('JWT_REFRESH_SECRET'),
       ignoreExpiration: false,
-      passReqToCallback: true,
     })
   }
 
-  async validate(request: Request, payload: JwtTokenPayload) {
-    return this.userService.getUserIfRefreshTokenMatches(
-      ExtractJwt.fromAuthHeaderAsBearerToken()(request),
-      payload.userId
-    )
+  async validate(payload: JwtTokenPayload) {
+    return await this.userService.getUserIfRefreshTokenMatches(payload.userId, payload.jwtid)
   }
 }

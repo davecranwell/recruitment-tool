@@ -67,10 +67,10 @@ export class UserService {
     })
   }
 
-  async getUserIfRefreshTokenMatches(refreshToken: string, userId: number) {
+  async getUserIfRefreshTokenMatches(userId: number, jwtId: string) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } })
 
-    const isRefreshTokenMatching = await bcrypt.compare(refreshToken, user.refreshTokenHash)
+    const isRefreshTokenMatching = await bcrypt.compare(jwtId, user.refreshTokenHash)
 
     if (isRefreshTokenMatching) return new UserEntity(user)
   }

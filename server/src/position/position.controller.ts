@@ -17,6 +17,7 @@ import { CreatePositionDto } from './dto/create-position.dto'
 import { UpdatePositionDto } from './dto/update-position.dto'
 
 import { Position } from './entities/position.entity'
+import { ApplicantProfile } from 'src/applicant-profile/entities/applicant-profile.entity'
 
 @ApiTags('Positions')
 @Controller('position')
@@ -35,6 +36,14 @@ export class PositionController {
   @ApiOkResponse({ type: Position })
   findOne(@Param('id') id: number) {
     return this.positionService.findOne(+id)
+  }
+
+  @Get(':id/applicants')
+  @ApiExtraModels(PaginatedDto)
+  @ApiPaginatedResponse(ApplicantProfile)
+  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(ApplicantProfile))
+  findApplicantProfiles(@Param('id') id: number, @Query() paginationArgs: PaginationArgsDto) {
+    return this.positionService.findApplicantProfiles(+id, paginationArgs)
   }
 
   // @Patch(':id')
