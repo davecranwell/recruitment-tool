@@ -1,5 +1,6 @@
+import type { LoaderFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
-import { useLoaderData, Link } from '@remix-run/react'
+import { useLoaderData, Link, Outlet } from '@remix-run/react'
 import { LocationMarkerIcon, UsersIcon } from '@heroicons/react/solid'
 import { CurrencyPoundIcon, CalendarIcon } from '@heroicons/react/outline'
 
@@ -11,10 +12,11 @@ import Content from 'app/components/Content'
 
 import { dateTimeFormat } from 'app/utils'
 
-export async function loader({ request }: { request: Request }) {
+export const loader: LoaderFunction = async (data) => {
+  const { request } = data
   const user = await requireAuth(request)
 
-  return await api(request, `/applicant-profile/by-user/${user.user.id}`)
+  return await api(data, `/applicant-profile/by-user/${user.user.id}`)
 }
 
 export type ApplicantProfile = {
@@ -62,6 +64,7 @@ const ApplicantProfiles = () => {
           </StackedListItem>
         ))}
       </StackedList>
+      <Outlet />
     </Content>
   )
 }

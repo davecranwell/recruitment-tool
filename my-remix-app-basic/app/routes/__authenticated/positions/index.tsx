@@ -1,5 +1,6 @@
+import type { LoaderFunction, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
+import { Outlet, useLoaderData } from '@remix-run/react'
 
 import { api } from 'app/api.server'
 
@@ -11,10 +12,19 @@ import Empty from 'app/components/Empty'
 import { StackedList, StackedListItem } from 'app/components/StackedList'
 import { dateTimeFormat } from 'app/utils'
 
-export async function loader({ request }: { request: Request }) {
+export const meta: MetaFunction = ({ data }) => {
+  return {
+    title: `Positions at ${data?.sessionData?.activeOrganisation?.name}`,
+  }
+}
+
+export const loader: LoaderFunction = async (data) => {
+  const { request } = data
   const sessionData = await getSessionData(request)
 
-  return await api(request, `/organisation/${sessionData.activeOrganisation.id}/positions`)
+  const positions = await api(data, `/organisation/${sessionData.activeOrganisation.id}/positions`)
+
+  return json({ sessionData, positions: await positions.json() })
 }
 
 export type Position = {
@@ -27,7 +37,7 @@ export type Position = {
 }
 
 const Positions = () => {
-  const positions = useLoaderData()
+  const { positions } = useLoaderData()
 
   return (
     <Content title={'Positions'} primaryAction={positions.data.length && { label: 'Create', link: '/positions/new' }}>
@@ -35,7 +45,7 @@ const Positions = () => {
       {positions.data.length > 0 && (
         <StackedList>
           {positions.data.map((position: Position) => (
-            <StackedListItem key={position.id} link={'#'}>
+            <StackedListItem key={position.id} link={`/positions/${position.id}`}>
               <div className="flex items-center justify-between">
                 <p className="truncate text-sm font-medium text-indigo-600">{position.name}</p>
                 <div className="ml-2 flex flex-shrink-0">
@@ -71,6 +81,7 @@ const Positions = () => {
           ))}
         </StackedList>
       )}
+      <Outlet />
     </Content>
   )
 }

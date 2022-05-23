@@ -6,7 +6,7 @@ import invariant from 'tiny-invariant'
 
 import type { Organisation } from './routes/__authenticated/choose-organisation'
 
-invariant(process.env.SESSION_SECRET, 'SESSION_SECRET must be set')
+invariant(process.env.SESSION_SECRET, 'SESSION_SECRET must be set22')
 
 type SessionData = {
   user: {
@@ -81,35 +81,56 @@ export function sessionAccessTokenHasExpired(session: Session) {
   return false
 }
 
-export async function getRefreshTokenHeadersAsNecessary(request: Request) {
+export async function getRefreshToken(request: Request) {
   const session = await getUserSession(request)
   const currentSession = session.get('user')
 
-  // if session stilla ctive, send empty headers to tack onto next appropriate request
-  if (!sessionAccessTokenHasExpired(session)) return new Headers()
-
-  // no processing of the json can occur here for reasons I can't explain
-  // we have to pass the whole response back
-  const refreshRes = await fetch(`${process.env.BACKEND_ROOT_URL}/authentication/refresh`, {
+  return fetch(`${process.env.BACKEND_ROOT_URL}/authentication/refresh`, {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${currentSession.refreshToken}`,
     },
   })
-
-  if (refreshRes.ok) {
-    const { accessToken, refreshToken } = await refreshRes.json()
-
-    // replace only the tokens.
-    currentSession.accessToken = accessToken
-    currentSession.refreshToken = refreshToken
-
-    session.set('user', currentSession)
-
-    return new Headers({
-      'Set-Cookie': await commitSession(session),
+    .then((res) => {
+      console.log('here', res, res.ok)
+      if (res.ok) return res.json()
+      throw redirect('/sign-out')
     })
-  }
+    .then(({ accessToken, refreshToken }) => {
+      console.log('there', accessToken, refreshToken)
+      // replace only the tokens.
+      currentSession.accessToken = accessToken
+      currentSession.refreshToken = refreshToken
+
+      session.set('user', currentSession)
+
+      return commitSession(session).then((cookie) => {
+        return {
+          accessToken,
+          headers: new Headers({ 'Set-Cookie': cookie }),
+        }
+      })
+    })
+}
+
+export async function refreshTokensIfNeeded(request: Request, context: any) {
+  const session = await getUserSession(request)
+  const currentSession = session.get('user')
+
+  // if session still active, send empty headers to tack onto next appropriate request
+  if (!sessionAccessTokenHasExpired(session)) return { headers: new Headers() }
+
+  const cachedRefreshPromise = context.cache[currentSession?.user?.id]
+  if (cachedRefreshPromise) return cachedRefreshPromise
+
+  context.cache[currentSession.user.id] = getRefreshToken(request)
+
+  setTimeout(() => {
+    // delete this cache after 20s because no request could ahve taken that long
+    delete context.cache[currentSession.user.id]
+  }, 20_000)
+
+  return context.cache[currentSession.user.id]
 }
 
 export async function getSessionData(request: Request): Promise<SessionData> {

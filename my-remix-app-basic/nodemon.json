@@ -1,0 +1,4 @@
+{
+  "watch": ["public", "build"],
+  "delay": 500
+}

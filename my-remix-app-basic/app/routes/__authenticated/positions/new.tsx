@@ -11,10 +11,11 @@ import type { FieldDef, NestValidationError } from 'app/components/Forms'
 import FormLayout from 'app/components/Forms'
 import { requireAuth } from 'app/sessions.server'
 
-export const action: ActionFunction = async ({ request, params }) => {
+export const action: ActionFunction = async (data) => {
+  const { request } = data
   const body = await request.formData()
 
-  const result = await api(request, '/position', 'POST', body)
+  const result = await api(data, '/position', 'POST', body)
 
   if (result.ok) return redirect('/positions')
 

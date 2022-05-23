@@ -5,8 +5,6 @@ import { getUserSession } from 'app/sessions.server'
 
 import styles from './tailwind.css'
 
-import Layout from 'app/components/Layout'
-
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: styles },
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },

@@ -1,20 +1,24 @@
-import { json, redirect } from '@remix-run/node'
-
-import { getSession, getRefreshTokenHeadersAsNecessary } from 'app/sessions.server'
+import type { DataFunctionArgs } from '@remix-run/node'
+import { json, redirect, Response } from '@remix-run/node'
+import type { JsonFunction } from '@remix-run/server-runtime'
+import { getSession, refreshTokensIfNeeded, getUserSession } from 'app/sessions.server'
 import { formDataToJson } from 'app/utils'
 
-export async function api(request: Request, url: string, method: string = 'GET', body?: any): Promise<any> {
+export async function api(data: DataFunctionArgs, url: string, method: string = 'GET', body?: any): Promise<any> {
+  const { request, context } = data
+
   const session = await getSession(request.headers.get('Cookie'))
+  let accessToken = session?.get('user')?.accessToken
 
   // Refresh token of existing session first before attempting API request
-  const headers = await getRefreshTokenHeadersAsNecessary(request)
+  const { headers, accessToken: refreshedAccessToken } = await refreshTokensIfNeeded(request, context)
   if (!headers) return redirect('/sign-out')
 
   // We won't have accessToken or a session if we're not logging in.
   // NB: the accessToken may have just this instant been refreshed by sessionAccessTokenHasExpired()
   // but it is yet to be committed to the cookie, done by setting headers at the very
   // end of this function.
-  const { accessToken } = session?.get('user') || {}
+  if (refreshedAccessToken) accessToken = refreshedAccessToken
 
   const apiRes = await fetch(`${process.env.BACKEND_ROOT_URL}${url}`, {
     method,

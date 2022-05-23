@@ -1,3 +1,4 @@
+import type { LoaderFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { useLoaderData, Link } from '@remix-run/react'
 import { LocationMarkerIcon, UsersIcon } from '@heroicons/react/solid'
@@ -8,9 +9,10 @@ import { requireAuth } from 'app/sessions.server'
 
 import Content from 'app/components/Content'
 
-export async function loader({ request }: { request: Request }) {
+export const loader: LoaderFunction = async (data) => {
+  const { request } = data
   const auth = await requireAuth(request)
-  return await api(request, `/user/${auth.user.id}/organisations`)
+  return await api(data, `/user/${auth.user.id}/organisations`)
 }
 
 export type Organisation = {

@@ -2,10 +2,11 @@ import type { LoaderFunction } from '@remix-run/node'
 import { api } from '~/api.server'
 import { setSessionOrganisation } from '~/sessions.server'
 
-export const loader: LoaderFunction = async ({ request, params }) => {
+export const loader: LoaderFunction = async (data) => {
+  const { request, params } = data
   const { id } = params
 
-  const organisation = await api(request, `/organisation/${id}`)
+  const organisation = await api(data, `/organisation/${id}`)
 
   if (organisation.ok) {
     // redirecting to '/' won't work because of the way the redirect withing

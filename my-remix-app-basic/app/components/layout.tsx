@@ -31,7 +31,6 @@ const Layout: React.FC<Props> = ({ children, session }) => {
     { name: 'Applicants', href: '/applicant-profiles', icon: UsersIcon },
     { name: 'Positions', href: '/positions', icon: FolderIcon },
     { name: 'Timeline', href: '/timeline', icon: CalendarIcon },
-    { name: 'Updates', href: '/updates', icon: CalendarIcon },
   ]
   const userNavigation = [
     {

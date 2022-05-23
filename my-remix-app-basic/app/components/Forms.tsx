@@ -1,11 +1,10 @@
 import React from 'react'
+import type { Transition } from '@remix-run/react/transition'
+import { ExclamationCircleIcon } from '@heroicons/react/solid'
 import { Form } from '@remix-run/react'
 import classNames from 'classnames'
 
-import { camelToSentence, titleCase } from 'app/utils'
-import Alert from 'app/components/Alert'
-import type { Transition } from '@remix-run/react/transition'
-import { ExclamationCircleIcon } from '@heroicons/react/solid'
+import { camelToSentence } from 'app/utils'
 
 export type FieldDef = {
   name: string
@@ -36,6 +35,10 @@ export type NestTargetMessage = {
   constraints: object
 }
 
+/**
+ * Takes an array of form fields, and an error structure from Nest, and returns
+ * a new array of form fields with errors added to the corresponding fields.
+ */
 export const withActionErrors = (formFields: FieldDef[], errors?: NestTargetMessage[]) => {
   if (!errors?.length) return formFields
 
@@ -58,7 +61,7 @@ export const withActionErrors = (formFields: FieldDef[], errors?: NestTargetMess
     })
   }
 
-  return enumerateFields(formFields) //formFields.map((field: FieldDef) => ({ ...field, errors: getTargetErrors(field.name) }))
+  return enumerateFields(formFields)
 }
 
 type FieldProps = {
@@ -122,6 +125,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                   >
                     {field.options &&
                       field.options
+                        // if options are provided as an array of strings, use the string as the option value
                         .map((option) => (typeof option !== 'object' ? { key: option, value: option } : option))
                         .map((option) => {
                           return (
@@ -169,8 +173,6 @@ type FormLayoutProps = {
 
 const FormLayout: React.FC<FormLayoutProps> = ({ fields, submitText = 'Submit', intro, errors, transition }) => {
   const fieldsWithValidation = withActionErrors(fields, errors?.message)
-
-  console.log(fieldsWithValidation)
 
   return (
     <Form method="post">
