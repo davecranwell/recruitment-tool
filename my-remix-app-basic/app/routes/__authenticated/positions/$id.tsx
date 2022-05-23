@@ -1,7 +1,7 @@
 import { BriefcaseIcon, CalendarIcon, CurrencyDollarIcon, LocationMarkerIcon } from '@heroicons/react/solid'
 import type { LoaderFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
+import { Outlet, useLoaderData } from '@remix-run/react'
 
 import { api } from 'app/api.server'
 import Content from 'app/components/Content'
@@ -17,11 +17,11 @@ const Position = () => {
   const { id, name } = useLoaderData()
 
   const tabs = [
-    { name: 'Applied', href: `/position/${id}/applicants/applied`, count: '2', current: true },
-    { name: 'Phone Screening', href: `/position/${id}/applicants/screened`, count: '4', current: false },
-    { name: 'Interview', href: `/position/${id}/applicants/interviewed`, count: '6', current: true },
-    { name: 'Offer', href: `/position/${id}/applicants/offered`, current: false },
-    { name: 'Disqualified', href: `/position/${id}/applicants/disqualified`, current: false },
+    { name: 'Applied', href: `/positions/${id}`, count: '2' },
+    { name: 'Phone Screening', href: `/positions/${id}/screened`, count: '4' },
+    { name: 'Interview', href: `/positions/${id}/interviewed`, count: '6' },
+    { name: 'Offer', href: `/positions/${id}/offered` },
+    { name: 'Disqualified', href: `/positions/${id}/disqualified` },
   ]
 
   return (
@@ -54,6 +54,7 @@ const Position = () => {
           <h2 className="text-lg font-medium text-gray-900">Candidates</h2>
 
           <Tabs tabs={tabs} />
+          <Outlet />
         </div>
       </main>
     </Content>

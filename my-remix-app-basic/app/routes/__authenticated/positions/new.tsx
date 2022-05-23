@@ -7,7 +7,7 @@ import { useActionData, useLoaderData, useTransition } from '@remix-run/react'
 import { api } from 'app/api.server'
 
 import Content from 'app/components/Content'
-import type { FieldDef, NestValidationError } from 'app/components/Forms'
+import type { FieldDef } from 'app/components/Forms'
 import FormLayout from 'app/components/Forms'
 import { requireAuth } from 'app/sessions.server'
 
