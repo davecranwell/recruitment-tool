@@ -92,12 +92,10 @@ export async function getRefreshToken(request: Request) {
     },
   })
     .then((res) => {
-      console.log('here', res, res.ok)
       if (res.ok) return res.json()
       throw redirect('/sign-out')
     })
     .then(({ accessToken, refreshToken }) => {
-      console.log('there', accessToken, refreshToken)
       // replace only the tokens.
       currentSession.accessToken = accessToken
       currentSession.refreshToken = refreshToken
