@@ -78,7 +78,10 @@ export class ApplicantProfileService {
   }
 
   async findOne(id: number) {
-    const record = await this.prisma.applicantProfile.findUnique({ where: { id } })
+    const record = await this.prisma.applicantProfile.findUnique({
+      where: { id },
+      include: { user: { select: { name: true, email: true } } },
+    })
     if (!record) throw new NotFoundException('Applicant profile with this ID does not exist')
 
     return record

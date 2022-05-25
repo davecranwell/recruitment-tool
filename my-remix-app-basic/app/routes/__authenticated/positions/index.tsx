@@ -4,27 +4,34 @@ import { Outlet, useLoaderData } from '@remix-run/react'
 
 import { api } from 'app/api.server'
 
-import { getSessionData } from '~/sessions.server'
+import { getSessionData, requireAuth } from '~/sessions.server'
 
 import Content from 'app/components/Content'
-import { CalendarIcon, CurrencyPoundIcon } from '@heroicons/react/outline'
+import { CalendarIcon, CurrencyPoundIcon, FolderAddIcon } from '@heroicons/react/outline'
 import Empty from 'app/components/Empty'
 import { StackedList, StackedListItem } from 'app/components/StackedList'
 import { dateTimeFormat } from 'app/utils'
+import { CurrencyDollarIcon, LocationMarkerIcon } from '@heroicons/react/outline'
+import { MetaList, MetaListItem } from '~/components/MetaList'
 
 export const meta: MetaFunction = ({ data }) => {
-  return {
-    title: `Positions at ${data?.sessionData?.activeOrganisation?.name}`,
-  }
+  return { title: `Positions at ${data?.sessionData?.activeOrganisation?.name}` }
 }
 
 export const loader: LoaderFunction = async (data) => {
   const { request } = data
+  await requireAuth(request)
   const sessionData = await getSessionData(request)
 
   const positions = await api(data, `/organisation/${sessionData.activeOrganisation.id}/positions`)
 
   return json({ sessionData, positions: await positions.json() })
+}
+
+export enum PositionEmploymentType {
+  FULL,
+  PART,
+  CONTRACT,
 }
 
 export type Position = {
@@ -34,6 +41,9 @@ export type Position = {
   description?: String
   openingDate?: Date
   closingDate?: Date
+  employment?: PositionEmploymentType
+  location?: string
+  salaryRange?: string
 }
 
 const Positions = () => {
@@ -41,7 +51,7 @@ const Positions = () => {
 
   return (
     <Content title={'Positions'} primaryAction={positions.data.length && { label: 'Create', link: '/positions/new' }}>
-      {positions.data.length < 1 && <Empty name={'position'} />}
+      {positions.data.length < 1 && <Empty Icon={FolderAddIcon} title={'No positions have been created'} />}
       {positions.data.length > 0 && (
         <StackedList>
           {positions.data.map((position: Position) => (
@@ -54,29 +64,14 @@ const Positions = () => {
                       </p> */}
                 </div>
               </div>
-              <div className="mt-2 sm:flex sm:justify-between">
-                <div className="sm:flex">
-                  {position.salary && (
-                    <p className="flex items-center text-sm text-gray-500">
-                      <CurrencyPoundIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                      {position.salary}
-                    </p>
-                  )}
-                  <p className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 sm:ml-6">
-                    {/* <LocationMarkerIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                        {position.location} */}
-                  </p>
-                </div>
-                {position.closingDate && (
-                  <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
-                    <CalendarIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                    <p>
-                      Closing on{' '}
-                      <time dateTime={position.closingDate.toString()}>{dateTimeFormat(position.closingDate)}</time>
-                    </p>
-                  </div>
-                )}
-              </div>
+              <MetaList className="mt-2">
+                <MetaListItem value={position.salaryRange!} icon={CurrencyDollarIcon}></MetaListItem>
+                <MetaListItem value={position.location!} icon={LocationMarkerIcon}></MetaListItem>
+                <MetaListItem
+                  value={`Closing on ${dateTimeFormat(position.closingDate!)}`}
+                  icon={CalendarIcon}
+                ></MetaListItem>
+              </MetaList>
             </StackedListItem>
           ))}
         </StackedList>

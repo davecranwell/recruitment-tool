@@ -2,22 +2,18 @@ import { NavLink, useMatches } from '@remix-run/react'
 import classNames from 'classnames'
 
 type Props = {
-  tabs: any[]
+  tabs: Tab[]
 }
 
 type Tab = {
   name: string
   href: string
-  count: number
-  current: boolean
+  count?: string
 }
 
 // TODO migrate to compound component?
 const Tabs: React.FC<Props> = ({ tabs }) => {
-  const matches = useMatches()
   if (!tabs.length) return null
-
-  console.log(matches)
 
   return (
     <>
@@ -31,7 +27,7 @@ const Tabs: React.FC<Props> = ({ tabs }) => {
           name="tabs"
           className="focus:border-primary-500 focus:ring-primary-500 mt-4 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:outline-none sm:text-sm"
         >
-          {tabs.map((tab: Tab) => (
+          {tabs.map((tab) => (
             <option key={tab.name}>{tab.name}</option>
           ))}
         </select>
@@ -41,6 +37,7 @@ const Tabs: React.FC<Props> = ({ tabs }) => {
           <nav className="mt-2 -mb-px flex space-x-8" aria-label="Tabs">
             {tabs.map((tab: Tab) => (
               <NavLink
+                end
                 key={tab.name}
                 to={tab.href}
                 className={({ isActive }) =>

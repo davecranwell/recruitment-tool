@@ -2,19 +2,28 @@ import { BriefcaseIcon, CalendarIcon, CurrencyDollarIcon, LocationMarkerIcon } f
 import type { LoaderFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { Outlet, useLoaderData } from '@remix-run/react'
+import type { MetaFunction } from '@remix-run/react/routeModules'
 
 import { api } from 'app/api.server'
 import Content from 'app/components/Content'
 import Tabs from 'app/components/Tabs'
+import { MetaList, MetaListItem } from '~/components/MetaList'
+import { requireAuth } from '~/sessions.server'
+import { dateTimeFormat } from '~/utils'
+import type { Position } from '.'
 
-export const loader: LoaderFunction = async (data) => {
-  const { params } = data
-  const { id } = params
-  return await api(data, `/position/${id}`)
+export const meta: MetaFunction = ({ data }) => {
+  return { title: data.name }
 }
 
-const Position = () => {
-  const { id, name } = useLoaderData()
+export const loader: LoaderFunction = async (data) => {
+  const { request, params } = data
+  await requireAuth(request)
+  return await api(data, `/position/${params.id}`)
+}
+
+const PositionDetail = () => {
+  const { id, name, closingDate, description, location, salaryRange, employment } = useLoaderData() as Position
 
   const tabs = [
     { name: 'Applied', href: `/positions/${id}`, count: '2' },
@@ -30,24 +39,17 @@ const Position = () => {
       // primaryAction={{ label: 'Create', link: '/positions/new' }}
       secondaryAction={{ label: 'Edit', link: `/positions/${id}/edit` }}
     >
-      <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-8">
-        <div className="mt-2 flex items-center text-sm text-gray-500">
-          <BriefcaseIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-          Full-time
+      <MetaList className="mt-2">
+        <MetaListItem value={salaryRange!} icon={CurrencyDollarIcon}></MetaListItem>
+        <MetaListItem value={location!} icon={LocationMarkerIcon}></MetaListItem>
+        <MetaListItem value={`Closing on ${dateTimeFormat(closingDate!)}`} icon={CalendarIcon}></MetaListItem>
+      </MetaList>
+
+      {description && (
+        <div className="mt-8">
+          <p>{description}</p>
         </div>
-        <div className="mt-2 flex items-center text-sm text-gray-500">
-          <LocationMarkerIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-          Remote
-        </div>
-        <div className="mt-2 flex items-center text-sm text-gray-500">
-          <CurrencyDollarIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-          $120k &ndash; $140k
-        </div>
-        <div className="mt-2 flex items-center text-sm text-gray-500">
-          <CalendarIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-          Closing on January 9, 2020
-        </div>
-      </div>
+      )}
 
       <main className="pt-8 pb-16">
         <div className="px-4 sm:px-0">
@@ -61,4 +63,4 @@ const Position = () => {
   )
 }
 
-export default Position
+export default PositionDetail

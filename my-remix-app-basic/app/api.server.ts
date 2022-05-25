@@ -29,5 +29,21 @@ export async function api(data: DataFunctionArgs, url: string, method: string = 
     body: body instanceof FormData ? JSON.stringify(formDataToJson(body)) : JSON.stringify(body),
   })
 
+  if (apiRes.status === 404) {
+    throw new Response('Not Found', {
+      status: 404,
+      statusText: 'Not Found',
+      headers,
+    })
+  } else if (apiRes.status === 500) {
+    const response = await apiRes.json()
+    console.log(JSON.stringify(response))
+    throw new Response(`An error occured: "${apiRes.statusText}"`, {
+      status: apiRes.status,
+      statusText: `An error occured: "${apiRes.statusText}"`,
+      headers,
+    })
+  }
+
   return json(await apiRes.json(), { status: apiRes.status, headers })
 }

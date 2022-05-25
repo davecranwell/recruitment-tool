@@ -6,6 +6,7 @@ import { createSession, hasSession } from 'app/sessions.server'
 import { api } from 'app/api.server'
 import { safeRedirect } from 'app/utils'
 import Alert from 'app/components/Alert'
+import Button from 'app/components/Button'
 
 export const loader: LoaderFunction = async ({ request }) => {
   if (await hasSession(request)) {
@@ -120,12 +121,7 @@ const SignIn = () => {
               </div> */}
 
               <div>
-                <button
-                  type="submit"
-                  className="sflex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                  {transition.state !== 'idle' ? 'One second...' : 'Sign in221'}
-                </button>
+                <Button type="submit" width="full" text="Sign in" transition={transition} />
                 <input type="hidden" name="redirectTo" value={redirectTo} />
               </div>
             </Form>

@@ -1,5 +1,5 @@
 import { Injectable, BadRequestException, HttpException, HttpStatus, NotFoundException } from '@nestjs/common'
-import { ApplicantProfile, Prisma } from '@prisma/client'
+import { ApplicantProfile, Prisma, User } from '@prisma/client'
 
 import { PrismaService } from 'src/prisma/prisma.service'
 import { createPaginator } from 'src/util/pagination'
@@ -45,7 +45,10 @@ export class PositionService {
   async findApplicantProfiles(positionId: number, paginationArgs: PaginationArgsDto) {
     const profiles = await paginate<ApplicantProfileForPosition, Prisma.ApplicantProfileForPositionFindManyArgs>(
       this.prisma.applicantProfileForPosition,
-      { where: { positionId }, include: { applicantProfile: { include: { user: { select: { name: true } } } } } },
+      {
+        where: { positionId },
+        include: { applicantProfile: { include: { user: { select: { name: true, email: true } } } } },
+      },
       { ...paginationArgs }
     )
 
@@ -56,9 +59,19 @@ export class PositionService {
     return profiles
   }
 
-  // update(id: number, updatePositionDto: UpdatePositionDto) {
-  //   return `This action updates a #${id} position`
-  // }
+  update(id: number, data: UpdatePositionDto) {
+    return this.prisma.position.update({
+      where: { id },
+      data: {
+        name: data.name,
+        description: data.description,
+        openingDate: data.openingDate,
+        closingDate: data.closingDate,
+        location: data.location,
+        salaryRange: data.salaryRange,
+      },
+    })
+  }
 
   // remove(id: number) {
   //   return `This action removes a #${id} position`

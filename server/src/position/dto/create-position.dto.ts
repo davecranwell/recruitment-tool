@@ -1,3 +1,4 @@
+import { PositionEmploymentType } from '@prisma/client'
 import { ApiProperty } from '@nestjs/swagger'
 import { IsEmail, IsString, IsNotEmpty, MinLength, MaxLength, IsNumber, IsDateString, IsDate } from 'class-validator'
 
@@ -22,4 +23,13 @@ export class CreatePositionDto {
   @IsNotEmpty()
   @IsNumber()
   organisationId: number
+
+  @ApiProperty({ enum: PositionEmploymentType })
+  employment?: PositionEmploymentType
+
+  @ApiProperty()
+  location?: string
+
+  @ApiProperty()
+  salaryRange?: string
 }

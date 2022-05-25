@@ -3,7 +3,7 @@ import { ApplicantProfile as ApplicantProfileModel } from '@prisma/client'
 import { ValidateNested } from 'class-validator'
 import { Exclude, Type } from 'class-transformer'
 
-import { UserEntity as User } from 'src/user/entities/user.entity'
+import { UserEntity as User, UserEntity } from 'src/user/entities/user.entity'
 import { Position } from 'src/position/entities/position.entity'
 import { Organisation } from 'src/organisation/entities/organisation.entity'
 
@@ -44,4 +44,11 @@ export class ApplicantProfile implements ApplicantProfileModel {
   constructor(partial: Partial<ApplicantProfile>) {
     Object.assign(this, partial)
   }
+}
+
+export class ApplicantProfileWithUser extends ApplicantProfile {
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => User)
+  user: User
 }

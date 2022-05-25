@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { ValidateNested } from 'class-validator'
 import { Exclude, Type } from 'class-transformer'
-import { Position as PositionModel } from '@prisma/client'
+import { Position as PositionModel, PositionEmploymentType } from '@prisma/client'
 
 import { Organisation } from 'src/organisation/entities/organisation.entity'
 import { ApplicantProfileForPosition } from 'src/applicant-profile-for-position/entities/applicant-profile-for-position.entity'
@@ -32,6 +32,15 @@ export class Position implements PositionModel {
 
   @ApiProperty()
   organisationId: number
+
+  @ApiProperty({ enum: PositionEmploymentType })
+  employment: PositionEmploymentType | null
+
+  @ApiProperty()
+  location: string | null
+
+  @ApiProperty()
+  salaryRange: string | null
 
   @ValidateNested()
   @Type(() => Organisation)

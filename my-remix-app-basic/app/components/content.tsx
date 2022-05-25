@@ -1,6 +1,7 @@
 import { PlusIcon } from '@heroicons/react/solid'
 import { Link } from '@remix-run/react'
 import type { ReactChildren } from 'react'
+import Button from './Button'
 
 type Props = {
   children: React.ReactNode
@@ -26,20 +27,12 @@ const Content: React.FC<Props> = ({ children, title, primaryAction, secondaryAct
         {(primaryAction || secondaryAction) && (
           <div className="mt-4 flex space-x-4 md:mt-0 md:ml-4">
             {secondaryAction && (
-              <Link
-                to={secondaryAction.link}
-                className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-              >
-                {secondaryAction.label}
-              </Link>
+              <Button component={Link} color="secondary" to={secondaryAction.link} text={secondaryAction.label} />
             )}
             {primaryAction && (
-              <Link
-                to={primaryAction.link}
-                className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-              >
-                {primaryAction.label}
-              </Link>
+              <>
+                <Button component={Link} to={primaryAction.link} text={primaryAction.label} />
+              </>
             )}
           </div>
         )}

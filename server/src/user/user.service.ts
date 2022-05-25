@@ -10,7 +10,7 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   async findOne(id: number) {
-    const record = await this.prisma.organisation.findUnique({ where: { id } })
+    const record = await this.prisma.user.findUnique({ where: { id } })
     if (!record) throw new NotFoundException('Organisation with this ID does not exist')
 
     return record

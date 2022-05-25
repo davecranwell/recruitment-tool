@@ -1,6 +1,14 @@
 ```mermaid
 erDiagram
 
+        PositionEmploymentType {
+            FULL FULL
+PART PART
+CONTRACT CONTRACT
+        }
+    
+
+
         UserRoleType {
             RECRUITER RECRUITER
 APPLICANT APPLICANT
@@ -54,6 +62,9 @@ INTERVIEWER INTERVIEWER
       Int id
     String name
     String description
+    PositionEmploymentType employment
+    String location
+    String salaryRange
     DateTime openingDate
     DateTime closingDate
     DateTime createdAt
@@ -105,6 +116,7 @@ INTERVIEWER INTERVIEWER
     ApplicantProfile o{--|| User : "user"
     ApplicantProfileForOrganisation o{--|| ApplicantProfile : "applicantProfile"
     ApplicantProfileForOrganisation o{--|| Organisation : "organisation"
+    Position o|--|| PositionEmploymentType : "enum:employment"
     Position o{--|| Organisation : "organisation"
     UsersInOrganisation o{--|| User : "user"
     UsersInOrganisation o{--|| Organisation : "organisation"

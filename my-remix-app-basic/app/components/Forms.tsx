@@ -5,6 +5,7 @@ import { Form } from '@remix-run/react'
 import classNames from 'classnames'
 
 import { camelToSentence } from 'app/utils'
+import Button from './Button'
 
 export type FieldDef = {
   name: string
@@ -20,6 +21,7 @@ export type FieldDef = {
   defaultValue?: any
   placeholder?: string
   errors?: string[]
+  valueTransform?: (value: any) => any
 }
 
 export type NestValidationError = {
@@ -64,6 +66,27 @@ export const withActionErrors = (formFields: FieldDef[], errors?: NestTargetMess
   return enumerateFields(formFields)
 }
 
+/**
+ * Takes an array of form fields and an object defining their current values
+ * and returns the field array with values inserted into the defaultValue properties
+ */
+
+export const withValues = (formFields: FieldDef[], values: any) => {
+  const enumerateFields = (fields: FieldDef[]): FieldDef[] => {
+    return fields.map((field) => {
+      if (field.content) {
+        field.content = enumerateFields(field.content)
+      }
+      if (field.name) {
+        field.defaultValue = field.valueTransform ? field.valueTransform(values[field.name]) : values[field.name]
+      }
+      return field
+    })
+  }
+
+  return enumerateFields(formFields)
+}
+
 type FieldProps = {
   field: FieldDef
 }
@@ -89,7 +112,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                 {/* {field.required && <span className="text-red-600">(Required)</span>} */}
               </label>
               <div className="relative mt-1">
-                {['text', 'email', 'number', 'password', 'url', 'date'].includes(field.type) && (
+                {['text', 'email', 'number', 'password', 'url', 'date', 'datetime-local'].includes(field.type) && (
                   <input
                     type={field.type}
                     name={field.name}
@@ -190,12 +213,7 @@ const FormLayout: React.FC<FormLayoutProps> = ({ fields, submitText = 'Submit', 
         </div>
         <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
           <div className="flex justify-end">
-            <button
-              type="submit"
-              className="bg-primary-500 hover:bg-primary-600 focus:ring-primary-500 ml-3 inline-flex justify-center rounded-md border border-transparent py-2 px-4 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2"
-            >
-              {transition.state !== 'idle' ? 'One second...' : submitText}
-            </button>
+            <Button type="submit" text={submitText} transition={transition} />
           </div>
         </div>
       </div>

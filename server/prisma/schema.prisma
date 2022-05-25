@@ -74,10 +74,19 @@ model ApplicantProfileForOrganisation {
   @@id([applicantProfileId, organisationId])
 }
 
+enum PositionEmploymentType {
+  FULL
+  PART
+  CONTRACT
+}
+
 model Position {
   id                Int                           @id @default(autoincrement())
   name              String
   description       String?                       @db.Text
+  employment        PositionEmploymentType?
+  location          String?
+  salaryRange       String?
   openingDate       DateTime?                     @default(now())
   closingDate       DateTime?
   createdAt         DateTime                      @default(now())

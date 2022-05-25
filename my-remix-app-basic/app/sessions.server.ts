@@ -8,7 +8,7 @@ import type { Organisation } from './routes/__authenticated/choose-organisation'
 
 invariant(process.env.SESSION_SECRET, 'SESSION_SECRET must be set22')
 
-type SessionData = {
+export type SessionData = {
   user: {
     id: number
     name: string

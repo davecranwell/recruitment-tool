@@ -20,6 +20,7 @@ import { CreateOrganisationDto } from './dto/create-organisation.dto'
 import { UpdateOrganisationDto } from './dto/update-organisation.dto'
 import { Organisation } from './entities/organisation.entity'
 import { UsersInOrganisation } from 'src/users-in-organisation/entities/users-in-organisation.entity'
+import { Position } from 'src/position/entities/position.entity'
 
 @ApiTags('Organisations')
 @Controller('organisation')
@@ -57,8 +58,8 @@ export class OrganisationController {
 
   @Get(':id/positions')
   @ApiExtraModels(PaginatedDto)
-  @ApiPaginatedResponse(UserEntity)
-  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(UserEntity))
+  @ApiPaginatedResponse(Position)
+  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Position))
   async findPositions(@Param('id', ParseIntPipe) id: number, @Query() paginationArgs: PaginationArgsDto) {
     return this.organisationService.findPositions(id, paginationArgs)
   }

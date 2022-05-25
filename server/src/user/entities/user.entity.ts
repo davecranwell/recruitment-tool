@@ -27,7 +27,10 @@ export class UserEntity implements User {
   @Exclude()
   refreshTokenHash: string
 
+  @ApiProperty({ required: true })
   createdAt: Date
+
+  @ApiProperty({ required: true })
   updatedAt: Date
 
   organisations?: UsersInOrganisation[]
