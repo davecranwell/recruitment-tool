@@ -104,7 +104,7 @@ export async function getRefreshToken(request: Request) {
 
       return commitSession(session).then((cookie) => {
         return {
-          accessToken,
+          refreshedAccessToken: accessToken,
           headers: new Headers({ 'Set-Cookie': cookie }),
         }
       })

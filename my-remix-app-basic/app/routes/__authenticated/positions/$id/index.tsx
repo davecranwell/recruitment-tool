@@ -1,6 +1,6 @@
 import type { LoaderFunction } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import { UserIcon } from '@heroicons/react/outline'
+import { UsersIcon } from '@heroicons/react/outline'
 
 import { api } from 'app/api.server'
 import { requireAuth } from 'app/sessions.server'
@@ -33,7 +33,7 @@ const PositionApplicants = () => {
 
   return (
     <div className="py-6">
-      {applicants.data.length < 1 && <Empty Icon={UserIcon} title="No applicants for this position" />}
+      {applicants.data.length < 1 && <Empty Icon={UsersIcon} title="There are no applicants for this position" />}
       {applicants.data.length > 0 && (
         <StackedList>
           {applicants.data.map((applicant: PositionApplicant) => (

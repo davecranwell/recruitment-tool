@@ -51,7 +51,9 @@ const Positions = () => {
 
   return (
     <Content title={'Positions'} primaryAction={positions.data.length && { label: 'Create', link: '/positions/new' }}>
-      {positions.data.length < 1 && <Empty Icon={FolderAddIcon} title={'No positions have been created'} />}
+      {positions.data.length < 1 && (
+        <Empty Icon={FolderAddIcon} title={'No positions have been created'} createLink={'/positions/new'} />
+      )}
       {positions.data.length > 0 && (
         <StackedList>
           {positions.data.map((position: Position) => (

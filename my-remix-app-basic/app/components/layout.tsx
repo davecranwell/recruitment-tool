@@ -14,6 +14,8 @@ import {
   MenuAlt2Icon,
   UsersIcon,
   XIcon,
+  CogIcon,
+  UserGroupIcon,
 } from '@heroicons/react/outline'
 import { SearchIcon, SelectorIcon } from '@heroicons/react/solid'
 import type { SessionData } from '@remix-run/node'
@@ -27,10 +29,17 @@ const Layout: React.FC<Props> = ({ children, session }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const navigation = [
-    { name: 'Home', href: '/start', icon: HomeIcon },
-    { name: 'Applicants', href: '/applicant-profiles', icon: UsersIcon },
-    { name: 'Positions', href: '/positions', icon: FolderIcon },
-    { name: 'Timeline', href: '/timeline', icon: CalendarIcon },
+    [
+      { name: 'Home', href: '/start', icon: HomeIcon },
+      { name: 'Applicants', href: '/applicant-profiles', icon: UsersIcon },
+      { name: 'Positions', href: '/positions', icon: FolderIcon },
+      { name: 'Timeline', href: '/timeline', icon: CalendarIcon },
+    ],
+    [
+      { name: 'Organisation', type: 'heading' },
+      { name: 'Settings', href: '/config', icon: CogIcon },
+      { name: 'Users', href: '/users', icon: UserGroupIcon },
+    ],
   ]
   const userNavigation = [
     {
@@ -97,32 +106,48 @@ const Layout: React.FC<Props> = ({ children, session }) => {
                     alt="Workflow"
                   /> */}
                 </div>
-                <div className="mt-5 h-0 flex-1 overflow-y-auto">
-                  <nav className="space-y-1 px-2">
-                    {navigation.map((item) => (
-                      <NavLink
-                        key={item.name}
-                        to={item.href}
-                        className={({ isActive }) =>
-                          classNames('group flex items-center rounded-md py-2 px-2 text-base font-medium', {
-                            'bg-gray-100 text-gray-900': isActive,
-                            'text-gray-600 hover:bg-gray-50 hover:text-gray-900': !isActive,
-                          })
-                        }
-                      >
-                        {({ isActive }) => (
+                <div className="h-0 flex-1 overflow-y-auto">
+                  <nav className="divide-primary-200 space-y-8 divide-y px-2">
+                    {navigation.map((group, index) => (
+                      <div key={`group${index}`} className="pt-8">
+                        {group.map((item) => (
                           <>
-                            <item.icon
-                              className={classNames('mr-4 h-6 w-6 flex-shrink-0', {
-                                'text-gray-500': isActive,
-                                'text-gray-400 group-hover:text-gray-500': !isActive,
-                              })}
-                              aria-hidden="true"
-                            />
-                            {item.name}
+                            {item.type === 'heading' && (
+                              <h3
+                                className="px-3 text-xs font-semibold uppercase tracking-wider text-gray-500"
+                                id="projects-headline"
+                              >
+                                {item.name}
+                              </h3>
+                            )}
+                            {item.href && (
+                              <NavLink
+                                key={item.name}
+                                to={item.href}
+                                className={({ isActive }) =>
+                                  classNames('group flex items-center rounded-md py-2 px-2 text-base font-medium', {
+                                    'bg-gray-100 text-gray-900': isActive,
+                                    'text-gray-600 hover:bg-gray-50 hover:text-gray-900': !isActive,
+                                  })
+                                }
+                              >
+                                {({ isActive }) => (
+                                  <>
+                                    <item.icon
+                                      className={classNames('mr-4 h-6 w-6 flex-shrink-0', {
+                                        'text-gray-500': isActive,
+                                        'text-gray-400 group-hover:text-gray-500': !isActive,
+                                      })}
+                                      aria-hidden="true"
+                                    />
+                                    {item.name}
+                                  </>
+                                )}
+                              </NavLink>
+                            )}
                           </>
-                        )}
-                      </NavLink>
+                        ))}
+                      </div>
                     ))}
                   </nav>
                 </div>
@@ -200,32 +225,51 @@ const Layout: React.FC<Props> = ({ children, session }) => {
             </Transition>
           </Menu>
 
-          <div className="mt-5 flex flex-grow flex-col">
-            <nav className="flex-1 space-y-1 px-2 pb-4">
-              {navigation.map((item) => (
-                <NavLink
-                  key={item.name}
-                  to={item.href}
-                  className={({ isActive }) =>
-                    classNames('group flex items-center rounded-md py-2 px-2 text-sm font-medium text-indigo-100', {
-                      'bg-indigo-600': isActive,
-                      'hover:bg-indigo-500 hover:text-white': !isActive,
-                    })
-                  }
-                >
-                  {({ isActive }) => (
+          <div className="flex flex-grow flex-col">
+            <nav className="divide-primary-600 flex-1 space-y-8 divide-y px-2 pb-4">
+              {navigation.map((group, index) => (
+                <div key={`group${index}`} className="pt-8">
+                  {group.map((item) => (
                     <>
-                      <item.icon
-                        className={classNames('mr-3 h-6 w-6 flex-shrink-0', {
-                          'text-indigo-100': isActive,
-                          'text-indigo-100 group-hover:text-indigo-100': !isActive,
-                        })}
-                        aria-hidden="true"
-                      />
-                      {item.name}
+                      {item.type === 'heading' && (
+                        <h3
+                          className="text-primary-400 px-3 pb-2 text-xs font-semibold uppercase tracking-wider"
+                          id="projects-headline"
+                        >
+                          {item.name}
+                        </h3>
+                      )}
+                      {item.href && (
+                        <NavLink
+                          key={item.name}
+                          to={item.href}
+                          className={({ isActive }) =>
+                            classNames(
+                              'text-primary-100 group flex items-center rounded-md py-2 px-2 text-sm font-medium',
+                              {
+                                'bg-primary-600': isActive,
+                                'hover:bg-primary-500 hover:text-white': !isActive,
+                              }
+                            )
+                          }
+                        >
+                          {({ isActive }) => (
+                            <>
+                              <item.icon
+                                className={classNames('mr-3 h-6 w-6 flex-shrink-0', {
+                                  'text-primary-300': isActive,
+                                  'text-primary-300 group-hover:text-primary-100': !isActive,
+                                })}
+                                aria-hidden="true"
+                              />
+                              {item.name}
+                            </>
+                          )}
+                        </NavLink>
+                      )}
                     </>
-                  )}
-                </NavLink>
+                  ))}
+                </div>
               ))}
             </nav>
           </div>
