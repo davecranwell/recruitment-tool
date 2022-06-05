@@ -18,6 +18,17 @@ export class UserService {
 
   // TODO deprecate this
   async getById(id: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      include: { organisations: { include: { organisation: true } } },
+    })
+    if (user) {
+      return new UserEntity(user)
+    }
+    throw new NotFoundException('User with this id does not exist')
+  }
+
+  async getByIdWithOrgs(id: number) {
     const user = await this.prisma.user.findUnique({ where: { id } })
     if (user) {
       return new UserEntity(user)

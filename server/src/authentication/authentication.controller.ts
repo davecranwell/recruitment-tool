@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiOkResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Request, Response } from 'express'
-import { User } from '@prisma/client'
 
 import { PrismaClassSerializerInterceptorPaginated } from 'src/class-serializer-paginated.interceptor'
 
@@ -28,7 +27,7 @@ import { LoginResponseDto, LoginDto, MagicLoginDto } from './dto/login.dto'
 import { MagicLinkGuard } from './guards/magiclink.guard'
 import { ThrottlerGuard } from '@nestjs/throttler'
 export interface RequestWithUser extends Request {
-  user: User
+  user: UserEntity
 }
 @ApiTags('Authentication')
 // @UseGuards(ThrottlerGuard)

@@ -111,7 +111,7 @@ const Layout: React.FC<Props> = ({ children, session }) => {
                     {navigation.map((group, index) => (
                       <div key={`group${index}`} className="pt-8">
                         {group.map((item) => (
-                          <>
+                          <Fragment key={item.name}>
                             {item.type === 'heading' && (
                               <h3
                                 className="px-3 text-xs font-semibold uppercase tracking-wider text-gray-500"
@@ -145,7 +145,7 @@ const Layout: React.FC<Props> = ({ children, session }) => {
                                 )}
                               </NavLink>
                             )}
-                          </>
+                          </Fragment>
                         ))}
                       </div>
                     ))}
@@ -230,7 +230,7 @@ const Layout: React.FC<Props> = ({ children, session }) => {
               {navigation.map((group, index) => (
                 <div key={`group${index}`} className="pt-8">
                   {group.map((item) => (
-                    <>
+                    <Fragment key={item.name}>
                       {item.type === 'heading' && (
                         <h3
                           className="text-primary-400 px-3 pb-2 text-xs font-semibold uppercase tracking-wider"
@@ -267,7 +267,7 @@ const Layout: React.FC<Props> = ({ children, session }) => {
                           )}
                         </NavLink>
                       )}
-                    </>
+                    </Fragment>
                   ))}
                 </div>
               ))}

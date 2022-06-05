@@ -27,6 +27,7 @@ export class OrganisationService {
           create: [
             {
               userId: data.userId,
+              role: 'ORGANISATION_OWNER',
             },
           ],
         },

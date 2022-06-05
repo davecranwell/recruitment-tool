@@ -11,6 +11,7 @@ import { AppModule } from './app.module'
 import getLogLevels from './getLogLevels'
 import { exit } from 'process'
 import { PrismaClientExceptionFilter } from './prisma-client-exception.filter'
+import { NotFoundExceptionFilter } from './not-found-exception.filter'
 
 const logger = new Logger()
 
@@ -48,7 +49,7 @@ async function bootstrap() {
     })
   )
   const { httpAdapter } = app.get(HttpAdapterHost)
-  app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter))
+  app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter), new NotFoundExceptionFilter(httpAdapter))
 
   const configService = app.get(ConfigService)
   const swaggerConfig = configService.get<SwaggerConfig>('swagger')

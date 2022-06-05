@@ -1,3 +1,4 @@
+import { UserRoleType } from '@prisma/client'
 import { ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 
@@ -8,6 +9,7 @@ export class UsersInOrganisation {
   @ValidateNested()
   @Type(() => User)
   user?: User
+  role: UserRoleType
   userId: number
   organisation?: Organisation
   organisationId: number

@@ -18,7 +18,6 @@ import { ApplicantProfileForPositionModule } from './applicant-profile-for-posit
 import { PositionUserRoleModule } from './position-user-role/position-user-role.module'
 import { PositionRoleModule } from './position-role/position-role.module'
 import { UserRolesOfUserModule } from './user-roles-of-user/user-roles-of-user.module'
-
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [config] }),
