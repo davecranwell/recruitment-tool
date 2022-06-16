@@ -1,14 +1,18 @@
+import { PositionRoleType, PositionUserRole as PositionUserRoleModel } from '@prisma/client'
+
 import { Position } from 'src/position/entities/position.entity'
 import { UserEntity as User } from 'src/user/entities/user.entity'
-import { PositionRole } from 'src/position-role/entities/position-role.entity'
 
-export class PositionUserRole {
+export class PositionUserRole implements PositionUserRoleModel {
   position?: Position
   positionId: number
   user?: User
   userId: number
-  role?: PositionRole
-  roleId: number
+  role: PositionRoleType
   createdAt: Date
   updatedAt: Date
+
+  constructor(partial: Partial<PositionUserRole>) {
+    Object.assign(this, partial)
+  }
 }

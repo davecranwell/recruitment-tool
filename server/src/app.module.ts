@@ -16,7 +16,6 @@ import { ApplicantProfileForOrganisationModule } from './applicant-profile-for-o
 import { ApplicantProfileModule } from './applicant-profile/applicant-profile.module'
 import { ApplicantProfileForPositionModule } from './applicant-profile-for-position/applicant-profile-for-position.module'
 import { PositionUserRoleModule } from './position-user-role/position-user-role.module'
-import { PositionRoleModule } from './position-role/position-role.module'
 import { UserRolesOfUserModule } from './user-roles-of-user/user-roles-of-user.module'
 @Module({
   imports: [
@@ -36,7 +35,6 @@ import { UserRolesOfUserModule } from './user-roles-of-user/user-roles-of-user.m
     ApplicantProfileModule,
     ApplicantProfileForPositionModule,
     PositionUserRoleModule,
-    PositionRoleModule,
     UserRolesOfUserModule,
   ],
   controllers: [AppController],
