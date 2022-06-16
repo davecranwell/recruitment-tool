@@ -4,6 +4,7 @@ import { ValidationPipe, Logger, BadRequestException, ValidationError } from '@n
 import { DocumentBuilder, SwaggerDocumentOptions, SwaggerModule } from '@nestjs/swagger'
 import helmet from 'helmet'
 import * as cookieParser from 'cookie-parser'
+import * as compression from 'compression'
 
 import { SwaggerConfig } from './config/configuration.interface'
 import { PrismaService } from './prisma/prisma.service'
@@ -30,6 +31,7 @@ async function bootstrap() {
     logger: getLogLevels(process.env.NODE_ENV === 'production'),
   })
 
+  app.use(compression())
   app.enableCors()
   app.use(helmet())
   app.use(helmet.frameguard({ action: 'deny' })) // Prevent any iframes

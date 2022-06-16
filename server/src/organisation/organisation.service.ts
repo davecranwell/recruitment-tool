@@ -11,12 +11,16 @@ import { Organisation } from './entities/organisation.entity'
 import { CreateOrganisationDto } from './dto/create-organisation.dto'
 import { UpdateOrganisationDto } from './dto/update-organisation.dto'
 import { Position } from 'src/position/entities/position.entity'
+import { OrganisationPermissions } from './organisation.permissions'
+
+import { Action } from 'src/casl/actions'
+import { Abilities, AbilityClass } from '@casl/ability'
 
 const paginate = createPaginator({ perPage: 20 })
 
 @Injectable()
 export class OrganisationService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private readonly organisationPermissions: OrganisationPermissions) {}
 
   create(data: CreateOrganisationDto) {
     return this.prisma.organisation.create({
@@ -51,12 +55,49 @@ export class OrganisationService {
     return userOrgs
   }
 
-  async findPositions(organisationId: number, paginationArgs: PaginationArgsDto) {
-    return paginate<Position, Prisma.PositionFindManyArgs>(
+  async findPositions(organisationId: number, user: UserEntity, paginationArgs: PaginationArgsDto) {
+    // if you're an org admin, get all positions
+    // if you're a regular user, get all positions you're allocated to in some way
+    const ability = this.organisationPermissions.createForUser(user)
+
+    if (ability.can(Action.Manage, new Organisation({ id: organisationId }))) {
+      return await paginate<Position, Prisma.PositionFindManyArgs>(
+        this.prisma.position,
+        { where: { organisationId } },
+        { ...paginationArgs }
+      )
+    }
+
+    const results = await paginate<Position, Prisma.PositionFindManyArgs>(
       this.prisma.position,
-      { where: { organisationId } },
+      {
+        where: {
+          organisationId,
+          userRoles: {
+            some: {
+              userId: user.id,
+              role: {
+                in: ['HIRING_MANAGER', 'INTERVIEWER'],
+              },
+            },
+          },
+        },
+        include: { userRoles: { where: { userId: user.id } } },
+      },
       { ...paginationArgs }
     )
+
+    console.log({ results: results.data })
+
+    // strip salary range where role for this position is unsuitable
+    // results.data.map((position) => {
+    //   if (!position.userRoles.every((userRole) => userRole.role === 'HIRING_MANAGER')) {
+    //     delete position.salaryRange
+    //   }
+    //   return position
+    // })
+
+    return results
   }
 
   async findOne(id: number) {

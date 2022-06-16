@@ -37,7 +37,7 @@ import { OrganisationService } from './organisation.service'
 import { CreateOrganisationDto } from './dto/create-organisation.dto'
 import { UpdateOrganisationDto } from './dto/update-organisation.dto'
 import { Organisation } from './entities/organisation.entity'
-import { OrganisationPermissions } from './organisation.permissions'
+import { CaslPermissions } from 'src/casl/casl.permissions'
 
 import { Action } from 'src/casl/actions'
 
@@ -45,18 +45,17 @@ import { Action } from 'src/casl/actions'
 @ApiBearerAuth('access-token')
 @Controller('organisation')
 @UseGuards(JwtAuthenticationGuard)
-@UseInterceptors(PrismaClassSerializerInterceptorPaginated(Organisation))
 export class OrganisationController {
   constructor(
     private readonly organisationService: OrganisationService,
-    private readonly organisationPermissions: OrganisationPermissions
+    private readonly caslPermissions: CaslPermissions
   ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new organisation' })
   @ApiCreatedResponse({ type: Organisation, description: 'Organisation created' })
   create(@Req() request: RequestWithUser, @Body() createOrganisationDto: CreateOrganisationDto) {
-    const ability = this.organisationPermissions.createForUser(request.user)
+    const ability = this.caslPermissions.createForUser(request.user)
 
     if (!ability.can(Action.Create, new Organisation(createOrganisationDto))) throw new ForbiddenException()
 
@@ -79,7 +78,7 @@ export class OrganisationController {
     @Param('id', ParseIntPipe) id: number,
     @Query() paginationArgs: PaginationArgsDto
   ) {
-    const ability = this.organisationPermissions.createForUser(request.user)
+    const ability = this.caslPermissions.createForUser(request.user)
 
     if (!ability.can(Action.Manage, new Organisation({ id }))) throw new ForbiddenException()
 
@@ -103,18 +102,18 @@ export class OrganisationController {
     @Param('id', ParseIntPipe) id: number,
     @Query() paginationArgs: PaginationArgsDto
   ) {
-    const ability = this.organisationPermissions.createForUser(request.user)
+    const ability = this.caslPermissions.createForUser(request.user)
 
-    if (!ability.can(Action.Manage, new Organisation({ id }))) throw new ForbiddenException()
+    if (!ability.can(Action.Read, new Organisation({ id }))) throw new ForbiddenException()
 
-    return this.organisationService.findPositions(id, paginationArgs)
+    return this.organisationService.findPositions(id, request.user, paginationArgs)
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get information about one organisation' })
   @ApiOkResponse({ type: Organisation })
   findOne(@Req() request: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
-    const ability = this.organisationPermissions.createForUser(request.user)
+    const ability = this.caslPermissions.createForUser(request.user)
 
     if (!ability.can(Action.Read, new Organisation({ id }))) throw new ForbiddenException()
 

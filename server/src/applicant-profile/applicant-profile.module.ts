@@ -5,8 +5,9 @@ import { PrismaModule } from 'src/prisma/prisma.module'
 import { ApplicantProfileService } from './applicant-profile.service'
 import { ApplicantProfileController } from './applicant-profile.controller'
 import { UserModule } from 'src/user/user.module'
+import { CaslModule } from 'src/casl/casl.module'
 @Module({
-  imports: [PrismaModule, UserModule],
+  imports: [UserModule],
   controllers: [ApplicantProfileController],
   providers: [ApplicantProfileService],
 })

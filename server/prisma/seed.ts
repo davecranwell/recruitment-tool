@@ -85,7 +85,7 @@ async function main() {
    */
   const humanRecruiternUser = await prisma.user.create({
     data: {
-      name: 'Human recruiter user',
+      name: 'Humand recruiter user',
       email: 'foo@bar6.com',
       password: '$2a$10$Cer44Qb/fNW3flIcCEd.bONiYvyFwQtTewCGvZoeBlby78m94iwF.', // test
       organisations: {

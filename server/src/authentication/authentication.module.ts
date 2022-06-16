@@ -10,6 +10,7 @@ import { LocalStrategy } from './strategies/local.strategy'
 import { JwtStrategy } from './strategies/jwt.strategy'
 import { JwtRefreshTokenStrategy } from './strategies/jwtRefreshToken.strategy'
 import { MagicLinkStrategy } from './strategies/magicLink.strategy'
+import { CaslModule } from 'src/casl/casl.module'
 
 @Module({
   imports: [

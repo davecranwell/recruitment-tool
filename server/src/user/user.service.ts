@@ -10,13 +10,12 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   async findOne(id: number) {
-    const record = await this.prisma.user.findUnique({ where: { id } })
+    const record = await this.prisma.user.findUnique({ where: { id }, include: { organisations: true } })
     if (!record) throw new NotFoundException('Organisation with this ID does not exist')
 
     return record
   }
 
-  // TODO deprecate this
   async getById(id: number) {
     const user = await this.prisma.user.findUnique({
       where: { id },
@@ -28,17 +27,10 @@ export class UserService {
     throw new NotFoundException('User with this id does not exist')
   }
 
-  async getByIdWithOrgs(id: number) {
-    const user = await this.prisma.user.findUnique({ where: { id } })
-    if (user) {
-      return new UserEntity(user)
-    }
-    throw new NotFoundException('User with this id does not exist')
-  }
-
   async getByEmail(email: string): Promise<UserEntity> {
     const user = await this.prisma.user.findUnique({
       where: { email: email.toLowerCase() },
+      include: { organisations: { include: { organisation: true } } },
     })
     if (user) {
       return new UserEntity(user)
@@ -46,7 +38,7 @@ export class UserService {
     throw new NotFoundException('User with this email does not exist')
   }
 
-  async getByEmailWithOrgs(email: string): Promise<UserEntity> {
+  async getByEmailWithDetailedOrgs(email: string): Promise<UserEntity> {
     const user = await this.prisma.user.findUnique({
       where: { email: email.toLowerCase() },
       // This double inclusion is ugly but saves a query, so stays for now.

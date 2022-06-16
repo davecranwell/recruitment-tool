@@ -42,6 +42,16 @@ export class PositionService {
     return record
   }
 
+  async findByOrganisation(organisationId: number, paginationArgs: PaginationArgsDto) {
+    const positions = await paginate<Position, Prisma.PositionFindManyArgs>(
+      this.prisma.position,
+      { where: { organisationId } },
+      { ...paginationArgs }
+    )
+
+    return positions
+  }
+
   async findApplicantProfiles(positionId: number, paginationArgs: PaginationArgsDto) {
     const profiles = await paginate<ApplicantProfileForPosition, Prisma.ApplicantProfileForPositionFindManyArgs>(
       this.prisma.applicantProfileForPosition,

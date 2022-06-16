@@ -1,39 +1,71 @@
-import { ClassSerializerInterceptor, PlainLiteralObject, Type } from '@nestjs/common'
-import { plainToClass, ClassTransformOptions } from 'class-transformer'
+import {
+  CallHandler,
+  ClassSerializerInterceptor,
+  ExecutionContext,
+  Inject,
+  Injectable,
+  mixin,
+  PlainLiteralObject,
+  Type,
+} from '@nestjs/common'
+import { ClassTransformOptions, plainToClass } from 'class-transformer'
+import { map, Observable } from 'rxjs'
+import { Action } from './casl/actions'
+import { CaslPermissions } from './casl/casl.permissions'
 
 import { PaginatedResult } from './util/pagination'
 
 const isResponsePaginated = (response) => response.data && response.meta
 
 export function PrismaClassSerializerInterceptorPaginated(classToIntercept: Type): typeof ClassSerializerInterceptor {
-  return class Interceptor extends ClassSerializerInterceptor {
-    private static changePlainObjectToClass(response: PlainLiteralObject) {
-      return plainToClass(classToIntercept, response)
+  @Injectable()
+  class Interceptor extends ClassSerializerInterceptor {
+    @Inject(CaslPermissions) private readonly caslPermissions
+
+    private static permissions: any
+
+    changePlainObjectToClass(response: PlainLiteralObject) {
+      if (Interceptor?.permissions?.can(Action.Manage, plainToClass(classToIntercept, response))) {
+        return plainToClass(classToIntercept, response, { groups: ['manager'] })
+      } else {
+        return plainToClass(classToIntercept, response)
+      }
     }
 
-    private static prepareResponse(
-      response: PaginatedResult<typeof classToIntercept> | PlainLiteralObject | PlainLiteralObject[]
-    ) {
-      if (isResponsePaginated(response)) {
-        const res = response as PaginatedResult<typeof classToIntercept>
+    intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> {
+      const { user } = context.switchToHttp().getRequest()
 
-        res.data = res.data.map(Interceptor.changePlainObjectToClass)
-
-        return response
+      if (user) {
+        Interceptor.permissions = this.caslPermissions.createForUser(user)
       }
 
-      if (Array.isArray(response)) {
-        return response.map(Interceptor.changePlainObjectToClass)
+      const contextOptions = this.getContextOptions(context)
+      const options = {
+        ...this.defaultOptions,
+        ...contextOptions,
       }
-
-      return Interceptor.changePlainObjectToClass(response)
+      return next
+        .handle()
+        .pipe(map((res: PlainLiteralObject | Array<PlainLiteralObject>) => this.serialize(res, options)))
     }
 
     serialize(
       response: PaginatedResult<typeof classToIntercept> | PlainLiteralObject | Array<PlainLiteralObject>,
       options: ClassTransformOptions
     ): PaginatedResult<typeof classToIntercept> | PlainLiteralObject | Array<PlainLiteralObject> {
-      return super.serialize(Interceptor.prepareResponse(response), options)
+      if (isResponsePaginated(response)) {
+        const res = response as PaginatedResult<typeof classToIntercept>
+
+        res.data = res.data.map(this.changePlainObjectToClass)
+
+        return response
+      }
+
+      return Array.isArray(response)
+        ? response.map(this.changePlainObjectToClass)
+        : this.changePlainObjectToClass(response)
     }
   }
+
+  return mixin(Interceptor)
 }

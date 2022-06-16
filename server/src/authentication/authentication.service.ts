@@ -64,7 +64,7 @@ export class AuthenticationService {
 
   public async getAuthenticatedUser(email: string, plainTextPassword: string) {
     try {
-      const user = await this.userService.getByEmailWithOrgs(email)
+      const user = await this.userService.getByEmailWithDetailedOrgs(email)
       await this.verifyPassword(plainTextPassword, user.password)
       user.password = undefined
       return user

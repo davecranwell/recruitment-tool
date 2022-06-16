@@ -1,40 +1,33 @@
 import {
+  Body,
   Controller,
   Get,
-  Post,
-  Body,
-  Patch,
-  Query,
   Param,
-  Delete,
-  UseInterceptors,
-  HttpCode,
   ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
-import {
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiNoContentResponse,
-  ApiOkResponse,
-  ApiExtraModels,
-  ApiTags,
-} from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiExtraModels, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { PaginationArgsDto, PaginatedDto, ApiPaginatedResponse } from 'src/page/pagination-args.dto'
 import { PrismaClassSerializerInterceptorPaginated } from 'src/class-serializer-paginated.interceptor'
+import { ApiPaginatedResponse, PaginatedDto, PaginationArgsDto } from 'src/page/pagination-args.dto'
 
 import { PositionService } from './position.service'
 
 import { CreatePositionDto } from './dto/create-position.dto'
 import { UpdatePositionDto } from './dto/update-position.dto'
 
+import { ApplicantProfileWithUser } from 'src/applicant-profile/entities/applicant-profile.entity'
+import JwtAuthenticationGuard from 'src/authentication/guards/jwtAuthentication.guard'
 import { Position } from './entities/position.entity'
-import { ApplicantProfile, ApplicantProfileWithUser } from 'src/applicant-profile/entities/applicant-profile.entity'
-import { Prisma } from '@prisma/client'
 
 @ApiTags('Positions')
 @Controller('position')
 @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Position))
+@UseGuards(JwtAuthenticationGuard)
 export class PositionController {
   constructor(private readonly positionService: PositionService) {}
 

@@ -2,16 +2,17 @@ import { InferSubjects, Ability, AbilityBuilder, AbilityClass, ExtractSubjectTyp
 import { Injectable } from '@nestjs/common'
 
 import { UserEntity as User } from 'src/user/entities/user.entity'
-import { Action } from 'src/casl/actions'
+import { Organisation } from 'src/organisation/entities/organisation.entity'
+import { Position } from 'src/position/entities/position.entity'
 
-import { Organisation } from './entities/organisation.entity'
+import { Action } from './actions'
 
-type Subjects = InferSubjects<typeof Organisation | typeof User> | 'all'
+type Subjects = InferSubjects<typeof Organisation | typeof Position | typeof User> | 'all'
 
 export type AppAbility = Ability<[Action, Subjects]>
 
 @Injectable()
-export class OrganisationPermissions {
+export class CaslPermissions {
   createForUser(user: User) {
     const { can, cannot, build } = new AbilityBuilder<Ability<[Action, Subjects]>>(Ability as AbilityClass<AppAbility>)
 
@@ -43,6 +44,35 @@ export class OrganisationPermissions {
       id: {
         $in: orgIdsOwned,
       },
+    })
+
+    can(Action.Manage, Position, {
+      userRoles: {
+        $elemMatch: { role: 'HIRING_MANAGER', userId: user.id },
+      },
+    })
+
+    can(Action.Manage, Position, {
+      organisationId: {
+        $in: orgIdsOwned,
+      },
+    })
+
+    // Read any position to which they're assigned in some way
+    can(Action.Read, Position, {
+      userRoles: {
+        $elemMatch: { userId: user.id },
+      },
+    })
+
+    can(Action.Manage, User, {
+      organisations: {
+        $elemMatch: { organisationId: { $in: orgIdsOwned } },
+      },
+    })
+
+    can(Action.Read, User, {
+      id: user.id,
     })
 
     // View sensitive position information if they're the Hiring manager of those positions

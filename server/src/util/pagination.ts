@@ -1,5 +1,3 @@
-import { plainToClass } from 'class-transformer'
-
 export interface PaginatedResult<T> {
   data: T[]
   meta: {

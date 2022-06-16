@@ -1,6 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiUnprocessableEntityResponse } from '@nestjs/swagger'
 import { ValidateNested } from 'class-validator'
-import { Exclude, Type } from 'class-transformer'
+import { Exclude, Expose, Type } from 'class-transformer'
 import { Position as PositionModel, PositionEmploymentType } from '@prisma/client'
 
 import { Organisation } from 'src/organisation/entities/organisation.entity'
@@ -40,6 +40,7 @@ export class Position implements PositionModel {
   location: string | null
 
   @ApiProperty()
+  @Expose({ groups: ['manager'] })
   salaryRange: string | null
 
   @ValidateNested()
@@ -54,7 +55,7 @@ export class Position implements PositionModel {
   @Type(() => PositionUserRole)
   userRoles?: PositionUserRole[]
 
-  constructor(partial: Partial<Organisation>) {
+  constructor(partial: Partial<Position>) {
     Object.assign(this, partial)
   }
 }

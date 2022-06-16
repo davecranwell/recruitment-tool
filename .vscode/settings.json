@@ -29,8 +29,8 @@
     "**/CVS": true,
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
-    "**/.cache": true,
-    "**/node_modules": true
+    "**/.cache": true
+    // "**/node_modules": true
   },
   "todo-tree.filtering.excludeGlobs": ["**/node_modules", "**/build", "**/dist"]
 }
