@@ -1,6 +1,7 @@
+import { APP_GUARD } from '@nestjs/core'
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { ThrottlerModule } from '@nestjs/throttler'
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler'
 
 import config from './config/configuration'
 import { AppController } from './app.controller'
@@ -19,14 +20,15 @@ import { ApplicantProfileForPositionModule } from './applicant-profile-for-posit
 import { PositionUserRoleModule } from './position-user-role/position-user-role.module'
 import { UserRolesOfUserModule } from './user-roles-of-user/user-roles-of-user.module'
 import { PrismaModule } from './prisma/prisma.module'
+
 @Module({
   imports: [
     CaslModule,
     PrismaModule,
     ConfigModule.forRoot({ isGlobal: true, load: [config] }),
     ThrottlerModule.forRoot({
-      ttl: 60,
-      limit: 1,
+      ttl: 5,
+      limit: 10,
     }),
     AuthenticationModule,
     UpdatesModule,
@@ -42,6 +44,12 @@ import { PrismaModule } from './prisma/prisma.module'
     UserRolesOfUserModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}
