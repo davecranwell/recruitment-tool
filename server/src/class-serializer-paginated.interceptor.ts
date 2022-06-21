@@ -25,11 +25,9 @@ export function PrismaClassSerializerInterceptorPaginated(classToIntercept: Type
     private static permissions: any
 
     changePlainObjectToClass(response: PlainLiteralObject) {
-      if (Interceptor?.permissions?.can(Action.Manage, plainToClass(classToIntercept, response))) {
-        return plainToClass(classToIntercept, response, { groups: ['manager'] })
-      } else {
-        return plainToClass(classToIntercept, response)
-      }
+      const canManage = Interceptor?.permissions?.can(Action.Manage, plainToClass(classToIntercept, response))
+
+      return plainToClass(classToIntercept, response, canManage && { groups: ['manager'] })
     }
 
     intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> {
