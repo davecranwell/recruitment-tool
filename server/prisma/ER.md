@@ -102,7 +102,32 @@ INTERVIEWER INTERVIEWER
   
 
   PositionUserRole {
+    DateTime createdAt  
+    DateTime updatedAt  
     PositionRoleType role  
+    }
+  
+
+  Stage {
+    Int id PK 
+    String name  
+    String description  "nullable"
+    DateTime createdAt  
+    DateTime updatedAt  
+    }
+  
+
+  Pipeline {
+    Int id PK 
+    String name  
+    String description  "nullable"
+    DateTime createdAt  
+    DateTime updatedAt  
+    }
+  
+
+  StagesInPipeline {
+    Int order  
     DateTime createdAt  
     DateTime updatedAt  
     }
@@ -112,11 +137,13 @@ INTERVIEWER INTERVIEWER
     ApplicantProfileForOrganisation o{--|| Organisation : "organisation"
     Position o|--|| PositionEmploymentType : "enum:employment"
     Position o{--|| Organisation : "organisation"
+    Position o{--|| Pipeline : "pipeline"
     UsersInOrganisation o|--|| UserRoleType : "enum:role"
     UsersInOrganisation o{--|| User : "user"
     UsersInOrganisation o{--|| Organisation : "organisation"
     ApplicantProfileForPosition o{--|| ApplicantProfile : "applicantProfile"
     ApplicantProfileForPosition o{--|| Position : "position"
+    ApplicantProfileForPosition o{--|| Stage : "stage"
     UserRole o|--|| UserRoleType : "enum:type"
     UserRole o{--|| Organisation : "organisation"
     UserRolesOfUser o{--|| User : "user"
@@ -124,4 +151,6 @@ INTERVIEWER INTERVIEWER
     PositionUserRole o{--|| Position : "position"
     PositionUserRole o{--|| User : "user"
     PositionUserRole o|--|| PositionRoleType : "enum:role"
+    StagesInPipeline o{--|| Stage : "stage"
+    StagesInPipeline o{--|| Pipeline : "pipeline"
 ```

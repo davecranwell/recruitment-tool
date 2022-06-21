@@ -2,6 +2,8 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function main() {
+  // ORGANISATIONS
+
   const vocovoOrganisation = await prisma.organisation.create({
     data: {
       name: 'VoCoVo Ltd',
@@ -35,6 +37,8 @@ async function main() {
       // },
     },
   })
+
+  // USERS
 
   const recruiterUser = await prisma.user.create({
     data: {
@@ -100,7 +104,7 @@ async function main() {
       email: 'foo@bar4.com',
       password: '$2a$10$Cer44Qb/fNW3flIcCEd.bONiYvyFwQtTewCGvZoeBlby78m94iwF.', // test
       organisations: {
-        create: [{ organisationId: vocovoOrganisation.id, role: 'STANDARD' }],
+        create: [{ organisationId: vocovoOrganisation.id, role: 'ORGANISATION_OWNER' }],
       },
     },
   })
@@ -129,6 +133,8 @@ async function main() {
       },
     },
   })
+
+  // APPLICANT PROFILES
 
   const applicant1Profile = await prisma.applicantProfile.create({
     data: {
@@ -163,6 +169,77 @@ async function main() {
     },
   })
 
+  // STAGES & PIPELINES
+  const standardPipeline = await prisma.pipeline.create({
+    data: {
+      name: 'Standard pipeline',
+      stages: {
+        create: [
+          {
+            order: 1,
+            stage: {
+              create: {
+                name: 'Stage 1',
+              },
+            },
+          },
+          {
+            order: 2,
+            stage: {
+              create: {
+                name: 'Stage 2',
+              },
+            },
+          },
+          {
+            order: 3,
+            stage: {
+              create: {
+                name: 'Stage 3',
+              },
+            },
+          },
+          {
+            order: 4,
+            stage: {
+              create: {
+                name: 'Disqualified',
+              },
+            },
+          },
+        ],
+      },
+    },
+  })
+
+  const shortPipeline = await prisma.pipeline.create({
+    data: {
+      name: 'Short pipeline',
+      stages: {
+        create: [
+          {
+            order: 1,
+            stage: {
+              create: {
+                name: 'Offered',
+              },
+            },
+          },
+          {
+            order: 4,
+            stage: {
+              create: {
+                name: 'Disqualified',
+              },
+            },
+          },
+        ],
+      },
+    },
+  })
+
+  // POSITIONS
+
   const position1 = await prisma.position.create({
     data: {
       name: 'Lead Software Engineer',
@@ -173,6 +250,7 @@ async function main() {
       // applicantProfiles: {
       //   create: [{ applicantPId: applicantProfile.id }],
       // },
+      pipelineId: standardPipeline.id,
     },
   })
 
@@ -186,8 +264,11 @@ async function main() {
       // applicantProfiles: {
       //   create: [{ applicantPId: applicantProfile.id }],
       // },
+      pipelineId: shortPipeline.id,
     },
   })
+
+  // POSITION USER ROLES
 
   const position1userRole1 = await prisma.positionUserRole.create({
     data: {

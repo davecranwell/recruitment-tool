@@ -14,7 +14,7 @@ generator erd {
 
 generator nestjsDto {
   provider                        = "prisma-generator-nestjs-dto"
-  output                          = "../tmp"
+  output                          = "../../tmp"
   outputToNestJsResourceStructure = "true"
 }
 
@@ -95,6 +95,8 @@ model Position {
   organisationId    Int
   applicantProfiles ApplicantProfileForPosition[]
   userRoles         PositionUserRole[]
+  pipeline          Pipeline?                     @relation(fields: [pipelineId], references: [id])
+  pipelineId        Int?
 
   @@index([organisationId])
 }
@@ -126,6 +128,8 @@ model ApplicantProfileForPosition {
   positionId         Int
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @default(now())
+  stage              Stage            @relation(fields: [stageId], references: [id])
+  stageId            Int
 
   @@id([applicantProfileId, positionId])
 }
@@ -173,48 +177,48 @@ enum PositionRoleType {
 }
 
 model PositionUserRole {
-  position   Position         @relation(fields: [positionId], references: [id])
   positionId Int
-  user       User             @relation(fields: [userId], references: [id])
   userId     Int
-  role       PositionRoleType
   createdAt  DateTime         @default(now())
   updatedAt  DateTime         @default(now())
+  position   Position         @relation(fields: [positionId], references: [id])
+  user       User             @relation(fields: [userId], references: [id])
+  role       PositionRoleType
 
   @@id([userId, positionId])
 }
 
-// model Stage {
-//   id               Int                @id @default(autoincrement())
-//   name             String
-//   description      String?            @db.Text
-//   createdAt        DateTime           @default(now())
-//   updatedAt        DateTime           @default(now())
-//   StagesInProcess  StagesInProcess[]
-//   PositionUserRole PositionUserRole[]
-// }
+model Stage {
+  id          Int                           @id @default(autoincrement())
+  name        String
+  description String?                       @db.Text
+  createdAt   DateTime                      @default(now())
+  updatedAt   DateTime                      @default(now())
+  pipeline    StagesInPipeline[]
+  applicants  ApplicantProfileForPosition[]
+}
 
-// model Process {
-//   id                 Int                  @id @default(autoincrement())
-//   name               String
-//   description        String?              @db.Text
-//   createdAt          DateTime             @default(now())
-//   updatedAt          DateTime             @default(now())
-//   StagesInProcess    StagesInProcess[]
-//   ProcessForPosition ProcessForPosition[]
-// }
+model Pipeline {
+  id          Int                @id @default(autoincrement())
+  name        String
+  description String?            @db.Text
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @default(now())
+  stages      StagesInPipeline[]
+  positions   Position[]
+}
 
-// model StagesInProcess {
-//   stage     Stage    @relation(fields: [stageId], references: [id])
-//   stageId   Int
-//   process   Process  @relation(fields: [processId], references: [id])
-//   processId Int
-//   order     Int
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @default(now())
+model StagesInPipeline {
+  stage      Stage    @relation(fields: [stageId], references: [id])
+  stageId    Int
+  pipeline   Pipeline @relation(fields: [pipelineId], references: [id])
+  pipelineId Int
+  order      Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
 
-//   @@id([stageId, processId])
-// }
+  @@id([stageId, pipelineId])
+}
 
 // model ProcessForPosition {
 //   process    Process  @relation(fields: [processId], references: [id])
