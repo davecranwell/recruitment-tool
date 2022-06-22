@@ -58,10 +58,23 @@ export class CaslPermissions {
       },
     })
 
+    can(Action.Create, Position, {
+      organisationId: {
+        $in: orgIdsMember,
+      },
+    })
+
     // Read any position to which they're assigned in some way
     can(Action.Read, Position, {
       userRoles: {
         $elemMatch: { userId: user.id },
+      },
+    })
+
+    // Update any position to which they're assigned as a HIRING_MANAGER
+    can(Action.Update, Position, {
+      userRoles: {
+        $elemMatch: { role: 'HIRING_MANAGER', userId: user.id },
       },
     })
 

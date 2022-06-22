@@ -7,6 +7,7 @@ import { Organisation } from 'src/organisation/entities/organisation.entity'
 import { ApplicantProfileForPosition } from 'src/applicant-profile-for-position/entities/applicant-profile-for-position.entity'
 import { PositionUserRole } from 'src/position-user-role/entities/position-user-role.entity'
 import { ApplicantProfile } from 'src/applicant-profile/entities/applicant-profile.entity'
+import { Pipeline } from 'src/pipeline/entities/pipeline.entity'
 
 export class Position implements PositionModel {
   @ApiProperty()
@@ -27,6 +28,13 @@ export class Position implements PositionModel {
   @ApiProperty()
   createdAt: Date
 
+  @ValidateNested()
+  @Type(() => Pipeline)
+  pipeline?: Pipeline
+
+  @ApiProperty()
+  pipelineId: number
+
   @ApiProperty()
   updatedAt: Date
 
@@ -39,7 +47,7 @@ export class Position implements PositionModel {
   @ApiProperty()
   location: string | null
 
-  @ApiProperty()
+  @ApiProperty({ description: 'May not be present if unsufficiently privileged in position role' })
   @Expose({ groups: ['manager'] })
   salaryRange: string | null
 

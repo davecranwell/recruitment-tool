@@ -1,16 +1,18 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Param,
   ParseIntPipe,
   Patch,
   Post,
   Query,
+  Req,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiExtraModels, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiCreatedResponse, ApiExtraModels, ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { PrismaClassSerializerInterceptorPaginated } from 'src/class-serializer-paginated.interceptor'
 import { ApiPaginatedResponse, PaginatedDto, PaginationArgsDto } from 'src/page/pagination-args.dto'
@@ -19,42 +21,86 @@ import { PositionService } from './position.service'
 
 import { CreatePositionDto } from './dto/create-position.dto'
 import { UpdatePositionDto } from './dto/update-position.dto'
+import { UpdateApplicantStageDto } from './dto/update-applicant-stage.dto'
 
 import { ApplicantProfileWithUser } from 'src/applicant-profile/entities/applicant-profile.entity'
 import JwtAuthenticationGuard from 'src/authentication/guards/jwtAuthentication.guard'
 import { Position } from './entities/position.entity'
+import { Pipeline } from 'src/pipeline/entities/pipeline.entity'
+import { Action } from 'src/casl/actions'
+import { CaslPermissions } from 'src/casl/casl.permissions'
+import { RequestWithUser } from 'src/authentication/authentication.controller'
+import { Organisation } from 'src/organisation/entities/organisation.entity'
 
 @ApiTags('Positions')
+@ApiBearerAuth('access-token')
 @Controller('position')
-@UseInterceptors(PrismaClassSerializerInterceptorPaginated(Position))
 @UseGuards(JwtAuthenticationGuard)
 export class PositionController {
-  constructor(private readonly positionService: PositionService) {}
+  constructor(private readonly positionService: PositionService, private readonly caslPermissions: CaslPermissions) {}
 
   @Post()
   @ApiCreatedResponse({ type: Position })
-  create(@Body() data: CreatePositionDto) {
-    // TODO hook in orgId properly to check for ownership and also for existence of org
+  create(@Req() request: RequestWithUser, @Body() data: CreatePositionDto) {
+    console.log({ data })
+    return false
+    const ability = this.caslPermissions.createForUser(request.user)
+
+    if (!ability.can(Action.Create, new Position(data))) throw new ForbiddenException()
+
     return this.positionService.create(data)
   }
 
   @Get(':id')
   @ApiOkResponse({ type: Position })
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.positionService.findOne(id)
+  findOne(@Req() request: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
+    return this.positionService.findOne(id, request.user)
   }
 
   @Get(':id/applicants')
   @ApiExtraModels(PaginatedDto, ApplicantProfileWithUser)
   @ApiPaginatedResponse(ApplicantProfileWithUser)
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(ApplicantProfileWithUser))
-  findApplicantProfiles(@Param('id', ParseIntPipe) id: number, @Query() paginationArgs: PaginationArgsDto) {
-    return this.positionService.findApplicantProfiles(+id, paginationArgs)
+  findAllApplicants(
+    @Req() request: RequestWithUser,
+    @Param('id', ParseIntPipe) id: number,
+    @Query() paginationArgs: PaginationArgsDto
+  ) {
+    return this.positionService.findAllApplicants(id, request.user, paginationArgs)
+  }
+
+  @Get(':id/applicant/:applicantId')
+  @ApiExtraModels(ApplicantProfileWithUser)
+  @ApiResponse({ type: ApplicantProfileWithUser })
+  findApplicant(
+    @Req() request: RequestWithUser,
+    @Param('id', ParseIntPipe) id: number,
+    @Param('applicantId', ParseIntPipe) applicantId: number
+  ) {
+    return this.positionService.findApplicant(id, applicantId, request.user)
+  }
+
+  @Patch(':positionId/applicant/:applicantProfileId')
+  @ApiExtraModels(ApplicantProfileWithUser)
+  @ApiResponse({ type: ApplicantProfileWithUser })
+  changeApplicantStage(
+    @Req() request: RequestWithUser,
+    @Param('positionId', ParseIntPipe) positionId: number,
+    @Param('applicantProfileId', ParseIntPipe) applicantProfileId: number,
+    @Body() data: UpdateApplicantStageDto
+  ) {
+    return this.positionService.changeApplicantStage(positionId, applicantProfileId, data, request.user)
+  }
+
+  @Get(':id/pipeline')
+  @ApiOkResponse({ type: Pipeline })
+  findPipelineWithStages(@Req() request: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
+    return this.positionService.findPipelineWithStages(id, request.user)
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: string, @Body() data: UpdatePositionDto) {
-    return this.positionService.update(+id, data)
+  update(@Req() request: RequestWithUser, @Param('id', ParseIntPipe) id: string, @Body() data: UpdatePositionDto) {
+    return this.positionService.update(+id, data, request.user)
   }
 
   // @Delete(':id')

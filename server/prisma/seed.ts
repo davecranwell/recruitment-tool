@@ -134,41 +134,6 @@ async function main() {
     },
   })
 
-  // APPLICANT PROFILES
-
-  const applicant1Profile = await prisma.applicantProfile.create({
-    data: {
-      profileName: 'General profile',
-      askingSalary: 100000,
-      userId: applicantUser1.id,
-      // organisations: {
-      //   create: [{ organisationId: vocovo.id }],
-      // },
-    },
-  })
-
-  const applicant2Profile = await prisma.applicantProfile.create({
-    data: {
-      profileName: 'My profile',
-      askingSalary: 1500000,
-      userId: applicantUser2.id,
-      // organisations: {
-      //   create: [{ organisationId: vocovo.id }],
-      // },
-    },
-  })
-
-  const applicant3Profile = await prisma.applicantProfile.create({
-    data: {
-      profileName: 'First profile',
-      askingSalary: 50000,
-      userId: applicantUser3.id,
-      // organisations: {
-      //   create: [{ organisationId: vocovo.id }],
-      // },
-    },
-  })
-
   // STAGES & PIPELINES
   const standardPipeline = await prisma.pipeline.create({
     data: {
@@ -283,6 +248,55 @@ async function main() {
       positionId: position1.id,
       userId: vocovoInterviewer.id,
       role: 'INTERVIEWER',
+    },
+  })
+
+  // APPLICANT PROFILES
+
+  // get standard pipeline first stage Id
+  const standardPipelineStages = await prisma.pipeline.findUnique({
+    where: { id: standardPipeline.id },
+    include: { stages: { orderBy: { order: 'asc' }, include: { stage: true } } },
+  })
+
+  const applicant1Profile = await prisma.applicantProfile.create({
+    data: {
+      profileName: 'General profile',
+      askingSalary: 100000,
+      userId: applicantUser1.id,
+      organisations: {
+        create: {
+          organisationId: vocovoOrganisation.id,
+        },
+      },
+      positions: {
+        create: {
+          stageId: standardPipelineStages.stages[0].stageId,
+          positionId: position1.id,
+        },
+      },
+    },
+  })
+
+  const applicant2Profile = await prisma.applicantProfile.create({
+    data: {
+      profileName: 'My profile',
+      askingSalary: 1500000,
+      userId: applicantUser2.id,
+      // organisations: {
+      //   create: [{ organisationId: vocovo.id }],
+      // },
+    },
+  })
+
+  const applicant3Profile = await prisma.applicantProfile.create({
+    data: {
+      profileName: 'First profile',
+      askingSalary: 50000,
+      userId: applicantUser3.id,
+      // organisations: {
+      //   create: [{ organisationId: vocovo.id }],
+      // },
     },
   })
 }
