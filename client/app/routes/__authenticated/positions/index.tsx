@@ -1,18 +1,18 @@
+import { CalendarIcon, FolderAddIcon, CurrencyDollarIcon, LocationMarkerIcon } from '@heroicons/react/outline'
 import type { LoaderFunction, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { Outlet, useLoaderData } from '@remix-run/react'
 
 import { api } from 'app/api.server'
-
 import { getSessionData, requireAuth } from '~/sessions.server'
 
 import Content from 'app/components/Content'
-import { CalendarIcon, CurrencyPoundIcon, FolderAddIcon } from '@heroicons/react/outline'
 import Empty from 'app/components/Empty'
+import { MetaList, MetaListItem } from 'app/components/MetaList'
 import { StackedList, StackedListItem } from 'app/components/StackedList'
+
 import { dateTimeFormat } from 'app/utils'
-import { CurrencyDollarIcon, LocationMarkerIcon } from '@heroicons/react/outline'
-import { MetaList, MetaListItem } from '~/components/MetaList'
+import { useAppAbility } from 'app/hooks/useAppAbility'
 
 export const meta: MetaFunction = ({ data }) => {
   return { title: `Positions at ${data?.sessionData?.activeOrganisation?.name}` }
@@ -48,9 +48,13 @@ export type Position = {
 
 const Positions = () => {
   const { positions } = useLoaderData()
+  const { can } = useAppAbility()
 
   return (
-    <Content title={'Positions'} primaryAction={positions.data.length && { label: 'Create', link: '/positions/new' }}>
+    <Content
+      title={'Positions'}
+      primaryAction={positions.data.length && can('create', 'Position') && { label: 'Create', link: '/positions/new' }}
+    >
       {positions.data.length < 1 && (
         <Empty Icon={FolderAddIcon} title={'No positions have been created'} createLink={'/positions/new'} />
       )}

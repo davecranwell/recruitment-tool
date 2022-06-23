@@ -1,46 +1,59 @@
-import { Fragment, useState } from 'react'
-import * as React from 'react'
-import { Form, useTransition, NavLink, Link } from '@remix-run/react'
-import classNames from 'classnames'
-
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import {
   BellIcon,
   CalendarIcon,
-  ChartBarIcon,
+  CogIcon,
   FolderIcon,
   HomeIcon,
-  InboxIcon,
   MenuAlt2Icon,
+  UserGroupIcon,
   UsersIcon,
   XIcon,
-  CogIcon,
-  UserGroupIcon,
 } from '@heroicons/react/outline'
-import { SearchIcon, SelectorIcon } from '@heroicons/react/solid'
+import { SelectorIcon } from '@heroicons/react/solid'
 import type { SessionData } from '@remix-run/node'
+import { Link, NavLink } from '@remix-run/react'
+import classNames from 'classnames'
+import * as React from 'react'
+import { Fragment, useState } from 'react'
+
+import { useAppAbility } from 'app/hooks/useAppAbility'
 
 type Props = {
   children: React.ReactNode
   session?: SessionData
 }
 
+type NavItem = {
+  name: string
+  href?: string
+  icon?: any
+  type?: string
+}
+
+type NavItems = [NavItem[]]
+
 const Layout: React.FC<Props> = ({ children, session }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const { can, subject } = useAppAbility()
 
-  const navigation = [
+  const navigation: NavItems = [
     [
       { name: 'Home', href: '/start', icon: HomeIcon },
       { name: 'Applicants', href: '/applicant-profiles', icon: UsersIcon },
       { name: 'Positions', href: '/positions', icon: FolderIcon },
       { name: 'Timeline', href: '/timeline', icon: CalendarIcon },
     ],
-    [
+  ]
+
+  if (can('manage', subject('Organisation', session?.activeOrganisation))) {
+    navigation.push([
       { name: 'Organisation', type: 'heading' },
       { name: 'Settings', href: '/config', icon: CogIcon },
       { name: 'Users', href: '/users', icon: UserGroupIcon },
-    ],
-  ]
+    ])
+  }
+
   const userNavigation = [
     {
       name: 'Change organisation',

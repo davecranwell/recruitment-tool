@@ -26,6 +26,7 @@ import RegisterDto from './dto/register.dto'
 import { LoginResponseDto, LoginDto, MagicLoginDto } from './dto/login.dto'
 import { MagicLinkGuard } from './guards/magiclink.guard'
 import { ThrottlerGuard } from '@nestjs/throttler'
+import { CaslPermissions } from 'src/casl/casl.permissions'
 export interface RequestWithUser extends Request {
   user: UserEntity
 }
@@ -35,7 +36,8 @@ export interface RequestWithUser extends Request {
 export class AuthenticationController {
   constructor(
     private readonly authenticationService: AuthenticationService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly caslPermission: CaslPermissions
   ) {}
 
   private async registerAccount(registrationData: RegisterDto) {
@@ -69,7 +71,9 @@ export class AuthenticationController {
     // TODO disabled until we understand how to use it better
     //request.res.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie])
 
-    return <LoginResponseDto>{ user, accessToken, refreshToken }
+    const abilities = this.caslPermission.asJsonForUser(user)
+
+    return <LoginResponseDto>{ user, accessToken, refreshToken, abilities }
   }
 
   @ApiOkResponse()

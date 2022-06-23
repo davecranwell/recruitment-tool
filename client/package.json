@@ -19,6 +19,8 @@
     "start": "NODE_ENV=production node server.js"
   },
   "dependencies": {
+    "@casl/ability": "^5.4.4",
+    "@casl/react": "^3.0.0",
     "@headlessui/react": "^1.6.1",
     "@heroicons/react": "^1.0.6",
     "@remix-run/express": "^1.5.1",
