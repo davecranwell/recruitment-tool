@@ -17,8 +17,6 @@ export const action: ActionFunction = async (data) => {
   const { request, params } = data
   const body = await request.formData()
 
-  console.log(JSON.stringify(body))
-
   const result = await api(data, `/position/${params.id}`, 'PATCH', body)
   if (result.ok) return redirect(`/positions/${params.id}`)
 

@@ -9,8 +9,7 @@ import Content from 'app/components/Content'
 export const loader: LoaderFunction = async (data) => {
   const { request } = data
   const auth = await requireAuth(request)
-  console.log(auth.user.organisations)
-  // return await api(data, `/user/${auth.user.id}/organisations`)
+
   return auth.user.organisations
 }
 
