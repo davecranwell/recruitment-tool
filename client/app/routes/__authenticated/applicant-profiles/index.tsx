@@ -1,15 +1,14 @@
-import type { LoaderFunction } from '@remix-run/node'
+import { CalendarIcon, CurrencyPoundIcon, UsersIcon } from '@heroicons/react/outline'
+import type { LoaderFunction, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import type { MetaFunction } from '@remix-run/react/routeModules'
-import { CurrencyPoundIcon, CalendarIcon, UsersIcon } from '@heroicons/react/outline'
 
 import { api } from 'app/api.server'
 import { getSessionData, requireAuth } from 'app/sessions.server'
 
-import { StackedList, StackedListItem } from 'app/components/StackedList'
 import Content from 'app/components/Content'
 import Empty from 'app/components/Empty'
+import { StackedList, StackedListItem } from 'app/components/StackedList'
 
 import { dateTimeFormat } from 'app/utils'
 
