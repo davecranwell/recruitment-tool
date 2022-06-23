@@ -1,3 +1,4 @@
+import React from 'react'
 import { Outlet, useLoaderData } from '@remix-run/react'
 import { Ability } from '@casl/ability'
 
@@ -17,9 +18,11 @@ export default function Authenticated() {
   return (
     <div>
       <AbilityProvider abilities={abilities}>
-        <Layout session={session}>
-          <Outlet context={session} />
-        </Layout>
+        <React.StrictMode>
+          <Layout session={session}>
+            <Outlet context={session} />
+          </Layout>
+        </React.StrictMode>
       </AbilityProvider>
     </div>
   )

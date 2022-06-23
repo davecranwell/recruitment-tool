@@ -21,7 +21,9 @@ const Content: React.FC<Props> = ({ children, title, primaryAction, secondaryAct
     <main className="flex-1">
       <div className="md:flex md:items-center md:justify-between">
         <div className="min-w-0 flex-1">
-          <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl">{title}</h2>
+          <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl" id="content-title">
+            {title}
+          </h2>
         </div>
 
         {(primaryAction || secondaryAction) && (

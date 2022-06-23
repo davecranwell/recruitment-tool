@@ -11,7 +11,7 @@ type Props = {
   Icon: React.ElementType
   title: string
   intro?: string
-  createLink?: string
+  createLink?: string | null
   createText?: string
 }
 

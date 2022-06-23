@@ -56,7 +56,11 @@ const Positions = () => {
       primaryAction={positions.data.length && can('create', 'Position') && { label: 'Create', link: '/positions/new' }}
     >
       {positions.data.length < 1 && (
-        <Empty Icon={FolderAddIcon} title={'No positions have been created'} createLink={'/positions/new'} />
+        <Empty
+          Icon={FolderAddIcon}
+          title={'No positions have been created'}
+          createLink={can('create', 'Position') ? '/positions/new' : null}
+        />
       )}
       {positions.data.length > 0 && (
         <StackedList>

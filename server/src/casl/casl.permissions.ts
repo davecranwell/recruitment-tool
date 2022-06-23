@@ -13,9 +13,9 @@ import { Action } from './actions'
 export class CaslPermissions {
   asJsonForUser(user: User) {
     const orgIdsOwned: number[] =
-      user?.organisations.filter((org) => org.role === 'ORGANISATION_OWNER').map((orgs) => orgs.organisationId) || []
+      user?.organisations?.filter((org) => org.role === 'ORGANISATION_OWNER').map((orgs) => orgs.organisationId) || []
 
-    const orgIdsMember: number[] = user.organisations.map((orgs) => orgs.organisationId)
+    const orgIdsMember: number[] = user?.organisations?.map((orgs) => orgs.organisationId) || []
 
     return [
       {

@@ -85,15 +85,12 @@ export class OrganisationService {
       { ...paginationArgs }
     )
 
-    console.log({ results: results.data })
-
     // strip salary range where role for this position is unsuitable
-    // results.data.map((position) => {
-    //   if (!position.userRoles.every((userRole) => userRole.role === 'HIRING_MANAGER')) {
-    //     delete position.salaryRange
-    //   }
-    //   return position
-    // })
+    results.data.forEach((position) => {
+      if (!position.userRoles.every((userRole) => userRole.role === 'HIRING_MANAGER')) {
+        delete position.salaryRange
+      }
+    })
 
     return results
   }

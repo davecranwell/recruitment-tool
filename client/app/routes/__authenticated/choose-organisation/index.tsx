@@ -14,6 +14,7 @@ export const loader: LoaderFunction = async (data) => {
 }
 
 export type Organisation = {
+  id: any
   role: string
   userId: number
   organisationId: number
@@ -36,19 +37,19 @@ const ChooseOrganisation = () => {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {organisations.map((orgRec: Organisation) => (
           <div
-            key={orgRec.organisationId}
+            key={orgRec.organisation.id}
             className="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400"
           >
             <div className="flex-shrink-0">
               {/* <img className="h-10 w-10 rounded-full" src={organisation.imageUrl} alt="" /> */}
             </div>
-            <div className="min-w-0 flex-1">
-              <Link to={`/choose-organisation/${orgRec.organisationId}`} className="focus:outline-none">
+            <nav className="min-w-0 flex-1" aria-describedby="content-title">
+              <Link to={`/choose-organisation/${orgRec.organisation.id}`} className="focus:outline-none">
                 <span className="absolute inset-0" aria-hidden="true" />
                 <p className="text-xl font-medium text-gray-900">{orgRec.organisation.name}</p>
                 {/* <p className="truncate text-sm text-gray-500">{orgRec.machineName}</p> */}
               </Link>
-            </div>
+            </nav>
           </div>
 
           // <li
