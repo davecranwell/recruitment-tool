@@ -6,7 +6,8 @@ import invariant from 'tiny-invariant'
 
 import type { Organisation } from './routes/__authenticated/choose-organisation'
 
-invariant(process.env.SESSION_SECRET, 'SESSION_SECRET must be set22')
+invariant(process.env.SESSION_SECRET, 'SESSION_SECRET must be set')
+invariant(process.env.SESSION_EXPIRATION_TIME, 'SESSION_EXPIRATION_TIME must be set')
 
 export type SessionData = {
   user: {
@@ -24,7 +25,7 @@ const { getSession, commitSession, destroySession } = createCookieSessionStorage
   // a Cookie from `createCookie` or the CookieOptions to create one
   cookie: {
     name: '__session',
-    maxAge: 60_000 * 60 * 24,
+    maxAge: +process.env.SESSION_EXPIRATION_TIME,
     httpOnly: true,
     path: '/',
     sameSite: 'lax',
