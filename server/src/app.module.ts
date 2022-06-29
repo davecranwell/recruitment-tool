@@ -17,7 +17,7 @@ import { UserModule } from './user/user.module'
 import { UserRoleModule } from './user-role/user-role.module'
 import { ApplicantProfileForOrganisationModule } from './applicant-profile-for-organisation/applicant-profile-for-organisation.module'
 import { ApplicantProfileForPositionModule } from './applicant-profile-for-position/applicant-profile-for-position.module'
-import { PositionUserRoleModule } from './position-user-role/position-user-role.module'
+import { PositionUserRoleModule } from './project-user-role/position-user-role.module'
 import { UserRolesOfUserModule } from './user-roles-of-user/user-roles-of-user.module'
 import { PrismaModule } from './prisma/prisma.module'
 

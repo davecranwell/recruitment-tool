@@ -5,7 +5,7 @@ import { IsOptional, ValidateNested } from 'class-validator'
 
 import { UsersInOrganisation } from 'src/users-in-organisation/entities/users-in-organisation.entity'
 import { UserRolesOfUser } from 'src/user-roles-of-user/entities/user-roles-of-user.entity'
-import { PositionUserRole } from 'src/position-user-role/entities/position-user-role.entity'
+import { PositionUserRole } from 'src/project-user-role/entities/position-user-role.entity'
 import { ApplicantProfile } from 'src/applicant-profile/entities/applicant-profile.entity'
 import { Organisation } from 'src/organisation/entities/organisation.entity'
 
