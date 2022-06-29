@@ -38,6 +38,34 @@ async function main() {
     },
   })
 
+  // PROJECTS
+
+  const vocovoOrganisationProject1 = await prisma.project.create({
+    data: {
+      name: 'VoCoVo Project 1',
+      organisationId: vocovoOrganisation.id,
+    },
+  })
+  const vocovoOrganisationProject2 = await prisma.project.create({
+    data: {
+      name: 'VoCoVo Project 2',
+      organisationId: vocovoOrganisation.id,
+    },
+  })
+
+  const strongbyteOrganisationProject1 = await prisma.project.create({
+    data: {
+      name: 'Strongbyte Project 1',
+      organisationId: strongbyteOrganisation.id,
+    },
+  })
+  const strongbyteOrganisationProject2 = await prisma.project.create({
+    data: {
+      name: 'Strongbyte Project 2',
+      organisationId: strongbyteOrganisation.id,
+    },
+  })
+
   // USERS
 
   const recruiterUser = await prisma.user.create({
@@ -211,7 +239,7 @@ async function main() {
       description: 'A description of this role is as follows',
       openingDate: new Date(),
       // closingDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
-      organisationId: vocovoOrganisation.id,
+      projectId: vocovoOrganisationProject1.id,
       // applicantProfiles: {
       //   create: [{ applicantPId: applicantProfile.id }],
       // },
@@ -225,7 +253,7 @@ async function main() {
       description: 'A description of this role is as follows',
       openingDate: new Date(),
       // closingDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
-      organisationId: vocovoOrganisation.id,
+      projectId: vocovoOrganisationProject2.id,
       // applicantProfiles: {
       //   create: [{ applicantPId: applicantProfile.id }],
       // },
@@ -235,17 +263,17 @@ async function main() {
 
   // POSITION USER ROLES
 
-  const position1userRole1 = await prisma.positionUserRole.create({
+  const position1userRole1 = await prisma.projectUserRole.create({
     data: {
-      positionId: position1.id,
+      projectId: vocovoOrganisationProject1.id,
       userId: humanRecruiternUser.id,
       role: 'HIRING_MANAGER',
     },
   })
 
-  const position1userRole2 = await prisma.positionUserRole.create({
+  const position1userRole2 = await prisma.projectUserRole.create({
     data: {
-      positionId: position1.id,
+      projectId: vocovoOrganisationProject2.id,
       userId: vocovoInterviewer.id,
       role: 'INTERVIEWER',
     },

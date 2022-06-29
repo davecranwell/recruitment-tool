@@ -5,8 +5,9 @@
 |                   | Superuser | Organisation Owner (e.g HR) | Hiring Manager (e.g recruiter)       | Basic User (e.g interviewer) | Applicant |
 | ----------------- | --------- | --------------------------- | ------------------------------------ | ---------------------------- | --------- |
 | Organisations     | All       | CRUD own                    | CR                                   | CR                           | R         |
+| Projects          | All       | CRUD all in org             | CRUD all to which assigned           | CR all to which assigned     | R         |
+| Positions         | All       | CRUD all in org             | RUD assigned by project              | R assigned by project        | R         |
 | Users             | All       | Invite to / Leave org       | Invite to / Leave assigned positions | Edit own / Leave org         | Edit own  |
-| Positions         | All       | CRUD all in org             | RUD assigned positions               | R assigned                   | R         |
 | Applicant Profile | All       | CRUD ??                     | CRUD assigned positions              | R on positions assigned      | CRUD own  |
 | Process           | All       | CRUD all in org             | CRUD assigned positions              | R on positions assigned      | None      |
 | Stage             | All       | CRUD all in org             | CRUD assigned positions              | R on positions assigned      | None      |

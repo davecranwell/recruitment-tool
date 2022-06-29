@@ -92,22 +92,22 @@ export class OrganisationController {
   //   return this.positionService.findByOrg(+orgId, paginationArgs)
   // }
 
-  @Get(':id/positions')
-  @ApiOperation({ summary: 'List all positions created for an organisation' })
-  @ApiExtraModels(PaginatedDto)
-  @ApiPaginatedResponse(Position)
-  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Position))
-  async findPositions(
-    @Req() request: RequestWithUser,
-    @Param('id', ParseIntPipe) id: number,
-    @Query() paginationArgs: PaginationArgsDto
-  ) {
-    const ability = this.caslPermissions.createForUser(request.user)
+  // @Get(':id/positions')
+  // @ApiOperation({ summary: 'List all positions created for an organisation' })
+  // @ApiExtraModels(PaginatedDto)
+  // @ApiPaginatedResponse(Position)
+  // @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Position))
+  // async findPositions(
+  //   @Req() request: RequestWithUser,
+  //   @Param('id', ParseIntPipe) id: number,
+  //   @Query() paginationArgs: PaginationArgsDto
+  // ) {
+  //   const ability = this.caslPermissions.createForUser(request.user)
 
-    if (!ability.can(Action.Read, new Organisation({ id }))) throw new ForbiddenException()
+  //   if (!ability.can(Action.Read, new Organisation({ id }))) throw new ForbiddenException()
 
-    return this.organisationService.findPositions(id, request.user, paginationArgs)
-  }
+  //   return this.organisationService.findPositions(id, request.user, paginationArgs)
+  // }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get information about one organisation' })

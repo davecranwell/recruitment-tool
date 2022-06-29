@@ -33,7 +33,7 @@ model User {
   updatedAt         DateTime              @default(now())
   organisations     UsersInOrganisation[]
   userRoles         UserRolesOfUser[]
-  positionRoles     PositionUserRole[]
+  projectRoles      ProjectUserRole[]
   applicantProfiles ApplicantProfile[]
 }
 
@@ -58,9 +58,9 @@ model Organisation {
   createdAt         DateTime                          @default(now())
   updatedAt         DateTime                          @default(now())
   users             UsersInOrganisation[]
-  positions         Position[]
   roles             UserRole[]
   applicantProfiles ApplicantProfileForOrganisation[]
+  projects          Project[]
 }
 
 model ApplicantProfileForOrganisation {
@@ -80,6 +80,20 @@ enum PositionEmploymentType {
   CONTRACT
 }
 
+model Project {
+  id             Int               @id @default(autoincrement())
+  name           String
+  description    String?           @db.Text
+  organisation   Organisation      @relation(fields: [organisationId], references: [id])
+  organisationId Int
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @default(now())
+  userRoles      ProjectUserRole[]
+  positions      Position[]
+
+  @@index([organisationId])
+}
+
 model Position {
   id                Int                           @id @default(autoincrement())
   name              String
@@ -91,14 +105,13 @@ model Position {
   closingDate       DateTime?
   createdAt         DateTime                      @default(now())
   updatedAt         DateTime                      @default(now())
-  organisation      Organisation                  @relation(fields: [organisationId], references: [id])
-  organisationId    Int
+  project           Project                       @relation(fields: [projectId], references: [id])
+  projectId         Int
   applicantProfiles ApplicantProfileForPosition[]
-  userRoles         PositionUserRole[]
   pipeline          Pipeline?                     @relation(fields: [pipelineId], references: [id])
   pipelineId        Int?
 
-  @@index([organisationId])
+  @@index([projectId])
 }
 
 enum UserRoleType {
@@ -119,19 +132,6 @@ model UsersInOrganisation {
   updatedAt      DateTime     @default(now())
 
   @@id([userId, organisationId])
-}
-
-model ApplicantProfileForPosition {
-  applicantProfile   ApplicantProfile @relation(fields: [applicantProfileId], references: [id])
-  applicantProfileId Int
-  position           Position         @relation(fields: [positionId], references: [id])
-  positionId         Int
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @default(now())
-  stage              Stage            @relation(fields: [stageId], references: [id])
-  stageId            Int
-
-  @@id([applicantProfileId, positionId])
 }
 
 model UserRole {
@@ -159,6 +159,19 @@ model UserRolesOfUser {
   @@id([userId, roleId])
 }
 
+model ApplicantProfileForPosition {
+  applicantProfile   ApplicantProfile @relation(fields: [applicantProfileId], references: [id])
+  applicantProfileId Int
+  position           Position         @relation(fields: [positionId], references: [id])
+  positionId         Int
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @default(now())
+  stage              Stage            @relation(fields: [stageId], references: [id])
+  stageId            Int
+
+  @@id([applicantProfileId, positionId])
+}
+
 // Position Roles could be useful in future if custom roles were create.
 // It dictates what role people take within the hiring process of a specific position via a many-many
 // rather than via a direct enum in the relationship table.
@@ -171,21 +184,21 @@ model UserRolesOfUser {
 //   userPosition PositionUserRole[]
 // }
 
-enum PositionRoleType {
+enum ProjectRoleType {
   HIRING_MANAGER
   INTERVIEWER
 }
 
-model PositionUserRole {
-  positionId Int
-  userId     Int
-  createdAt  DateTime         @default(now())
-  updatedAt  DateTime         @default(now())
-  position   Position         @relation(fields: [positionId], references: [id])
-  user       User             @relation(fields: [userId], references: [id])
-  role       PositionRoleType
+model ProjectUserRole {
+  userId    Int
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @default(now())
+  project   Project         @relation(fields: [projectId], references: [id])
+  projectId Int
+  user      User            @relation(fields: [userId], references: [id])
+  role      ProjectRoleType
 
-  @@id([userId, positionId])
+  @@id([userId, projectId])
 }
 
 model Stage {

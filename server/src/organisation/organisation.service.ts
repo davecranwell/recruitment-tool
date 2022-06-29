@@ -53,47 +53,47 @@ export class OrganisationService {
     return userOrgs
   }
 
-  async findPositions(organisationId: number, user: UserEntity, paginationArgs: PaginationArgsDto) {
-    // if you're an org admin, get all positions
-    // if you're a regular user, get all positions you're allocated to in some way
-    const ability = this.caslPermissions.createForUser(user)
+  // async findPositions(organisationId: number, user: UserEntity, paginationArgs: PaginationArgsDto) {
+  //   // if you're an org admin, get all positions
+  //   // if you're a regular user, get all positions you're allocated to in some way
+  //   const ability = this.caslPermissions.createForUser(user)
 
-    if (ability.can(Action.Manage, new Organisation({ id: organisationId }))) {
-      return await paginate<Position, Prisma.PositionFindManyArgs>(
-        this.prisma.position,
-        { where: { organisationId } },
-        { ...paginationArgs }
-      )
-    }
+  //   if (ability.can(Action.Manage, new Organisation({ id: organisationId }))) {
+  //     return await paginate<Position, Prisma.PositionFindManyArgs>(
+  //       this.prisma.position,
+  //       { where: { organisationId } },
+  //       { ...paginationArgs }
+  //     )
+  //   }
 
-    const results = await paginate<Position, Prisma.PositionFindManyArgs>(
-      this.prisma.position,
-      {
-        where: {
-          organisationId,
-          userRoles: {
-            some: {
-              userId: user.id,
-              role: {
-                in: ['HIRING_MANAGER', 'INTERVIEWER'],
-              },
-            },
-          },
-        },
-        include: { userRoles: { where: { userId: user.id } } },
-      },
-      { ...paginationArgs }
-    )
+  //   const results = await paginate<Position, Prisma.PositionFindManyArgs>(
+  //     this.prisma.position,
+  //     {
+  //       where: {
+  //         organisationId,
+  //         userRoles: {
+  //           some: {
+  //             userId: user.id,
+  //             role: {
+  //               in: ['HIRING_MANAGER', 'INTERVIEWER'],
+  //             },
+  //           },
+  //         },
+  //       },
+  //       include: { userRoles: { where: { userId: user.id } } },
+  //     },
+  //     { ...paginationArgs }
+  //   )
 
-    // strip salary range where role for this position is unsuitable
-    results.data.forEach((position) => {
-      if (!position.userRoles.every((userRole) => userRole.role === 'HIRING_MANAGER')) {
-        delete position.salaryRange
-      }
-    })
+  //   // strip salary range where role for this position is unsuitable
+  //   results.data.forEach((position) => {
+  //     if (!position.userRoles.every((userRole) => userRole.role === 'HIRING_MANAGER')) {
+  //       delete position.salaryRange
+  //     }
+  //   })
 
-    return results
-  }
+  //   return results
+  // }
 
   async findOne(id: number) {
     const record = await this.prisma.organisation.findUnique({ where: { id } })
