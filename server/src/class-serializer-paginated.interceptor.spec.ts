@@ -1,7 +1,8 @@
-import { ClassSerializerInterceptorPaginated } from './class-serializer.interceptor'
+import { PrismaClassSerializerInterceptorPaginated } from './class-serializer-paginated.interceptor'
+import { UserEntity } from './user/entities/user.entity'
 
 describe('ClassSerializerInterceptor', () => {
   it('should be defined', () => {
-    expect(new ClassSerializerInterceptorPaginated()).toBeDefined()
+    expect(PrismaClassSerializerInterceptorPaginated(UserEntity)).toBeDefined()
   })
 })

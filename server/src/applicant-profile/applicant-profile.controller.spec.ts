@@ -1,4 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing'
+import { CaslPermissions } from 'src/casl/casl.permissions'
+import { PrismaService } from 'src/prisma/prisma.service'
+import { UserService } from 'src/user/user.service'
 import { ApplicantProfileController } from './applicant-profile.controller'
 import { ApplicantProfileService } from './applicant-profile.service'
 
@@ -8,7 +11,7 @@ describe('ApplicantProfileController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ApplicantProfileController],
-      providers: [ApplicantProfileService],
+      providers: [ApplicantProfileService, PrismaService, UserService, CaslPermissions],
     }).compile()
 
     controller = module.get<ApplicantProfileController>(ApplicantProfileController)

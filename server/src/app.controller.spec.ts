@@ -3,19 +3,22 @@ import { AppController } from './app.controller'
 import { AppService } from './app.service'
 
 describe('AppController', () => {
-  let app: TestingModule
+  let module: TestingModule
+
+  let controller: AppController
 
   beforeAll(async () => {
-    app = await Test.createTestingModule({
+    module = await Test.createTestingModule({
       controllers: [AppController],
       providers: [AppService],
     }).compile()
+
+    controller = await module.resolve<AppController>(AppController)
   })
 
   describe('getHello', () => {
-    it('should return "Hello World!"', () => {
-      const appController = app.get<AppController>(AppController)
-      expect(appController.getHello()).toBe('Hello World!')
+    it('should be defined', () => {
+      expect(controller).toBeDefined()
     })
   })
 })
