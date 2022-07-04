@@ -5,9 +5,10 @@ import { IsOptional, ValidateNested } from 'class-validator'
 
 import { UsersInOrganisation } from 'src/users-in-organisation/entities/users-in-organisation.entity'
 import { UserRolesOfUser } from 'src/user-roles-of-user/entities/user-roles-of-user.entity'
-import { PositionUserRole } from 'src/project-user-role/entities/position-user-role.entity'
+import { ProjectUserRole } from 'src/project-user-role/entities/project-user-role.entity'
 import { ApplicantProfile } from 'src/applicant-profile/entities/applicant-profile.entity'
 import { Organisation } from 'src/organisation/entities/organisation.entity'
+import { Ability } from '@casl/ability'
 
 export class UserEntity implements User {
   @ApiProperty({ required: true })
@@ -36,8 +37,11 @@ export class UserEntity implements User {
 
   organisations?: UsersInOrganisation[]
   userRoles?: UserRolesOfUser[]
-  positionRoles?: PositionUserRole[]
+  projectRoles?: ProjectUserRole[]
   applicantProfiles?: ApplicantProfile[]
+
+  @ApiProperty()
+  abilities: any
 
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial)

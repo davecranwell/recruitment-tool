@@ -8,13 +8,15 @@ import { PostgresErrorCode } from '../util/db-types'
 import { UserService } from '../user/user.service'
 
 import { JwtTokenPayload, MagicTokenPayload } from './strategies/types'
+import { CaslPermissions } from 'src/casl/casl.permissions'
 
 @Injectable()
 export class AuthenticationService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private readonly caslPermissions: CaslPermissions
   ) {}
 
   public async register(registrationData) {
@@ -66,7 +68,10 @@ export class AuthenticationService {
     try {
       const user = await this.userService.getByEmailWithDetailedOrgs(email)
       await this.verifyPassword(plainTextPassword, user.password)
+
       user.password = undefined
+      user.abilities = await this.caslPermissions.asJsonForUser(user)
+
       return user
     } catch (error) {
       throw new UnauthorizedException('Wrong credentials provided')

@@ -14,19 +14,19 @@ import { ApiBearerAuth, ApiOkResponse, ApiQuery, ApiResponse, ApiTags } from '@n
 import { Request, Response } from 'express'
 
 import { PrismaClassSerializerInterceptorPaginated } from 'src/class-serializer-paginated.interceptor'
+import { LowerCasePipe } from 'src/app.pipes'
+import { UserEntity } from 'src/user/entities/user.entity'
+import { UserService } from 'src/user/user.service'
+import { CaslPermissions } from 'src/casl/casl.permissions'
+
+import RegisterDto from './dto/register.dto'
+import { LoginResponseDto, LoginDto, MagicLoginDto } from './dto/login.dto'
 
 import { AuthenticationService } from './authentication.service'
 import { LocalAuthenticationGuard } from './guards/localAuthentication.guard'
 import JwtAuthenticationGuard from './guards/jwtAuthentication.guard'
-import { UserEntity } from 'src/user/entities/user.entity'
-import { UserService } from 'src/user/user.service'
 import JwtRefreshGuard from './guards/jwtRefresh.guard'
-import { LowerCasePipe } from 'src/app.pipes'
-import RegisterDto from './dto/register.dto'
-import { LoginResponseDto, LoginDto, MagicLoginDto } from './dto/login.dto'
 import { MagicLinkGuard } from './guards/magiclink.guard'
-import { ThrottlerGuard } from '@nestjs/throttler'
-import { CaslPermissions } from 'src/casl/casl.permissions'
 export interface RequestWithUser extends Request {
   user: UserEntity
 }
@@ -71,9 +71,7 @@ export class AuthenticationController {
     // TODO disabled until we understand how to use it better
     //request.res.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie])
 
-    const abilities = this.caslPermission.asJsonForUser(user)
-
-    return <LoginResponseDto>{ user, accessToken, refreshToken, abilities }
+    return <LoginResponseDto>{ user, accessToken, refreshToken }
   }
 
   @ApiOkResponse()

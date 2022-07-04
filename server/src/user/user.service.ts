@@ -4,10 +4,11 @@ import * as bcrypt from 'bcrypt'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { UserEntity } from './entities/user.entity'
 import { FindOneDto } from 'src/util/shared.dto'
+import { CaslPermissions } from 'src/casl/casl.permissions'
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private readonly caslPermissions: CaslPermissions) {}
 
   async findOne(id: number) {
     const record = await this.prisma.user.findUnique({ where: { id }, include: { organisations: true } })
@@ -22,6 +23,20 @@ export class UserService {
       include: { organisations: { include: { organisation: true } } },
     })
     if (user) {
+      return new UserEntity(user)
+    }
+    throw new NotFoundException('User with this id does not exist')
+  }
+
+  async getByIdWithAbilities(id: number) {
+    const user = (await this.prisma.user.findUnique({
+      where: { id },
+      include: { organisations: { include: { organisation: true } } },
+    })) as UserEntity
+
+    if (user) {
+      user.abilities = await this.caslPermissions.asJsonForUser(user)
+
       return new UserEntity(user)
     }
     throw new NotFoundException('User with this id does not exist')

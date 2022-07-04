@@ -59,8 +59,8 @@ export class UserController {
   @Get(':id')
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(User))
   @ApiOkResponse({ type: User })
-  findOne(@Req() request: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
-    const ability = this.caslPermissions.createForUser(request.user)
+  async findOne(@Req() request: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
+    const ability = await this.caslPermissions.createForUser(request.user)
 
     if (!ability.can(Action.Read, new UserEntity({ id }))) throw new ForbiddenException()
 
