@@ -1,41 +1,48 @@
-import {
-  Injectable,
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common'
-import { ApplicantProfile, Prisma, User } from '@prisma/client'
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common'
+import { ApplicantProfile, Prisma } from '@prisma/client'
 
 import { PrismaService } from 'src/prisma/prisma.service'
+import { CaslPermissions } from 'src/casl/casl.permissions'
+
+import { PaginatedDto, PaginationArgsDto } from 'src/page/pagination-args.dto'
 import { createPaginator } from 'src/util/pagination'
-import { PaginationArgsDto, PaginatedDto } from 'src/page/pagination-args.dto'
 
 import { CreatePositionDto } from './dto/create-position.dto'
 import { UpdatePositionDto } from './dto/update-position.dto'
 
-import { Position } from './entities/position.entity'
 import { ApplicantProfileForPosition } from 'src/applicant-profile-for-position/entities/applicant-profile-for-position.entity'
 import { Action } from 'src/casl/actions'
 import { UserEntity } from 'src/user/entities/user.entity'
-import { CaslPermissions } from 'src/casl/casl.permissions'
 import { UpdateApplicantStageDto } from './dto/update-applicant-stage.dto'
+import { Position } from './entities/position.entity'
 
 const paginate = createPaginator({ perPage: 20 })
 @Injectable()
 export class PositionService {
   constructor(private prisma: PrismaService, private readonly caslPermissions: CaslPermissions) {}
 
-  async create(data: CreatePositionDto) {
+  async create(data: CreatePositionDto, user: UserEntity) {
+    // get project
+    const project = await this.prisma.project.findUnique({ where: { id: data.projectId } })
+    if (!project) throw new NotFoundException('Project with this ID does not exist')
+
+    const ability = await this.caslPermissions.createForUser(user)
+    if (
+      !ability.can(Action.Create, new Position({ projectId: data.projectId, organisationId: project.organisationId }))
+    )
+      throw new ForbiddenException()
+
     return this.prisma.position.create({
       data: {
         name: data.name,
         description: data.description,
         openingDate: data.openingDate,
         closingDate: data.closingDate,
+        project: {
+          connect: { id: data.projectId },
+        },
         organisation: {
-          connect: { id: data.organisationId },
+          connect: { id: project.organisationId },
         },
       },
     })
@@ -46,16 +53,16 @@ export class PositionService {
   // }
 
   async findOne(id: number, user: UserEntity) {
-    const position = await this.prisma.position.findUnique({ where: { id }, include: { userRoles: true } })
+    const position = await this.prisma.position.findUnique({ where: { id } })
     if (!position) throw new NotFoundException('Position with this ID does not exist')
 
-    const ability = this.caslPermissions.createForUser(user)
+    const ability = await this.caslPermissions.createForUser(user)
 
     if (!ability.can(Action.Read, new Position(position))) throw new ForbiddenException()
 
-    if (!ability.can(Action.Manage, new Position(position))) {
-      delete position.userRoles
-    }
+    // if (!ability.can(Action.Manage, new Position(position))) {
+    //   delete position.userRoles
+    // }
 
     return position
   }
@@ -119,7 +126,7 @@ export class PositionService {
   }
 
   async update(id: number, data: UpdatePositionDto, user: UserEntity) {
-    const ability = this.caslPermissions.createForUser(user)
+    const ability = await this.caslPermissions.createForUser(user)
 
     const position = await this.findOne(id, user)
 
@@ -147,7 +154,7 @@ export class PositionService {
   ) {
     const position = await this.findOne(positionId, user)
 
-    const ability = this.caslPermissions.createForUser(user)
+    const ability = await this.caslPermissions.createForUser(user)
 
     if (!ability.can(Action.Update, new Position(position))) throw new ForbiddenException()
 

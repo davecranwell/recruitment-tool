@@ -41,14 +41,8 @@ export class PositionController {
 
   @Post()
   @ApiCreatedResponse({ type: Position })
-  create(@Req() request: RequestWithUser, @Body() data: CreatePositionDto) {
-    console.log({ data })
-    return false
-    const ability = this.caslPermissions.createForUser(request.user)
-
-    if (!ability.can(Action.Create, new Position(data))) throw new ForbiddenException()
-
-    return this.positionService.create(data)
+  async create(@Req() request: RequestWithUser, @Body() data: CreatePositionDto) {
+    return this.positionService.create(data, request.user)
   }
 
   @Get(':id')

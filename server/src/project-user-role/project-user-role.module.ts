@@ -6,4 +6,4 @@ import { ProjectUserRoleController } from './project-user-role.controller'
   controllers: [ProjectUserRoleController],
   providers: [ProjectUserRoleService],
 })
-export class PositionUserRoleModule {}
+export class ProjectUserRoleModule {}

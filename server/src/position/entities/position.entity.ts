@@ -5,9 +5,9 @@ import { Position as PositionModel, PositionEmploymentType } from '@prisma/clien
 
 import { Organisation } from 'src/organisation/entities/organisation.entity'
 import { ApplicantProfileForPosition } from 'src/applicant-profile-for-position/entities/applicant-profile-for-position.entity'
-import { PositionUserRole } from 'src/project-user-role/entities/position-user-role.entity'
 import { ApplicantProfile } from 'src/applicant-profile/entities/applicant-profile.entity'
 import { Pipeline } from 'src/pipeline/entities/pipeline.entity'
+import { Project } from 'src/project/entities/project.entity'
 
 export class Position implements PositionModel {
   @ApiProperty()
@@ -39,6 +39,9 @@ export class Position implements PositionModel {
   updatedAt: Date
 
   @ApiProperty()
+  projectId: number
+
+  @ApiProperty()
   organisationId: number
 
   @ApiProperty({ enum: PositionEmploymentType })
@@ -52,16 +55,16 @@ export class Position implements PositionModel {
   salaryRange: string | null
 
   @ValidateNested()
+  @Type(() => Project)
+  project?: Project
+
+  @ValidateNested()
   @Type(() => Organisation)
   organisation?: Organisation
 
   @ValidateNested()
   @Type(() => ApplicantProfile)
   applicantProfiles?: ApplicantProfileForPosition[]
-
-  @ValidateNested()
-  @Type(() => PositionUserRole)
-  userRoles?: PositionUserRole[]
 
   constructor(partial: Partial<Position>) {
     Object.assign(this, partial)

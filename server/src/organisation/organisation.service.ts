@@ -13,6 +13,7 @@ import { Organisation } from './entities/organisation.entity'
 
 import { Action } from 'src/casl/actions'
 import { CaslPermissions } from 'src/casl/casl.permissions'
+import { Project } from 'src/project/entities/project.entity'
 
 const paginate = createPaginator({ perPage: 20 })
 
@@ -53,47 +54,73 @@ export class OrganisationService {
     return userOrgs
   }
 
-  // async findPositions(organisationId: number, user: UserEntity, paginationArgs: PaginationArgsDto) {
-  //   // if you're an org admin, get all positions
-  //   // if you're a regular user, get all positions you're allocated to in some way
-  //   const ability = this.caslPermissions.createForUser(user)
+  async findProjects(organisationId: number, user: UserEntity, paginationArgs: PaginationArgsDto) {
+    const projects = await paginate<Project, Prisma.ProjectFindManyArgs>(
+      this.prisma.project,
+      {
+        where: {
+          organisationId,
+          userRoles: {
+            some: {
+              userId: user.id,
+              role: {
+                // TODO: we're specifying these so that other roles in the project (like an interviewee) can't see the wrong stuff
+                in: ['HIRING_MANAGER', 'INTERVIEWER'],
+              },
+            },
+          },
+        },
+      },
+      { ...paginationArgs }
+    )
 
-  //   if (ability.can(Action.Manage, new Organisation({ id: organisationId }))) {
-  //     return await paginate<Position, Prisma.PositionFindManyArgs>(
-  //       this.prisma.position,
-  //       { where: { organisationId } },
-  //       { ...paginationArgs }
-  //     )
-  //   }
+    return projects
+  }
 
-  //   const results = await paginate<Position, Prisma.PositionFindManyArgs>(
-  //     this.prisma.position,
-  //     {
-  //       where: {
-  //         organisationId,
-  //         userRoles: {
-  //           some: {
-  //             userId: user.id,
-  //             role: {
-  //               in: ['HIRING_MANAGER', 'INTERVIEWER'],
-  //             },
-  //           },
-  //         },
-  //       },
-  //       include: { userRoles: { where: { userId: user.id } } },
-  //     },
-  //     { ...paginationArgs }
-  //   )
+  async findPositions(organisationId: number, user: UserEntity, paginationArgs: PaginationArgsDto) {
+    // if you're an org admin, get all positions
+    // if you're a regular user, get all positions you're allocated to in some way
+    const ability = await this.caslPermissions.createForUser(user)
 
-  //   // strip salary range where role for this position is unsuitable
-  //   results.data.forEach((position) => {
-  //     if (!position.userRoles.every((userRole) => userRole.role === 'HIRING_MANAGER')) {
-  //       delete position.salaryRange
-  //     }
-  //   })
+    if (ability.can(Action.Manage, new Organisation({ id: organisationId }))) {
+      return await paginate<Position, Prisma.PositionFindManyArgs>(
+        this.prisma.position,
+        { where: { project: { organisationId } } },
+        { ...paginationArgs }
+      )
+    }
 
-  //   return results
-  // }
+    const results = await paginate<Position, Prisma.PositionFindManyArgs>(
+      this.prisma.position,
+      {
+        where: {
+          organisationId,
+          project: {
+            userRoles: {
+              some: {
+                userId: user.id,
+                role: {
+                  // TODO: we're specifying these so that other roles in the project (like an interviewee) can't see the wrong stuff
+                  in: ['HIRING_MANAGER', 'INTERVIEWER'],
+                },
+              },
+            },
+          },
+        },
+      },
+      { ...paginationArgs }
+    )
+
+    // TODO: Remove me once we're happy ClassSerializer is handling this well enough
+    // strip salary range where role for this position is unsuitable
+    // results.data.forEach((position) => {
+    //   if (!position.userRoles.every((userRole) => userRole.role === 'HIRING_MANAGER')) {
+    //     delete position.salaryRange
+    //   }
+    // })
+
+    return results
+  }
 
   async findOne(id: number) {
     const record = await this.prisma.organisation.findUnique({ where: { id } })

@@ -240,6 +240,7 @@ async function main() {
       openingDate: new Date(),
       // closingDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
       projectId: vocovoOrganisationProject1.id,
+      organisationId: vocovoOrganisation.id,
       // applicantProfiles: {
       //   create: [{ applicantPId: applicantProfile.id }],
       // },
@@ -254,6 +255,7 @@ async function main() {
       openingDate: new Date(),
       // closingDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
       projectId: vocovoOrganisationProject2.id,
+      organisationId: vocovoOrganisation.id,
       // applicantProfiles: {
       //   create: [{ applicantPId: applicantProfile.id }],
       // },

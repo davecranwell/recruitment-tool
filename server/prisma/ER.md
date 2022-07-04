@@ -146,6 +146,7 @@ INTERVIEWER INTERVIEWER
     ApplicantProfileForOrganisation o{--|| Organisation : "organisation"
     Project o{--|| Organisation : "organisation"
     Position o|--|| PositionEmploymentType : "enum:employment"
+    Position o{--|| Organisation : "organisation"
     Position o{--|| Project : "project"
     Position o{--|| Pipeline : "pipeline"
     UsersInOrganisation o|--|| UserRoleType : "enum:role"

@@ -22,7 +22,7 @@ export class CreatePositionDto {
   @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsNumber()
-  organisationId: number
+  projectId: number
 
   @ApiProperty({ enum: PositionEmploymentType })
   employment?: PositionEmploymentType
