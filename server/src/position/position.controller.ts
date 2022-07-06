@@ -3,6 +3,7 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Get,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
@@ -45,7 +46,10 @@ export class PositionController {
   @Get(':id')
   @ApiOkResponse({ type: Position })
   @UseInterceptors(ClassSerializerInterceptor)
-  findOne(@Req() request: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
+  findOne(
+    @Req() request: RequestWithUser,
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number
+  ) {
     return this.positionService.findOne(id, request.user)
   }
 
@@ -55,7 +59,7 @@ export class PositionController {
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(ApplicantProfileWithUser))
   findAllApplicants(
     @Req() request: RequestWithUser,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
     @Query() paginationArgs: PaginationArgsDto
   ) {
     return this.positionService.findAllApplicants(id, request.user, paginationArgs)
@@ -66,7 +70,7 @@ export class PositionController {
   @ApiResponse({ type: ApplicantProfileWithUser })
   findApplicant(
     @Req() request: RequestWithUser,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
     @Param('applicantId', ParseIntPipe) applicantId: number
   ) {
     return this.positionService.findApplicant(id, applicantId, request.user)
@@ -77,8 +81,9 @@ export class PositionController {
   @ApiResponse({ type: ApplicantProfileWithUser })
   changeApplicantStage(
     @Req() request: RequestWithUser,
-    @Param('positionId', ParseIntPipe) positionId: number,
-    @Param('applicantProfileId', ParseIntPipe) applicantProfileId: number,
+    @Param('positionId', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) positionId: number,
+    @Param('applicantProfileId', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND }))
+    applicantProfileId: number,
     @Body() data: UpdateApplicantStageDto
   ) {
     return this.positionService.changeApplicantStage(positionId, applicantProfileId, data, request.user)
@@ -86,12 +91,19 @@ export class PositionController {
 
   @Get(':id/pipeline')
   @ApiOkResponse({ type: Pipeline })
-  findPipelineWithStages(@Req() request: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
+  findPipelineWithStages(
+    @Req() request: RequestWithUser,
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number
+  ) {
     return this.positionService.findPipelineWithStages(id, request.user)
   }
 
   @Patch(':id')
-  update(@Req() request: RequestWithUser, @Param('id', ParseIntPipe) id: string, @Body() data: UpdatePositionDto) {
+  update(
+    @Req() request: RequestWithUser,
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: string,
+    @Body() data: UpdatePositionDto
+  ) {
     return this.positionService.update(+id, data, request.user)
   }
 

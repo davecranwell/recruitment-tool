@@ -4,6 +4,7 @@ import {
   Controller,
   ForbiddenException,
   Get,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
@@ -55,7 +56,10 @@ export class UserController {
   @Get(':id')
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(User))
   @ApiOkResponse({ type: User })
-  async findOne(@Req() request: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
+  async findOne(
+    @Req() request: RequestWithUser,
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number
+  ) {
     const ability = new Ability(request.user.abilities)
 
     if (!ability.can(Action.Read, new UserEntity({ id }))) throw new ForbiddenException()

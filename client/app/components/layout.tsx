@@ -1,27 +1,15 @@
-import { Dialog, Menu, Transition } from '@headlessui/react'
-import {
-  BellIcon,
-  CalendarIcon,
-  CogIcon,
-  FolderIcon,
-  HomeIcon,
-  MenuAlt2Icon,
-  UserGroupIcon,
-  UsersIcon,
-  XIcon,
-} from '@heroicons/react/outline'
+import { Menu } from '@headlessui/react'
+import { CalendarIcon, CogIcon, FolderIcon, HomeIcon, UserGroupIcon, UsersIcon } from '@heroicons/react/outline'
 import { SelectorIcon } from '@heroicons/react/solid'
 import type { SessionData } from '@remix-run/node'
-import { Link, NavLink } from '@remix-run/react'
-import classNames from 'classnames'
 import * as React from 'react'
-import { Fragment, useState, useCallback } from 'react'
+import { useCallback, useState } from 'react'
 
 import { useAppAbility } from 'app/hooks/useAppAbility'
-import UserNav from './UserNav'
 import MobileTopNav from './MobileTopNav'
-import SiteNav from './SiteNav'
 import Sidebar from './Sidebar'
+import SiteNav from './SiteNav'
+import UserNav from './UserNav'
 
 type Props = {
   children: React.ReactNode
@@ -45,7 +33,7 @@ const Layout: React.FC<Props> = ({ children, session }) => {
     [
       { name: 'Home', href: '/start', icon: HomeIcon },
       { name: 'Applicants', href: '/applicant-profiles', icon: UsersIcon },
-      { name: 'Positions', href: '/positions', icon: FolderIcon },
+      { name: 'Projects', href: '/projects', icon: FolderIcon },
       { name: 'Timeline', href: '/timeline', icon: CalendarIcon },
     ],
   ]

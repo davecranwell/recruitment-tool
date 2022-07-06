@@ -3,6 +3,7 @@ import {
   Controller,
   ForbiddenException,
   Get,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
@@ -44,7 +45,10 @@ export class OrganisationController {
   @Get(':id')
   @ApiOperation({ summary: 'Get information about one organisation' })
   @ApiOkResponse({ type: Organisation })
-  async findOne(@Req() request: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
+  async findOne(
+    @Req() request: RequestWithUser,
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number
+  ) {
     const ability = new Ability(request.user.abilities)
 
     if (!ability.can(Action.Read, new Organisation({ id }))) throw new ForbiddenException()
@@ -76,7 +80,7 @@ export class OrganisationController {
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(UserEntity))
   async findUsers(
     @Req() request: RequestWithUser,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
     @Query() paginationArgs: PaginationArgsDto
   ) {
     const ability = new Ability(request.user.abilities)
@@ -93,7 +97,7 @@ export class OrganisationController {
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(UserEntity))
   async findProjects(
     @Req() request: RequestWithUser,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
     @Query() paginationArgs: PaginationArgsDto
   ) {
     const ability = new Ability(request.user.abilities)
@@ -117,7 +121,7 @@ export class OrganisationController {
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Position))
   async findPositions(
     @Req() request: RequestWithUser,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
     @Query() paginationArgs: PaginationArgsDto
   ) {
     const ability = new Ability(request.user.abilities)

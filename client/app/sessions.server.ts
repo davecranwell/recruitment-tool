@@ -15,6 +15,7 @@ export type SessionData = {
     name: string
     email: string
     organisations: any[]
+    abilities: any[]
   }
   accessToken: string
   refreshToken: string

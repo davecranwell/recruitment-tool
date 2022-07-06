@@ -11,40 +11,37 @@ import { withValues } from 'app/components/Forms'
 import Form from 'app/components/Forms'
 import { requireAuth } from 'app/sessions.server'
 
-import formFields from 'app/models/positions/form'
+import formFields from 'app/models/projects/form'
 
 export const action: ActionFunction = async (data) => {
   const { request, params } = data
   const body = await request.formData()
 
-  const result = await api(data, `/position/${params.id}`, 'PATCH', body)
-  if (result.ok) return redirect(`/positions/${params.id}`)
+  const result = await api(data, `/project/${params.id}`, 'PATCH', body)
+  if (result.ok) return redirect(`/project/${params.id}`)
 
   return result
 }
 
 export const loader: LoaderFunction = async (data) => {
   const { request, params } = data
-  // return invariant(params.id, 'Expected position ID')
 
   const session = await requireAuth(request)
-  const positionRes = await api(data, `/position/${params.id}`)
-  const position = await positionRes.json()
+  const projectRes = await api(data, `/project/${params.id}`)
+  const project = await projectRes.json()
 
-  console.log(position)
-
-  return json({ position, fields: withValues(formFields(session), position) })
+  return json({ project, fields: withValues(formFields(session), project) })
 }
 
-const EditPosition = () => {
-  const { position, fields } = useLoaderData()
+const EditProject = () => {
+  const { project, fields } = useLoaderData()
   const errors = useActionData()
   const transition = useTransition()
 
   return (
-    <Content title={position.name}>
+    <Content title={project.name}>
       <Form submitText="Save changes" fields={fields} errors={errors} transition={transition} />
     </Content>
   )
 }
-export default EditPosition
+export default EditProject

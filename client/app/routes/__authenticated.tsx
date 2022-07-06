@@ -13,7 +13,7 @@ export async function loader({ request }: { request: Request }) {
 
 export default function Authenticated() {
   const session = useLoaderData()
-  const abilities = new Ability(session.abilities)
+  const abilities = new Ability(session.user.abilities)
 
   return (
     <div>

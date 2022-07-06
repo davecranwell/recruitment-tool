@@ -44,7 +44,7 @@ export class ProjectController {
   // @Get(':id')
   // @ApiOperation({ summary: 'Get information about one project' })
   // @ApiOkResponse({ type: Project })
-  // async findOne(@Req() request: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
+  // async findOne(@Req() request: RequestWithUser, @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number) {
   //   const ability = new Ability(request.user.abilities)
 
   //   if (!ability.can(Action.Read, new Project({ id }))) throw new ForbiddenException()

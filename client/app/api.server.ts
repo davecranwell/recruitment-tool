@@ -1,8 +1,9 @@
 import type { DataFunctionArgs } from '@remix-run/node'
-import { json, redirect, Response } from '@remix-run/node'
-import type { JsonFunction } from '@remix-run/server-runtime'
-import { getSession, refreshTokensIfNeeded, getUserSession } from 'app/sessions.server'
+import { json, redirect } from '@remix-run/node'
+
+import { getSession, refreshTokensIfNeeded } from 'app/sessions.server'
 import { formDataToJson } from 'app/utils'
+import { ErrorResponse, ForbiddenResponse, NotFoundResponse } from 'app/utils/errors'
 
 export async function api(data: DataFunctionArgs, url: string, method: string = 'GET', body?: any): Promise<any> {
   const { request, context } = data
@@ -30,26 +31,15 @@ export async function api(data: DataFunctionArgs, url: string, method: string = 
   })
 
   switch (apiRes.status) {
+    // NB: can't catch 400 here as 400 is a bad request i.e a request that had errors to be returned to user
     case 404:
-      throw new Response('Not Found', {
-        status: apiRes.status,
-        statusText: apiRes.statusText,
-        headers,
-      })
+      throw NotFoundResponse({ headers })
 
     case 403:
-      throw new Response('Forbidden', {
-        status: apiRes.status,
-        statusText: apiRes.statusText,
-        headers,
-      })
+      throw ForbiddenResponse({ headers })
 
     case 500:
-      throw new Response(`An error occured: "${apiRes.statusText}"`, {
-        status: apiRes.status,
-        statusText: `An error occured: "${apiRes.statusText}"`,
-        headers,
-      })
+      throw ErrorResponse({ headers, statusText: apiRes.statusText })
   }
 
   return json(await apiRes.json(), { status: apiRes.status, headers })

@@ -5,7 +5,7 @@ import type { Ability } from '@casl/ability'
 import { subject } from '@casl/ability'
 
 type Actions = 'manage' | 'create' | 'read' | 'update' | 'delete' | 'publish'
-type Subjects = 'Organisation' | 'User' | 'Position'
+type Subjects = 'Organisation' | 'User' | 'Position' | 'Projects'
 
 export type AppAbility = Ability<[Actions, Subjects]>
 

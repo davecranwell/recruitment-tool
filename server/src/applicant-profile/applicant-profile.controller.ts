@@ -10,6 +10,8 @@ import {
   UseInterceptors,
   HttpCode,
   ParseIntPipe,
+  UseGuards,
+  HttpStatus,
 } from '@nestjs/common'
 import {
   ApiBearerAuth,
@@ -28,9 +30,11 @@ import { ApplicantProfileService } from './applicant-profile.service'
 import { CreateApplicantProfileDto } from './dto/create-applicant-profile.dto'
 import { UpdateApplicantProfileDto } from './dto/update-applicant-profile.dto'
 import { ApplicantProfile } from './entities/applicant-profile.entity'
+import JwtAuthenticationGuard from 'src/authentication/guards/jwtAuthentication.guard'
 
 @ApiTags('Applicant Profiles')
 @Controller('applicant-profile')
+@UseGuards(JwtAuthenticationGuard)
 @UseInterceptors(PrismaClassSerializerInterceptorPaginated(ApplicantProfile))
 export class ApplicantProfileController {
   constructor(private readonly applicantProfileService: ApplicantProfileService) {}
@@ -51,14 +55,20 @@ export class ApplicantProfileController {
   @Get('by-user/:userId')
   @ApiExtraModels(PaginatedDto)
   @ApiPaginatedResponse(ApplicantProfile)
-  async findByUser(@Param('userId', ParseIntPipe) userId: number, @Query() paginationArgs: PaginationArgsDto) {
+  async findByUser(
+    @Param('userId', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) userId: number,
+    @Query() paginationArgs: PaginationArgsDto
+  ) {
     return this.applicantProfileService.findByUser(+userId, paginationArgs)
   }
 
   @Get('with-user/:userId')
   @ApiExtraModels(PaginatedDto)
   @ApiPaginatedResponse(ApplicantProfile)
-  async findWithUser(@Param('userId', ParseIntPipe) userId: number, @Query() paginationArgs: PaginationArgsDto) {
+  async findWithUser(
+    @Param('userId', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) userId: number,
+    @Query() paginationArgs: PaginationArgsDto
+  ) {
     return this.applicantProfileService.findWithUser(+userId, paginationArgs)
   }
 
@@ -66,7 +76,7 @@ export class ApplicantProfileController {
   @ApiExtraModels(PaginatedDto)
   @ApiPaginatedResponse(ApplicantProfile)
   async findByPosition(
-    @Param('positionId', ParseIntPipe) positionId: number,
+    @Param('positionId', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) positionId: number,
     @Query() paginationArgs: PaginationArgsDto
   ) {
     return this.applicantProfileService.findByPosition(+positionId, paginationArgs)
@@ -74,7 +84,7 @@ export class ApplicantProfileController {
 
   @Get(':id')
   @ApiOkResponse({ type: ApplicantProfile })
-  async findOne(@Param('id', ParseIntPipe) id: string) {
+  async findOne(@Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: string) {
     return this.applicantProfileService.findOne(+id)
   }
 
