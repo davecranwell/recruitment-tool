@@ -47,15 +47,17 @@ const Layout: React.FC<Props> = ({ children, session }) => {
   }
 
   const userNavigation = [
-    {
-      name: 'Change organisation',
-      href: '/choose-organisation',
-      condition: (session: SessionData) => session?.user?.organisations?.length > 1,
-    },
     // { name: 'Your Profile', href: '#' },
     // { name: 'Settings', href: '#' },
     { name: 'Sign out', href: '/sign-out' },
   ]
+
+  if (session?.activeOrganisation && session?.user?.organisations?.length > 1) {
+    userNavigation.push({
+      name: 'Change organisation',
+      href: '/choose-organisation',
+    })
+  }
 
   const handleSidebarClose = useCallback(() => setSidebarOpen(false), [])
   const handleSidebarOpen = useCallback(() => setSidebarOpen(true), [])

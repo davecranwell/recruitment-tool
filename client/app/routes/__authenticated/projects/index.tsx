@@ -37,12 +37,14 @@ const Projects = () => {
   const { sessionData, projects } = useLoaderData()
   const { can, subject } = useAppAbility()
 
+  const canCreateProject = can('manage', subject('Organisation', sessionData?.activeOrganisation))
+
   return (
     <Content
       title={'Projects'}
       primaryAction={
         projects.data.length &&
-        can('manage', subject('Organisation', sessionData?.activeOrganisation)) && {
+        canCreateProject && {
           label: 'Create',
           link: '/projects/new',
         }
@@ -52,7 +54,7 @@ const Projects = () => {
         <Empty
           Icon={FolderAddIcon}
           title={'No projects have been created'}
-          createLink={can('create', 'Position') ? '/projects/new' : null}
+          createLink={canCreateProject ? '/projects/new' : null}
         />
       )}
       {projects.data.length > 0 && (

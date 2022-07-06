@@ -31,8 +31,6 @@ export const loader: LoaderFunction = async (data) => {
   const positionRes = await api(data, `/position/${params.id}`)
   const position = await positionRes.json()
 
-  console.log(position)
-
   return json({ position, fields: withValues(formFields(session), position) })
 }
 
