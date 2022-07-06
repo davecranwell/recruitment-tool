@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
+import { Ability } from '@casl/ability'
 
 import { PaginatedDto, PaginationArgsDto } from 'src/page/pagination-args.dto'
 import { PrismaService } from 'src/prisma/prisma.service'
@@ -12,14 +13,13 @@ import { CreateOrganisationDto } from './dto/create-organisation.dto'
 import { Organisation } from './entities/organisation.entity'
 
 import { Action } from 'src/casl/actions'
-import { CaslPermissions } from 'src/casl/casl.permissions'
 import { Project } from 'src/project/entities/project.entity'
 
 const paginate = createPaginator({ perPage: 20 })
 
 @Injectable()
 export class OrganisationService {
-  constructor(private prisma: PrismaService, private readonly caslPermissions: CaslPermissions) {}
+  constructor(private prisma: PrismaService) {}
 
   create(data: CreateOrganisationDto) {
     return this.prisma.organisation.create({
@@ -55,7 +55,19 @@ export class OrganisationService {
   }
 
   async findProjects(organisationId: number, user: UserEntity, paginationArgs: PaginationArgsDto) {
-    const projects = await paginate<Project, Prisma.ProjectFindManyArgs>(
+    // if you're an org admin, get all projects
+    // if you're a regular user, get all projects you're allocated to in some way
+    const ability = new Ability(user.abilities)
+
+    if (ability.can(Action.Manage, new Organisation({ id: organisationId }))) {
+      return await paginate<Position, Prisma.PositionFindManyArgs>(
+        this.prisma.project,
+        { where: { organisationId } },
+        { ...paginationArgs }
+      )
+    }
+
+    return await paginate<Project, Prisma.ProjectFindManyArgs>(
       this.prisma.project,
       {
         where: {
@@ -73,14 +85,12 @@ export class OrganisationService {
       },
       { ...paginationArgs }
     )
-
-    return projects
   }
 
   async findPositions(organisationId: number, user: UserEntity, paginationArgs: PaginationArgsDto) {
     // if you're an org admin, get all positions
-    // if you're a regular user, get all positions you're allocated to in some way
-    const ability = await this.caslPermissions.createForUser(user)
+    // if you're a regular user, get all positions within theprojects you're allocated to
+    const ability = new Ability(user.abilities)
 
     if (ability.can(Action.Manage, new Organisation({ id: organisationId }))) {
       return await paginate<Position, Prisma.PositionFindManyArgs>(

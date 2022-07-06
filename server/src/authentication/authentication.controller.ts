@@ -17,7 +17,6 @@ import { PrismaClassSerializerInterceptorPaginated } from 'src/class-serializer-
 import { LowerCasePipe } from 'src/app.pipes'
 import { UserEntity } from 'src/user/entities/user.entity'
 import { UserService } from 'src/user/user.service'
-import { CaslPermissions } from 'src/casl/casl.permissions'
 
 import RegisterDto from './dto/register.dto'
 import { LoginResponseDto, LoginDto, MagicLoginDto } from './dto/login.dto'
@@ -36,8 +35,7 @@ export interface RequestWithUser extends Request {
 export class AuthenticationController {
   constructor(
     private readonly authenticationService: AuthenticationService,
-    private readonly userService: UserService,
-    private readonly caslPermission: CaslPermissions
+    private readonly userService: UserService
   ) {}
 
   private async registerAccount(registrationData: RegisterDto) {

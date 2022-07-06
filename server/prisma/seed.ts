@@ -121,7 +121,10 @@ async function main() {
       email: 'foo@bar6.com',
       password: '$2a$10$Cer44Qb/fNW3flIcCEd.bONiYvyFwQtTewCGvZoeBlby78m94iwF.', // test
       organisations: {
-        create: [{ organisationId: humandRecruiter.id, role: 'STANDARD' }],
+        create: [
+          { organisationId: humandRecruiter.id, role: 'STANDARD' },
+          { organisationId: vocovoOrganisation.id, role: 'STANDARD' },
+        ],
       },
     },
   })

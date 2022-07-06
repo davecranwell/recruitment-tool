@@ -1,12 +1,10 @@
 import * as request from 'supertest'
 import { Test } from '@nestjs/testing'
 import { ExecutionContext, INestApplication } from '@nestjs/common'
-import { Ability, ForbiddenError } from '@casl/ability'
 
 import { OrganisationModule } from './organisation.module'
 import { CaslModule } from 'src/casl/casl.module'
 import { OrganisationService } from './organisation.service'
-import { CaslPermissions } from 'src/casl/casl.permissions'
 import JwtAuthenticationGuard from 'src/authentication/guards/jwtAuthentication.guard'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { PrismaModule } from 'src/prisma/prisma.module'
@@ -18,31 +16,11 @@ describe('Organisation', () => {
     findUsers: () => ['users'],
     create: () => 'ok',
     findPositions: () => 'positions',
+    findProjects: () => 'projects',
   }
-  let caslPermissions: CaslPermissions
-  // {
-  //   createForUser: () => {
-  //     return new Ability()
-  //   },
-  // }
 
-  let jwtGuard = {
-    canActivate: (context: ExecutionContext) => {
-      const req = context.switchToHttp().getRequest()
-      req.user = {
-        id: 1,
-        organisations: [{ organisationId: 1 }],
-        abilities: [
-          {
-            action: 'read',
-            subject: 'Organisation',
-            conditions: { id: { $in: [1] } },
-          },
-        ],
-      }
-      return true
-    },
-  }
+  let jwtGuard
+
   let prismaService = {
     project: {
       findMany: () => [],
@@ -63,24 +41,25 @@ describe('Organisation', () => {
       .compile()
 
     jwtGuard = moduleRef.get(JwtAuthenticationGuard)
-    caslPermissions = moduleRef.get(CaslPermissions)
 
     app = moduleRef.createNestApplication()
     await app.init()
   })
 
   it(`/GET :id allowed if user part of the organisation`, () => {
-    // jest.spyOn(caslPermissions, 'createForUser').mockImplementation(() =>
-    //   Promise.resolve(
-    //     new Ability([
-    //       {
-    //         action: 'read',
-    //         subject: 'Organisation',
-    //         conditions: { id: { $in: [1] } },
-    //       },
-    //     ])
-    //   )
-    // )
+    jest.spyOn(jwtGuard, 'canActivate').mockImplementation((context: ExecutionContext) => {
+      const req = context.switchToHttp().getRequest()
+      req.user = {
+        abilities: [
+          {
+            action: 'read',
+            subject: 'Organisation',
+            conditions: { id: { $in: [1] } },
+          },
+        ],
+      }
+      return true
+    })
 
     return request(app.getHttpServer()).get('/organisation/1').expect(200).expect(organisationService.findOne())
   })
@@ -208,6 +187,27 @@ describe('Organisation', () => {
       .get('/organisation/1/positions')
       .expect(200)
       .expect(organisationService.findPositions())
+  })
+
+  it(`/GET :id/projects allowed if a member of the organisation`, () => {
+    jest.spyOn(jwtGuard, 'canActivate').mockImplementation((context: ExecutionContext) => {
+      const req = context.switchToHttp().getRequest()
+      req.user = {
+        abilities: [
+          {
+            action: 'read',
+            subject: 'Organisation',
+            conditions: { id: { $in: [1] } },
+          },
+        ],
+      }
+      return true
+    })
+
+    return request(app.getHttpServer())
+      .get('/organisation/1/projects')
+      .expect(200)
+      .expect(organisationService.findProjects())
   })
 
   afterAll(async () => {

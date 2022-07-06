@@ -1,3 +1,4 @@
+import { Ability } from '@casl/ability'
 import {
   Body,
   Controller,
@@ -14,26 +15,21 @@ import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { PrismaClassSerializerInterceptorPaginated } from 'src/class-serializer-paginated.interceptor'
 
-import { FindOneDto } from 'src/util/shared.dto'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UserService } from './user.service'
 
 // TODO fix this renaming
 import JwtAuthenticationGuard from 'src/authentication/guards/jwtAuthentication.guard'
-import { Organisation } from 'src/organisation/entities/organisation.entity'
 import { UserEntity as User, UserEntity } from './entities/user.entity'
 
-import { CaslPermissions } from 'src/casl/casl.permissions'
-// import { UsersInOrganisation } from 'src/users-in-organisation/entities/users-in-organisation.entity'
-
-import { Action } from 'src/casl/actions'
 import { RequestWithUser } from 'src/authentication/authentication.controller'
+import { Action } from 'src/casl/actions'
 
 @ApiTags('Users')
 @UseGuards(JwtAuthenticationGuard)
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService, private readonly caslPermissions: CaslPermissions) {}
+  constructor(private readonly userService: UserService) {}
 
   @Post()
   @ApiCreatedResponse({ type: User })
@@ -60,7 +56,7 @@ export class UserController {
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(User))
   @ApiOkResponse({ type: User })
   async findOne(@Req() request: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
-    const ability = await this.caslPermissions.createForUser(request.user)
+    const ability = new Ability(request.user.abilities)
 
     if (!ability.can(Action.Read, new UserEntity({ id }))) throw new ForbiddenException()
 

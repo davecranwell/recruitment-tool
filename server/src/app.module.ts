@@ -20,6 +20,8 @@ import { ApplicantProfileForPositionModule } from './applicant-profile-for-posit
 import { ProjectUserRoleModule } from './project-user-role/project-user-role.module'
 import { UserRolesOfUserModule } from './user-roles-of-user/user-roles-of-user.module'
 import { PrismaModule } from './prisma/prisma.module'
+import { ProjectController } from './project/project.controller';
+import { ProjectService } from './project/project.service';
 
 @Module({
   imports: [
@@ -43,13 +45,14 @@ import { PrismaModule } from './prisma/prisma.module'
     ProjectUserRoleModule,
     UserRolesOfUserModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, ProjectController],
   providers: [
     AppService,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
+    ProjectService,
   ],
 })
 export class AppModule {}

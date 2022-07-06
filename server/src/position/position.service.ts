@@ -2,7 +2,6 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { ApplicantProfile, Prisma } from '@prisma/client'
 
 import { PrismaService } from 'src/prisma/prisma.service'
-import { CaslPermissions } from 'src/casl/casl.permissions'
 
 import { PaginatedDto, PaginationArgsDto } from 'src/page/pagination-args.dto'
 import { createPaginator } from 'src/util/pagination'
@@ -15,18 +14,19 @@ import { Action } from 'src/casl/actions'
 import { UserEntity } from 'src/user/entities/user.entity'
 import { UpdateApplicantStageDto } from './dto/update-applicant-stage.dto'
 import { Position } from './entities/position.entity'
+import { Ability } from '@casl/ability'
 
 const paginate = createPaginator({ perPage: 20 })
 @Injectable()
 export class PositionService {
-  constructor(private prisma: PrismaService, private readonly caslPermissions: CaslPermissions) {}
+  constructor(private prisma: PrismaService) {}
 
   async create(data: CreatePositionDto, user: UserEntity) {
     // get project
     const project = await this.prisma.project.findUnique({ where: { id: data.projectId } })
     if (!project) throw new NotFoundException('Project with this ID does not exist')
 
-    const ability = await this.caslPermissions.createForUser(user)
+    const ability = new Ability(user.abilities)
     if (
       !ability.can(Action.Create, new Position({ projectId: data.projectId, organisationId: project.organisationId }))
     )
@@ -56,15 +56,11 @@ export class PositionService {
     const position = await this.prisma.position.findUnique({ where: { id } })
     if (!position) throw new NotFoundException('Position with this ID does not exist')
 
-    const ability = await this.caslPermissions.createForUser(user)
+    const ability = new Ability(user.abilities)
 
     if (!ability.can(Action.Read, new Position(position))) throw new ForbiddenException()
 
-    // if (!ability.can(Action.Manage, new Position(position))) {
-    //   delete position.userRoles
-    // }
-
-    return position
+    return new Position(position)
   }
 
   // async findByOrganisation(organisationId: number, paginationArgs: PaginationArgsDto) {
@@ -126,7 +122,7 @@ export class PositionService {
   }
 
   async update(id: number, data: UpdatePositionDto, user: UserEntity) {
-    const ability = await this.caslPermissions.createForUser(user)
+    const ability = new Ability(user.abilities)
 
     const position = await this.findOne(id, user)
 
@@ -154,7 +150,7 @@ export class PositionService {
   ) {
     const position = await this.findOne(positionId, user)
 
-    const ability = await this.caslPermissions.createForUser(user)
+    const ability = new Ability(user.abilities)
 
     if (!ability.can(Action.Update, new Position(position))) throw new ForbiddenException()
 

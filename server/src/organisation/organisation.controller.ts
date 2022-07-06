@@ -1,57 +1,45 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Query,
+  Controller,
+  ForbiddenException,
+  Get,
   Param,
-  Delete,
-  UseInterceptors,
   ParseIntPipe,
+  Post,
+  Query,
   Req,
   UseGuards,
-  NotFoundException,
-  ForbiddenException,
+  UseInterceptors,
 } from '@nestjs/common'
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
-  ApiNoContentResponse,
-  ApiOkResponse,
   ApiExtraModels,
-  ApiTags,
-  ApiParam,
+  ApiOkResponse,
   ApiOperation,
-  ApiSecurity,
+  ApiTags,
 } from '@nestjs/swagger'
 
-import { PaginationArgsDto, PaginatedDto, ApiPaginatedResponse } from 'src/page/pagination-args.dto'
-import { PrismaClassSerializerInterceptorPaginated } from 'src/class-serializer-paginated.interceptor'
-import JwtAuthenticationGuard from 'src/authentication/guards/jwtAuthentication.guard'
-import { RequestWithUser } from 'src/authentication/authentication.controller'
-
-import { UserEntity } from 'src/user/entities/user.entity'
-import { Position } from 'src/position/entities/position.entity'
-import { Project } from 'src/project/entities/project.entity'
-import { OrganisationService } from './organisation.service'
-import { CreateOrganisationDto } from './dto/create-organisation.dto'
-import { UpdateOrganisationDto } from './dto/update-organisation.dto'
-import { Organisation } from './entities/organisation.entity'
-import { CaslPermissions } from 'src/casl/casl.permissions'
-
-import { Action } from 'src/casl/actions'
 import { Ability } from '@casl/ability'
+
+import { RequestWithUser } from 'src/authentication/authentication.controller'
+import JwtAuthenticationGuard from 'src/authentication/guards/jwtAuthentication.guard'
+import { PrismaClassSerializerInterceptorPaginated } from 'src/class-serializer-paginated.interceptor'
+import { ApiPaginatedResponse, PaginatedDto, PaginationArgsDto } from 'src/page/pagination-args.dto'
+import { Action } from 'src/casl/actions'
+import { Position } from 'src/position/entities/position.entity'
+import { UserEntity } from 'src/user/entities/user.entity'
+
+import { CreateOrganisationDto } from './dto/create-organisation.dto'
+import { Organisation } from './entities/organisation.entity'
+import { OrganisationService } from './organisation.service'
 
 @ApiTags('Organisations')
 @ApiBearerAuth('access-token')
 @Controller('organisation')
 @UseGuards(JwtAuthenticationGuard)
 export class OrganisationController {
-  constructor(
-    private readonly organisationService: OrganisationService,
-    private readonly caslPermissions: CaslPermissions
-  ) {}
+  constructor(private readonly organisationService: OrganisationService) {}
 
   @Get(':id')
   @ApiOperation({ summary: 'Get information about one organisation' })

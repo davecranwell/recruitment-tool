@@ -1,7 +1,7 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
-  ForbiddenException,
   Get,
   Param,
   ParseIntPipe,
@@ -20,24 +20,21 @@ import { ApiPaginatedResponse, PaginatedDto, PaginationArgsDto } from 'src/page/
 import { PositionService } from './position.service'
 
 import { CreatePositionDto } from './dto/create-position.dto'
-import { UpdatePositionDto } from './dto/update-position.dto'
 import { UpdateApplicantStageDto } from './dto/update-applicant-stage.dto'
+import { UpdatePositionDto } from './dto/update-position.dto'
 
 import { ApplicantProfileWithUser } from 'src/applicant-profile/entities/applicant-profile.entity'
-import JwtAuthenticationGuard from 'src/authentication/guards/jwtAuthentication.guard'
-import { Position } from './entities/position.entity'
-import { Pipeline } from 'src/pipeline/entities/pipeline.entity'
-import { Action } from 'src/casl/actions'
-import { CaslPermissions } from 'src/casl/casl.permissions'
 import { RequestWithUser } from 'src/authentication/authentication.controller'
-import { Organisation } from 'src/organisation/entities/organisation.entity'
+import JwtAuthenticationGuard from 'src/authentication/guards/jwtAuthentication.guard'
+import { Pipeline } from 'src/pipeline/entities/pipeline.entity'
+import { Position } from './entities/position.entity'
 
 @ApiTags('Positions')
 @ApiBearerAuth('access-token')
 @Controller('position')
 @UseGuards(JwtAuthenticationGuard)
 export class PositionController {
-  constructor(private readonly positionService: PositionService, private readonly caslPermissions: CaslPermissions) {}
+  constructor(private readonly positionService: PositionService) {}
 
   @Post()
   @ApiCreatedResponse({ type: Position })
@@ -47,6 +44,7 @@ export class PositionController {
 
   @Get(':id')
   @ApiOkResponse({ type: Position })
+  @UseInterceptors(ClassSerializerInterceptor)
   findOne(@Req() request: RequestWithUser, @Param('id', ParseIntPipe) id: number) {
     return this.positionService.findOne(id, request.user)
   }

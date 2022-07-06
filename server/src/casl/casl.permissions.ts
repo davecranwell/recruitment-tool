@@ -94,7 +94,12 @@ export class CaslPermissions {
       {
         action: Action.Manage,
         subject: 'Position',
-        conditions: { 'project.organisationId': { $in: orgIdsOwned } } as any,
+        conditions: { organisationId: { $in: orgIdsOwned } } as any,
+      },
+      {
+        action: Action.Read,
+        subject: 'Position',
+        conditions: { projectId: { $in: projectIdsRead } } as any,
       },
       {
         action: Action.Create,

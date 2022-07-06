@@ -13,7 +13,7 @@ describe('OrganisationController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [OrganisationController],
-      providers: [OrganisationService, PrismaService, CaslPermissions],
+      providers: [OrganisationService, PrismaService],
     }).compile()
 
     controller = await module.resolve<OrganisationController>(OrganisationController)

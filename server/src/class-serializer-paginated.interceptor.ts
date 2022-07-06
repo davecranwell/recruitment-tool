@@ -3,7 +3,6 @@ import {
   CallHandler,
   ClassSerializerInterceptor,
   ExecutionContext,
-  Inject,
   Injectable,
   mixin,
   PlainLiteralObject,
@@ -11,20 +10,16 @@ import {
 } from '@nestjs/common'
 import { ClassTransformOptions, plainToClass } from 'class-transformer'
 import { map, Observable } from 'rxjs'
-import { Action } from './casl/actions'
-import { CaslPermissions } from './casl/casl.permissions'
-import { Organisation } from './organisation/entities/organisation.entity'
-import { UserEntity as User } from './user/entities/user.entity'
 
-import { PaginatedResult } from './util/pagination'
+import { PaginatedResult } from 'src/util/pagination'
+
+import { Action } from './casl/actions'
 
 const isResponsePaginated = (response) => response && response.data && response.meta
 
 export function PrismaClassSerializerInterceptorPaginated(classToIntercept: Type): typeof ClassSerializerInterceptor {
   @Injectable()
   class Interceptor extends ClassSerializerInterceptor {
-    @Inject(CaslPermissions) private readonly caslPermissions
-
     private static user: any
 
     changePlainObjectToClass(response: PlainLiteralObject, abilities: Ability) {
