@@ -4,7 +4,7 @@ import { redirect } from '@remix-run/node'
 
 import { useActionData, useLoaderData, useTransition } from '@remix-run/react'
 
-import { api, forwardHeaders } from 'app/api.server'
+import { api, jsonWithHeaders } from 'app/api.server'
 
 import Content from 'app/components/Content'
 import { withValues } from 'app/components/Forms'
@@ -28,10 +28,9 @@ export const loader: LoaderFunction = async (data) => {
   // return invariant(params.id, 'Expected position ID')
 
   const session = await requireAuth(request)
-  const positionRes = await api(data, `/position/${params.id}`)
-  const position = await positionRes.json()
+  const position = await api(data, `/position/${params.id}`)
 
-  return forwardHeaders({ position, fields: withValues(formFields(session), position) })
+  return jsonWithHeaders({ position, fields: withValues(formFields(session), position) })
 }
 
 const EditPosition = () => {

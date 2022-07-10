@@ -2,7 +2,7 @@ import { FolderIcon } from '@heroicons/react/outline'
 import type { LoaderFunction, MetaFunction } from '@remix-run/node'
 import { Outlet, useLoaderData } from '@remix-run/react'
 
-import { api, forwardHeaders } from 'app/api.server'
+import { api, jsonWithHeaders } from 'app/api.server'
 import { getSessionData, requireAuth } from '~/sessions.server'
 
 import Content from 'app/components/Content'
@@ -22,7 +22,7 @@ export const loader: LoaderFunction = async (data) => {
 
   const projects = await api(data, `/organisation/${sessionData.activeOrganisation.id}/projects`)
 
-  return forwardHeaders({ sessionData, projects })
+  return jsonWithHeaders({ sessionData, projects })
 }
 
 export type Project = {

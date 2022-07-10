@@ -51,7 +51,7 @@ export async function api(data: DataFunctionArgs, url: string, method: string = 
  * @param data an object containing data to be returned as json, can include Response objects
  * @returns
  */
-export async function forwardHeaders(data: any) {
+export async function jsonWithHeaders(data: any) {
   let headers = new Headers()
 
   for (let datum of Object.keys(data)) {

@@ -70,12 +70,12 @@ async function main() {
 
   const recruiterUser = await prisma.user.create({
     data: {
-      name: 'Recruiter user',
+      name: 'Recruiter for VoCoVo',
       email: 'foo@bar3.com',
       password: '$2a$10$Cer44Qb/fNW3flIcCEd.bONiYvyFwQtTewCGvZoeBlby78m94iwF.', // test
-      // organisations: {
-      //   create: [{ organisationId: vocovo.id }, { organisationId: strongbyte.id }],
-      // },
+      organisations: {
+        create: [{ organisationId: vocovoOrganisation.id, role: 'STANDARD' }],
+      },
     },
   })
 
@@ -117,7 +117,7 @@ async function main() {
    */
   const humanRecruiternUser = await prisma.user.create({
     data: {
-      name: 'Humand recruiter user',
+      name: 'Humand standard user',
       email: 'foo@bar6.com',
       password: '$2a$10$Cer44Qb/fNW3flIcCEd.bONiYvyFwQtTewCGvZoeBlby78m94iwF.', // test
       organisations: {
@@ -131,7 +131,7 @@ async function main() {
 
   const vocovoOrganisationUser = await prisma.user.create({
     data: {
-      name: 'Vocovo org user',
+      name: 'Vocovo org owner',
       email: 'foo@bar4.com',
       password: '$2a$10$Cer44Qb/fNW3flIcCEd.bONiYvyFwQtTewCGvZoeBlby78m94iwF.', // test
       organisations: {
@@ -294,7 +294,7 @@ async function main() {
 
   const applicant1Profile = await prisma.applicantProfile.create({
     data: {
-      profileName: 'General profile',
+      profileName: 'Applicant 1 General profile',
       askingSalary: 100000,
       userId: applicantUser1.id,
       organisations: {
@@ -313,7 +313,7 @@ async function main() {
 
   const applicant2Profile = await prisma.applicantProfile.create({
     data: {
-      profileName: 'My profile',
+      profileName: 'Applicant 2 My profile',
       askingSalary: 1500000,
       userId: applicantUser2.id,
       // organisations: {
@@ -324,7 +324,7 @@ async function main() {
 
   const applicant3Profile = await prisma.applicantProfile.create({
     data: {
-      profileName: 'First profile',
+      profileName: 'Applicant 3 First profile',
       askingSalary: 50000,
       userId: applicantUser3.id,
       // organisations: {

@@ -4,7 +4,7 @@ import { redirect } from '@remix-run/node'
 
 import { useActionData, useLoaderData, useTransition } from '@remix-run/react'
 
-import { api, forwardHeaders } from 'app/api.server'
+import { api, jsonWithHeaders } from 'app/api.server'
 
 import Content from 'app/components/Content'
 import { withValues } from 'app/components/Forms'
@@ -27,10 +27,9 @@ export const loader: LoaderFunction = async (data) => {
   const { request, params } = data
 
   const session = await requireAuth(request)
-  const projectRes = await api(data, `/project/${params.id}`)
-  const project = await projectRes.json()
+  const project = await api(data, `/project/${params.id}`)
 
-  return forwardHeaders({ project, fields: withValues(formFields(session), project) })
+  return jsonWithHeaders({ project, fields: withValues(formFields(session), project) })
 }
 
 const EditProject = () => {
