@@ -1,43 +1,21 @@
-import type { LoaderFunction } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
-import { UsersIcon } from '@heroicons/react/outline'
-import { MailIcon } from '@heroicons/react/solid'
-import invariant from 'tiny-invariant'
+import { UsersIcon, MailIcon } from '@heroicons/react/solid'
 
-import { api } from 'app/api.server'
-import { requireAuth } from 'app/sessions.server'
+import type { PositionApplicant } from 'app/models/positions/PositionApplicant'
+import Empty from './Empty'
+import { StackedList, StackedListItem } from './StackedList'
 
-import { StackedList, StackedListItem } from 'app/components/StackedList'
-import Empty from '~/components/Empty'
-
-import type { ApplicantProfile } from '~/models/applicant-profiles/ApplicantProfile'
-
-export const loader: LoaderFunction = async (data) => {
-  const { request, params } = data
-  invariant(params.id, 'Expected position ID')
-
-  await requireAuth(request)
-
-  return await api(data, `/position/${params.id}/applicants`)
+type Props = {
+  applicants: PositionApplicant[]
+  emptyText?: string
 }
 
-type PositionApplicant = ApplicantProfile & {
-  user: {
-    name: string
-    email: string
-    id: number
-  }
-}
-
-const PositionApplicants = () => {
-  const applicants = useLoaderData()
-
+const ApplicantList: React.FC<Props> = ({ applicants, emptyText = 'There are no applicants at this stage' }) => {
   return (
-    <div className="py-6">
-      {applicants.data.length < 1 && <Empty Icon={UsersIcon} title="There are no applicants for this position" />}
-      {applicants.data.length > 0 && (
+    <>
+      {applicants.length < 1 && <Empty Icon={UsersIcon} title={emptyText} />}
+      {applicants.length > 0 && (
         <StackedList>
-          {applicants.data.map((applicant: PositionApplicant) => (
+          {applicants.map((applicant: PositionApplicant) => (
             <StackedListItem key={applicant.id} link={`/applicant-profiles/${applicant.id}`}>
               <div className="flex min-w-0 flex-1 items-center">
                 <div className="flex-shrink-0">
@@ -68,8 +46,8 @@ const PositionApplicants = () => {
           ))}
         </StackedList>
       )}
-    </div>
+    </>
   )
 }
 
-export default PositionApplicants
+export default ApplicantList

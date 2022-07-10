@@ -2,8 +2,8 @@ import type { LoaderFunction } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import invariant from 'tiny-invariant'
 
-import { api } from 'app/api.server'
-import { requireAuth } from 'app/sessions.server'
+import { api } from '~/api.server'
+import { requireAuth } from '~/sessions.server'
 
 import ApplicantList from '~/components/ApplicantList'
 
@@ -13,17 +13,17 @@ export const loader: LoaderFunction = async (data) => {
 
   await requireAuth(request)
 
-  return await api(data, `/position/${params.id}/applicants`)
+  return await api(data, `/position/${params.id}/applicants/${params.stage}`)
 }
 
-const PositionApplicants = () => {
+const Stage = () => {
   const applicants = useLoaderData()
 
   return (
     <div className="py-6">
-      <ApplicantList applicants={applicants.data} emptyText={'There are no applicants for this position'} />
+      <ApplicantList applicants={applicants.data} />
     </div>
   )
 }
 
-export default PositionApplicants
+export default Stage

@@ -93,6 +93,31 @@ export class PositionService {
     return profiles
   }
 
+  async findApplicantsAtStage(
+    positionId: number,
+    stageId: number,
+    user: UserEntity,
+    paginationArgs: PaginationArgsDto
+  ) {
+    // used to test access to the position
+    await this.findOne(positionId, user)
+
+    const profiles = await paginate<ApplicantProfileForPosition, Prisma.ApplicantProfileForPositionFindManyArgs>(
+      this.prisma.applicantProfileForPosition,
+      {
+        where: { positionId, stageId },
+        include: { applicantProfile: { include: { user: { select: { name: true, email: true } } } } },
+      },
+      { ...paginationArgs }
+    )
+
+    ;(profiles as unknown as PaginatedDto<ApplicantProfile>).data = profiles.data.map((prof) => ({
+      ...prof.applicantProfile,
+    }))
+
+    return profiles
+  }
+
   async findApplicant(positionId: number, applicantProfileId: number, user: UserEntity) {
     // used to test access to the position
     await this.findOne(positionId, user)
@@ -117,7 +142,12 @@ export class PositionService {
 
     return this.prisma.pipeline.findUnique({
       where: { id: position.pipelineId },
-      include: { stages: { orderBy: { order: 'asc' }, include: { stage: true } } },
+      include: {
+        stages: {
+          orderBy: { order: 'asc' },
+          include: { stage: { include: { _count: { select: { applicants: true } } } } },
+        },
+      },
     })
   }
 

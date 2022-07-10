@@ -1,8 +1,9 @@
 import { FolderIcon } from '@heroicons/react/outline'
 import type { LoaderFunction, MetaFunction } from '@remix-run/node'
-import { Outlet, useLoaderData } from '@remix-run/react'
+import { Outlet, useLoaderData, useOutletContext } from '@remix-run/react'
 
-import { api, jsonWithHeaders } from 'app/api.server'
+import { api } from 'app/api.server'
+import type { SessionData } from '~/sessions.server'
 import { getSessionData, requireAuth } from '~/sessions.server'
 
 import Content from 'app/components/Content'
@@ -20,9 +21,7 @@ export const loader: LoaderFunction = async (data) => {
   await requireAuth(request)
   const sessionData = await getSessionData(request)
 
-  const projects = await api(data, `/organisation/${sessionData.activeOrganisation.id}/projects`)
-
-  return jsonWithHeaders({ sessionData, projects })
+  return api(data, `/organisation/${sessionData.activeOrganisation.id}/projects`)
 }
 
 export type Project = {
@@ -31,7 +30,9 @@ export type Project = {
 }
 
 const Projects = () => {
-  const { sessionData, projects } = useLoaderData()
+  const sessionData = useOutletContext<SessionData>()
+  const projects = useLoaderData()
+
   const { can, subject } = useAppAbility()
 
   const canCreateProject = can('manage', subject('Organisation', sessionData?.activeOrganisation))

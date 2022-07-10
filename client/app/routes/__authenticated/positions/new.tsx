@@ -1,14 +1,12 @@
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
-import { json } from '@remix-run/node'
-import { redirect } from '@remix-run/node'
-
+import { json, redirect } from '@remix-run/node'
 import { useActionData, useLoaderData, useTransition } from '@remix-run/react'
 
 import { api } from 'app/api.server'
+import { requireAuth } from 'app/sessions.server'
 
 import Content from 'app/components/Content'
 import Form from 'app/components/Forms'
-import { requireAuth } from 'app/sessions.server'
 
 import formFields from 'app/models/positions/form'
 

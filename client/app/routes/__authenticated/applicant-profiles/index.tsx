@@ -1,16 +1,17 @@
 import { CalendarIcon, CurrencyPoundIcon, UsersIcon } from '@heroicons/react/outline'
 import type { LoaderFunction, MetaFunction } from '@remix-run/node'
-import { json } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 
 import { api } from 'app/api.server'
-import { getSessionData, requireAuth } from 'app/sessions.server'
+import { requireAuth } from 'app/sessions.server'
 
 import Content from 'app/components/Content'
 import Empty from 'app/components/Empty'
 import { StackedList, StackedListItem } from 'app/components/StackedList'
 
 import { dateTimeFormat } from 'app/utils'
+import type { ApplicantProfile } from 'app/models/applicant-profiles/ApplicantProfile'
+import ApplicantList from '~/components/ApplicantList'
 
 export const meta: MetaFunction = ({ data }) => {
   return { title: `Applicants to ${data?.sessionData?.activeOrganisation?.name}` }
@@ -23,17 +24,6 @@ export const loader: LoaderFunction = async (data) => {
   return api(data, `/applicant-profile/by-user/${user.user.id}`)
 }
 
-export type ApplicantProfile = {
-  id: number
-  askingSalary: string
-  profileName: string
-  updatedAt: Date
-  user?: {
-    email: string
-    name: string
-  }
-}
-
 const ApplicantProfiles = () => {
   const profiles = useLoaderData()
 
@@ -42,6 +32,7 @@ const ApplicantProfiles = () => {
       title={'Applicant Profiles'}
       primaryAction={profiles.data.length && { label: 'Create', link: '/profile/new' }}
     >
+      <ApplicantList applicants={profiles} emptyText="There are no applicants in this organisation" />
       {profiles.data.length < 1 && <Empty Icon={UsersIcon} title={'There are no applicants in this organisation'} />}
       {profiles.data.length > 0 && (
         <StackedList>

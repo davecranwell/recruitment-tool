@@ -6,7 +6,7 @@ import classNames from 'classnames'
 import { api } from '~/api.server'
 import Button from '~/components/Button'
 import Content from '~/components/Content'
-import type { ApplicantProfile } from '.'
+import type { ApplicantProfile } from 'app/models/applicant-profiles/ApplicantProfile'
 
 export const meta: MetaFunction = ({ data }) => {
   return { title: `Applicant - ${data?.user?.name}` }

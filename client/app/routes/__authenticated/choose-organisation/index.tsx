@@ -1,32 +1,16 @@
 import type { LoaderFunction } from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
 
-import { api } from 'app/api.server'
 import { requireAuth } from 'app/sessions.server'
 
 import Content from 'app/components/Content'
+import type { Organisation } from 'app/models/organisation/Organisation'
 
 export const loader: LoaderFunction = async (data) => {
   const { request } = data
   const auth = await requireAuth(request)
 
   return auth.user.organisations
-}
-
-export type Organisation = {
-  id: any
-  role: string
-  userId: number
-  organisationId: number
-  createdAt: Date
-  updatedAt: Date
-  organisation: {
-    id: number
-    name: string
-    machineName: string
-    createdAt: Date
-    updatedAt: Date
-  }
 }
 
 const ChooseOrganisation = () => {

@@ -41,7 +41,7 @@ const Layout: React.FC<Props> = ({ children, session }) => {
     [
       { name: 'Home', href: '/start', icon: HomeIcon },
       { name: 'Applicants', href: '/applicant-profiles', icon: UsersIcon },
-      { name: 'Projects', href: '/projects', icon: FolderIcon },
+
       { name: 'Positions', href: '/positions', icon: BriefcaseIcon },
       { name: 'Timeline', href: '/timeline', icon: CalendarIcon },
     ],
@@ -51,6 +51,7 @@ const Layout: React.FC<Props> = ({ children, session }) => {
     navigation.push([
       { name: 'Organisation', type: 'heading' },
       { name: 'Settings', href: '/config', icon: CogIcon },
+      { name: 'Projects', href: '/projects', icon: FolderIcon },
       { name: 'Users', href: '/users', icon: UserGroupIcon },
     ])
   }
@@ -77,8 +78,8 @@ const Layout: React.FC<Props> = ({ children, session }) => {
         <SiteNav navItems={navigation} />
       </Sidebar>
 
-      <div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
-        <div className="bg-primary-700 flex flex-grow flex-col overflow-y-auto border-r border-gray-200 pt-5">
+      <div className="hidden md:fixed md:inset-y-0 md:flex md:w-72 md:flex-col">
+        <div className="bg-primary-700 flex flex-grow flex-col overflow-y-auto border-r border-gray-200 px-2 pt-5">
           <div className="flex flex-shrink-0 items-center px-4">
             {/* <img
               className="h-8 w-auto"
@@ -119,7 +120,7 @@ const Layout: React.FC<Props> = ({ children, session }) => {
         </div>
       </div>
 
-      <div className="md:pl-64">
+      <div className="md:pl-72">
         <MobileTopNav userNavigation={userNavigation} onSidebarOpen={handleSidebarOpen} />
         <main className="mt-8">
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">{children}</div>

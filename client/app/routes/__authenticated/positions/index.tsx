@@ -1,12 +1,5 @@
-import {
-  CalendarIcon,
-  FolderAddIcon,
-  CurrencyDollarIcon,
-  LocationMarkerIcon,
-  BriefcaseIcon,
-} from '@heroicons/react/outline'
+import { BriefcaseIcon, CalendarIcon, CurrencyDollarIcon, LocationMarkerIcon } from '@heroicons/react/outline'
 import type { LoaderFunction, MetaFunction } from '@remix-run/node'
-import { json } from '@remix-run/node'
 import { Outlet, useLoaderData } from '@remix-run/react'
 
 import { api } from 'app/api.server'
@@ -17,8 +10,9 @@ import Empty from 'app/components/Empty'
 import { MetaList, MetaListItem } from 'app/components/MetaList'
 import { StackedList, StackedListItem } from 'app/components/StackedList'
 
-import { dateTimeFormat } from 'app/utils'
 import { useAppAbility } from 'app/hooks/useAppAbility'
+import { dateTimeFormat } from 'app/utils'
+import type { Position } from '~/models/positions/Position'
 
 export const meta: MetaFunction = ({ data }) => {
   return { title: `Positions at ${data?.sessionData?.activeOrganisation?.name}` }
@@ -27,27 +21,9 @@ export const meta: MetaFunction = ({ data }) => {
 export const loader: LoaderFunction = async (data) => {
   const { request } = data
   await requireAuth(request)
+
   const sessionData = await getSessionData(request)
-
   return api(data, `/organisation/${sessionData.activeOrganisation.id}/positions`)
-}
-
-export enum PositionEmploymentType {
-  FULL,
-  PART,
-  CONTRACT,
-}
-
-export type Position = {
-  id: number
-  name: string
-  salary?: string
-  description?: String
-  openingDate?: Date
-  closingDate?: Date
-  employment?: PositionEmploymentType
-  location?: string
-  salaryRange?: string
 }
 
 const Positions = () => {

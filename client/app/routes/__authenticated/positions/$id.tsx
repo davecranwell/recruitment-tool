@@ -1,16 +1,17 @@
-import { BriefcaseIcon, CalendarIcon, CurrencyDollarIcon, LocationMarkerIcon } from '@heroicons/react/solid'
+import { CalendarIcon, CurrencyDollarIcon, LocationMarkerIcon } from '@heroicons/react/solid'
 import type { LoaderFunction } from '@remix-run/node'
-import { json } from '@remix-run/node'
 import { Outlet, useLoaderData } from '@remix-run/react'
 import type { MetaFunction } from '@remix-run/react/routeModules'
 
-import { api } from 'app/api.server'
+import { api, jsonWithHeaders } from 'app/api.server'
+import { requireAuth } from '~/sessions.server'
+
 import Content from 'app/components/Content'
 import Tabs from 'app/components/Tabs'
 import { MetaList, MetaListItem } from '~/components/MetaList'
-import { requireAuth } from '~/sessions.server'
+
+import type { Position } from '~/models/positions/Position'
 import { dateTimeFormat } from '~/utils'
-import type { Position } from '.'
 
 export const meta: MetaFunction = ({ data }) => {
   return { title: data.name }
@@ -19,19 +20,36 @@ export const meta: MetaFunction = ({ data }) => {
 export const loader: LoaderFunction = async (data) => {
   const { request, params } = data
   await requireAuth(request)
-  return api(data, `/position/${params.id}`)
+  const position = await api(data, `/position/${params.id}`)
+  const stages = await api(data, `/position/${params.id}/pipeline`)
+
+  return jsonWithHeaders({ position, stages })
 }
 
 const PositionDetail = () => {
-  const { id, name, closingDate, description, location, salaryRange, employment } = useLoaderData() as Position
+  const { position, stages } = useLoaderData()
+  const { id, name, closingDate, description, location, salaryRange, employment } = position as Position
+
+  const totalCount = stages.stages.reduce((acc: number, curr: any) => {
+    const { stage } = curr
+    return (acc = acc + stage._count.applicants)
+  }, 0)
 
   const tabs = [
-    { name: 'Applied', href: `/positions/${id}`, count: '2' },
-    { name: 'Phone Screening', href: `/positions/${id}/screened`, count: '4' },
-    { name: 'Interview', href: `/positions/${id}/interviewed`, count: '6' },
-    { name: 'Offer', href: `/positions/${id}/offered` },
-    { name: 'Disqualified', href: `/positions/${id}/disqualified` },
+    {
+      name: 'All',
+      href: `/positions/${id}`,
+      count: totalCount,
+    },
   ]
+
+  tabs.push(
+    ...stages.stages.map(({ stage }: { stage: any }) => ({
+      name: stage.name,
+      href: `/positions/${id}/${stage.id}`,
+      count: stage._count.applicants,
+    }))
+  )
 
   return (
     <Content

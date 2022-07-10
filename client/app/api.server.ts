@@ -60,7 +60,9 @@ export async function jsonWithHeaders(data: any) {
     if (thisData instanceof Response) {
       if (thisData.headers) {
         for (let headerPair of thisData.headers.entries()) {
-          headers.append(headerPair[0], headerPair[1])
+          if (!headers.has(headerPair[0])) {
+            headers.append(headerPair[0], headerPair[1])
+          }
         }
       }
 

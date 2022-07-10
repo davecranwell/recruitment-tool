@@ -4,7 +4,7 @@ import type { JwtPayload } from 'jsonwebtoken'
 import jwt from 'jsonwebtoken'
 import invariant from 'tiny-invariant'
 
-import type { Organisation } from './routes/__authenticated/choose-organisation'
+import type { Organisation } from '~/models/organisation/Organisation'
 
 invariant(process.env.SESSION_SECRET, 'SESSION_SECRET must be set')
 invariant(process.env.SESSION_EXPIRATION_TIME, 'SESSION_EXPIRATION_TIME must be set')

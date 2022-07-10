@@ -65,6 +65,19 @@ export class PositionController {
     return this.positionService.findAllApplicants(id, request.user, paginationArgs)
   }
 
+  @Get(':id/applicants/:stageId')
+  @ApiExtraModels(PaginatedDto, ApplicantProfileWithUser)
+  @ApiPaginatedResponse(ApplicantProfileWithUser)
+  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(ApplicantProfileWithUser))
+  findApplicantsAtStage(
+    @Req() request: RequestWithUser,
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
+    @Param('stageId', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) stageId: number,
+    @Query() paginationArgs: PaginationArgsDto
+  ) {
+    return this.positionService.findApplicantsAtStage(id, stageId, request.user, paginationArgs)
+  }
+
   @Get(':id/applicant/:applicantId')
   @ApiExtraModels(ApplicantProfileWithUser)
   @ApiResponse({ type: ApplicantProfileWithUser })
@@ -76,17 +89,17 @@ export class PositionController {
     return this.positionService.findApplicant(id, applicantId, request.user)
   }
 
-  @Patch(':positionId/applicant/:applicantProfileId')
+  @Patch(':id/applicant/:applicantProfileId')
   @ApiExtraModels(ApplicantProfileWithUser)
   @ApiResponse({ type: ApplicantProfileWithUser })
   changeApplicantStage(
     @Req() request: RequestWithUser,
-    @Param('positionId', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) positionId: number,
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
     @Param('applicantProfileId', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND }))
     applicantProfileId: number,
     @Body() data: UpdateApplicantStageDto
   ) {
-    return this.positionService.changeApplicantStage(positionId, applicantProfileId, data, request.user)
+    return this.positionService.changeApplicantStage(id, applicantProfileId, data, request.user)
   }
 
   @Get(':id/pipeline')
