@@ -1,5 +1,13 @@
 import { Menu } from '@headlessui/react'
-import { CalendarIcon, CogIcon, FolderIcon, HomeIcon, UserGroupIcon, UsersIcon } from '@heroicons/react/outline'
+import {
+  BriefcaseIcon,
+  CalendarIcon,
+  CogIcon,
+  FolderIcon,
+  HomeIcon,
+  UserGroupIcon,
+  UsersIcon,
+} from '@heroicons/react/outline'
 import { SelectorIcon } from '@heroicons/react/solid'
 import type { SessionData } from '@remix-run/node'
 import * as React from 'react'
@@ -34,6 +42,7 @@ const Layout: React.FC<Props> = ({ children, session }) => {
       { name: 'Home', href: '/start', icon: HomeIcon },
       { name: 'Applicants', href: '/applicant-profiles', icon: UsersIcon },
       { name: 'Projects', href: '/projects', icon: FolderIcon },
+      { name: 'Positions', href: '/positions', icon: BriefcaseIcon },
       { name: 'Timeline', href: '/timeline', icon: CalendarIcon },
     ],
   ]
@@ -112,9 +121,9 @@ const Layout: React.FC<Props> = ({ children, session }) => {
 
       <div className="md:pl-64">
         <MobileTopNav userNavigation={userNavigation} onSidebarOpen={handleSidebarOpen} />
-        <div className="mt-8">
+        <main className="mt-8">
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">{children}</div>
-        </div>
+        </main>
       </div>
     </div>
   )

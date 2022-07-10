@@ -19,7 +19,7 @@ export const meta: MetaFunction = ({ data }) => {
 export const loader: LoaderFunction = async (data) => {
   const { request, params } = data
   await requireAuth(request)
-  return await api(data, `/position/${params.id}`)
+  return api(data, `/position/${params.id}`)
 }
 
 const PositionDetail = () => {

@@ -44,3 +44,29 @@ export async function api(data: DataFunctionArgs, url: string, method: string = 
 
   return json(await apiRes.json(), { status: apiRes.status, headers })
 }
+
+/**
+ * Converts a data object containing potential Response objects in which headers are set, into the same data with the headers forwarded as appropriate
+ *
+ * @param data an object containing data to be returned as json, can include Response objects
+ * @returns
+ */
+export async function forwardHeaders(data: any) {
+  let headers = new Headers()
+
+  for (let datum of Object.keys(data)) {
+    const thisData = data[datum]
+
+    if (thisData instanceof Response) {
+      if (thisData.headers) {
+        for (let headerPair of thisData.headers.entries()) {
+          headers.append(headerPair[0], headerPair[1])
+        }
+      }
+
+      data[datum] = await thisData.json()
+    }
+  }
+
+  return json(data, { headers })
+}

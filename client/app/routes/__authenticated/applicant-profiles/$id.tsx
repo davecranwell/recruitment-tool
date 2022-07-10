@@ -1,17 +1,15 @@
 import { CheckIcon, QuestionMarkCircleIcon, ThumbUpIcon, UserIcon } from '@heroicons/react/solid'
 import type { LoaderFunction, MetaFunction } from '@remix-run/node'
-import { json } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import classNames from 'classnames'
 
 import { api } from '~/api.server'
 import Button from '~/components/Button'
 import Content from '~/components/Content'
-import { getSessionData, requireAuth } from '~/sessions.server'
 import type { ApplicantProfile } from '.'
 
 export const meta: MetaFunction = ({ data }) => {
-  return { title: `Applicant profile: ${data?.user?.name}` }
+  return { title: `Applicant - ${data?.user?.name}` }
 }
 
 export const loader: LoaderFunction = async (data) => {
@@ -191,7 +189,7 @@ const Profile = () => {
                     </h2>
                   </div>
                   <div className="px-4 py-6 sm:px-6">
-                    <ul role="list" className="space-y-8">
+                    <ul className="space-y-8">
                       {/* {comments.map((comment) => (
                         <li key={comment.id}>
                           <div className="flex space-x-3">
@@ -274,7 +272,7 @@ const Profile = () => {
 
               {/* Activity Feed */}
               <div className="mt-6 flow-root">
-                <ul role="list" className="-mb-8">
+                <ul className="-mb-8">
                   {timeline.map((item, itemIdx) => (
                     <li key={item.id}>
                       <div className="relative pb-8">

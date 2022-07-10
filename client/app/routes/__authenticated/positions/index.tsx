@@ -1,4 +1,10 @@
-import { CalendarIcon, FolderAddIcon, CurrencyDollarIcon, LocationMarkerIcon } from '@heroicons/react/outline'
+import {
+  CalendarIcon,
+  FolderAddIcon,
+  CurrencyDollarIcon,
+  LocationMarkerIcon,
+  BriefcaseIcon,
+} from '@heroicons/react/outline'
 import type { LoaderFunction, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { Outlet, useLoaderData } from '@remix-run/react'
@@ -23,9 +29,7 @@ export const loader: LoaderFunction = async (data) => {
   await requireAuth(request)
   const sessionData = await getSessionData(request)
 
-  const positions = await api(data, `/organisation/${sessionData.activeOrganisation.id}/positions`)
-
-  return json({ sessionData, positions: await positions.json() })
+  return api(data, `/organisation/${sessionData.activeOrganisation.id}/positions`)
 }
 
 export enum PositionEmploymentType {
@@ -47,7 +51,7 @@ export type Position = {
 }
 
 const Positions = () => {
-  const { positions } = useLoaderData()
+  const positions = useLoaderData()
   const { can } = useAppAbility()
 
   return (
@@ -57,7 +61,7 @@ const Positions = () => {
     >
       {positions.data.length < 1 && (
         <Empty
-          Icon={FolderAddIcon}
+          Icon={BriefcaseIcon}
           title={'No positions have been created'}
           createLink={can('create', 'Position') ? '/positions/new' : null}
         />

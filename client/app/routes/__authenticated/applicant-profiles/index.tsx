@@ -19,11 +19,8 @@ export const meta: MetaFunction = ({ data }) => {
 export const loader: LoaderFunction = async (data) => {
   const { request } = data
   const user = await requireAuth(request)
-  const sessionData = await getSessionData(request)
 
-  const profiles = await api(data, `/applicant-profile/by-user/${user.user.id}`)
-
-  return json({ sessionData, profiles: await profiles.json() })
+  return api(data, `/applicant-profile/by-user/${user.user.id}`)
 }
 
 export type ApplicantProfile = {
@@ -38,7 +35,7 @@ export type ApplicantProfile = {
 }
 
 const ApplicantProfiles = () => {
-  const { profiles } = useLoaderData()
+  const profiles = useLoaderData()
 
   return (
     <Content

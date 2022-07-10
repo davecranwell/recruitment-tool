@@ -1,9 +1,15 @@
-import { CalendarIcon, FolderAddIcon, CurrencyDollarIcon, LocationMarkerIcon } from '@heroicons/react/outline'
+import {
+  CalendarIcon,
+  FolderAddIcon,
+  CurrencyDollarIcon,
+  LocationMarkerIcon,
+  FolderIcon,
+} from '@heroicons/react/outline'
 import type { LoaderFunction, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { Outlet, useLoaderData } from '@remix-run/react'
 
-import { api } from 'app/api.server'
+import { api, forwardHeaders } from 'app/api.server'
 import { getSessionData, requireAuth } from '~/sessions.server'
 
 import Content from 'app/components/Content'
@@ -15,7 +21,7 @@ import { dateTimeFormat } from 'app/utils'
 import { useAppAbility } from 'app/hooks/useAppAbility'
 
 export const meta: MetaFunction = ({ data }) => {
-  return { title: `Positions at ${data?.sessionData?.activeOrganisation?.name}` }
+  return { title: `Projects at ${data?.sessionData?.activeOrganisation?.name}` }
 }
 
 export const loader: LoaderFunction = async (data) => {
@@ -25,7 +31,7 @@ export const loader: LoaderFunction = async (data) => {
 
   const projects = await api(data, `/organisation/${sessionData.activeOrganisation.id}/projects`)
 
-  return json({ sessionData, projects: await projects.json() })
+  return forwardHeaders({ sessionData, projects })
 }
 
 export type Project = {
@@ -52,7 +58,7 @@ const Projects = () => {
     >
       {projects.data.length < 1 && (
         <Empty
-          Icon={FolderAddIcon}
+          Icon={FolderIcon}
           title={'No projects have been created'}
           createLink={canCreateProject ? '/projects/new' : null}
         />
