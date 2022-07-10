@@ -1,12 +1,5 @@
-import {
-  CalendarIcon,
-  FolderAddIcon,
-  CurrencyDollarIcon,
-  LocationMarkerIcon,
-  FolderIcon,
-} from '@heroicons/react/outline'
+import { FolderIcon } from '@heroicons/react/outline'
 import type { LoaderFunction, MetaFunction } from '@remix-run/node'
-import { json } from '@remix-run/node'
 import { Outlet, useLoaderData } from '@remix-run/react'
 
 import { api, forwardHeaders } from 'app/api.server'
@@ -14,10 +7,8 @@ import { getSessionData, requireAuth } from '~/sessions.server'
 
 import Content from 'app/components/Content'
 import Empty from 'app/components/Empty'
-import { MetaList, MetaListItem } from 'app/components/MetaList'
 import { StackedList, StackedListItem } from 'app/components/StackedList'
 
-import { dateTimeFormat } from 'app/utils'
 import { useAppAbility } from 'app/hooks/useAppAbility'
 
 export const meta: MetaFunction = ({ data }) => {
