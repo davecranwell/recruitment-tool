@@ -8,3 +8,7 @@ export type ApplicantProfile = {
     name: string
   }
 }
+
+export type LinkedApplicantProfile = ApplicantProfile & {
+  link: string
+}

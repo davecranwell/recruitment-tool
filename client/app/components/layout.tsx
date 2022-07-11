@@ -122,9 +122,9 @@ const Layout: React.FC<Props> = ({ children, session }) => {
 
       <div className="md:pl-72">
         <MobileTopNav userNavigation={userNavigation} onSidebarOpen={handleSidebarOpen} />
-        <main className="mt-8">
+        <div className="mt-8">
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">{children}</div>
-        </main>
+        </div>
       </div>
     </div>
   )

@@ -1,11 +1,12 @@
 import type { LoaderFunction } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
+import { useLoaderData, useParams } from '@remix-run/react'
 import invariant from 'tiny-invariant'
 
 import { api } from '~/api.server'
 import { requireAuth } from '~/sessions.server'
 
 import ApplicantList from '~/components/ApplicantList'
+import type { LinkedApplicantProfile } from 'app/models/applicant-profiles/ApplicantProfile'
 
 export const loader: LoaderFunction = async (data) => {
   const { request, params } = data
@@ -18,6 +19,11 @@ export const loader: LoaderFunction = async (data) => {
 
 const Stage = () => {
   const applicants = useLoaderData()
+  const { id } = useParams()
+
+  applicants.data.forEach(
+    (applicant: LinkedApplicantProfile) => (applicant.link = `/positions/${id}/applicant/${applicant.id}`)
+  )
 
   return (
     <div className="py-6">
