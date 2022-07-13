@@ -7,49 +7,29 @@ import { api, jsonWithHeaders } from 'app/api.server'
 import { requireAuth } from '~/sessions.server'
 
 import Content from 'app/components/Content'
-import Tabs from 'app/components/Tabs'
+
 import { MetaList, MetaListItem } from '~/components/MetaList'
 
 import type { Position } from '~/models/positions/Position'
 import { dateTimeFormat } from '~/utils'
 
 export const meta: MetaFunction = ({ data }) => {
-  return { title: data.name }
+  const { position } = data
+  return { title: position.name }
 }
 
 export const loader: LoaderFunction = async (data) => {
   const { request, params } = data
   await requireAuth(request)
-  const position = await api(data, `/position/${params.id}`)
-  const stages = await api(data, `/position/${params.id}/pipeline`)
 
-  return jsonWithHeaders({ position, stages })
+  const stages = await api(data, `/position/${params.id}/pipeline`)
+  const position = await api(data, `/position/${params.id}`)
+  return jsonWithHeaders({ stages, position })
 }
 
 const PositionDetail = () => {
   const { position, stages } = useLoaderData()
   const { id, name, closingDate, description, location, salaryRange, employment } = position as Position
-
-  const totalCount = stages.stages.reduce((acc: number, curr: any) => {
-    const { stage } = curr
-    return (acc = acc + stage._count.applicants)
-  }, 0)
-
-  const tabs = [
-    {
-      name: 'All',
-      href: `/positions/${id}`,
-      count: totalCount,
-    },
-  ]
-
-  tabs.push(
-    ...stages.stages.map(({ stage }: { stage: any }) => ({
-      name: stage.name,
-      href: `/positions/${id}/${stage.id}`,
-      count: stage._count.applicants,
-    }))
-  )
 
   return (
     <Content
@@ -71,10 +51,7 @@ const PositionDetail = () => {
 
       <main className="pt-8 pb-16">
         <div className="px-4 sm:px-0">
-          <h2 className="text-lg font-medium text-gray-900">Candidates</h2>
-
-          <Tabs tabs={tabs} />
-          <Outlet />
+          <Outlet context={stages} />
         </div>
       </main>
     </Content>

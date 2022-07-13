@@ -11,6 +11,7 @@ import Empty from 'app/components/Empty'
 import { StackedList, StackedListItem } from 'app/components/StackedList'
 
 import { useAppAbility } from 'app/hooks/useAppAbility'
+import type { Project } from 'app/models/projects/Project'
 
 export const meta: MetaFunction = ({ data }) => {
   return { title: `Projects at ${data?.sessionData?.activeOrganisation?.name}` }
@@ -21,12 +22,7 @@ export const loader: LoaderFunction = async (data) => {
   await requireAuth(request)
   const sessionData = await getSessionData(request)
 
-  return api(data, `/organisation/${sessionData.activeOrganisation.id}/projects`)
-}
-
-export type Project = {
-  id: number
-  name: string
+  return await api(data, `/organisation/${sessionData.activeOrganisation.id}/projects`)
 }
 
 const Projects = () => {
