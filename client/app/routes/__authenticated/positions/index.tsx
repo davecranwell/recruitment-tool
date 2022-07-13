@@ -2,7 +2,7 @@ import { BriefcaseIcon, CalendarIcon, CurrencyDollarIcon, LocationMarkerIcon } f
 import type { LoaderFunction, MetaFunction } from '@remix-run/node'
 import { Outlet, useLoaderData } from '@remix-run/react'
 
-import { api } from 'app/api.server'
+import { api, jsonWithHeaders } from 'app/api.server'
 import { getSessionData, requireAuth } from '~/sessions.server'
 
 import Content from 'app/components/Content'
@@ -23,11 +23,14 @@ export const loader: LoaderFunction = async (data) => {
   await requireAuth(request)
 
   const sessionData = await getSessionData(request)
-  return api(data, `/organisation/${sessionData.activeOrganisation.id}/positions`)
+  const positions = await api(data, `/organisation/${sessionData.activeOrganisation.id}/positions`)
+
+  // sessionData returned so meta() function can use it
+  return jsonWithHeaders({ sessionData, positions })
 }
 
 const Positions = () => {
-  const positions = useLoaderData()
+  const { positions } = useLoaderData()
   const { can } = useAppAbility()
 
   return (
