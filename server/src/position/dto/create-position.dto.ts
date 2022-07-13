@@ -24,6 +24,11 @@ export class CreatePositionDto {
   @IsNumber()
   projectId: number
 
+  @ApiProperty({ required: true })
+  @IsNotEmpty()
+  @IsNumber()
+  pipelineId: number
+
   @ApiProperty({ enum: PositionEmploymentType })
   employment?: PositionEmploymentType
 
