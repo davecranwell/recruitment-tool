@@ -6,6 +6,7 @@ import classNames from 'classnames'
 
 import { camelToSentence } from 'app/utils'
 import Button from './Button'
+import Alert from './Alert'
 
 export type FieldDef = {
   name: string
@@ -42,10 +43,19 @@ export type NestTargetMessage = {
  * a new array of form fields with errors added to the corresponding fields.
  */
 export const withActionErrors = (formFields: FieldDef[], errors?: NestTargetMessage[]) => {
-  if (!errors?.length) return formFields
+  if (!errors?.length) return { fields: formFields, errors }
+
+  const orphanedErrors = ([] as NestTargetMessage[]).concat(errors)
 
   const getTargetErrors = (fieldName: string): string[] => {
-    const constraints = errors.filter((msg: NestTargetMessage) => msg.property === fieldName)[0]?.constraints
+    const errorIdx = errors.findIndex((msg: NestTargetMessage) => msg.property === fieldName)
+    const orphanedErrorsIdx = orphanedErrors.findIndex((msg: NestTargetMessage) => msg.property === fieldName)
+
+    if (errorIdx === -1) return []
+
+    orphanedErrors.splice(orphanedErrorsIdx, 1)
+    const constraints = errors[errorIdx]?.constraints
+
     return constraints
       ? Object.values(constraints).map((msg) => msg.replace(new RegExp(fieldName), camelToSentence(fieldName)))
       : []
@@ -63,7 +73,7 @@ export const withActionErrors = (formFields: FieldDef[], errors?: NestTargetMess
     })
   }
 
-  return enumerateFields(formFields)
+  return { fields: enumerateFields(formFields), orphanedErrors }
 }
 
 /**
@@ -152,7 +162,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                         .map((option) => (typeof option !== 'object' ? { key: option, value: option } : option))
                         .map((option) => {
                           return (
-                            <option key={option} value={option.value}>
+                            <option key={option.key} value={option.value}>
                               {option.key}
                             </option>
                           )
@@ -172,9 +182,9 @@ const Field: React.FC<FieldProps> = ({ field }) => {
               )}
               {field.errors && field.errors.length > 0 && (
                 <div className="mt-1 text-sm text-red-600" id={`${field.name}-errors`}>
-                  <p className="mt-2 text-sm text-red-600" id="email-error">
+                  <div className="mt-2 text-sm text-red-600" id="email-error">
                     {Array.isArray(field.errors) ? field.errors.map((msg) => <div key={msg}>{msg}</div>) : field.errors}
-                  </p>
+                  </div>
                 </div>
               )}
             </>
@@ -195,7 +205,11 @@ type FormLayoutProps = {
 }
 
 const FormLayout: React.FC<FormLayoutProps> = ({ fields, submitText = 'Submit', intro, errors, transition }) => {
-  const fieldsWithValidation = withActionErrors(fields, errors?.message)
+  const processedFields = withActionErrors(fields, errors?.message)
+
+  const { fields: fieldsWithValidation, orphanedErrors } = processedFields
+
+  console.log({ orphanedErrors })
 
   return (
     <Form method="post">
@@ -205,6 +219,10 @@ const FormLayout: React.FC<FormLayoutProps> = ({ fields, submitText = 'Submit', 
             <div>
               <p className="mt-1 text-sm text-gray-500">{intro}</p>
             </div>
+          )}
+
+          {orphanedErrors && orphanedErrors.length > 0 && (
+            <Alert type="error" message={orphanedErrors.flatMap((error) => Object.values(error.constraints))} />
           )}
 
           {fieldsWithValidation.map((field) => (
