@@ -1,7 +1,19 @@
 import type { FieldDef } from 'app/components/Forms'
 import type { SessionData } from 'app/sessions.server'
+import type { Project } from 'app/models/projects/Project'
 
-const formFields = (session: SessionData): FieldDef[] => [
+const formFields = (session: SessionData, projects: Project[]): FieldDef[] => [
+  {
+    name: 'projectId',
+    required: true,
+    label: 'Project',
+    type: 'select',
+    options: projects.map((project) => ({
+      key: project.name,
+      value: project.id,
+    })),
+    defaultValue: '',
+  },
   {
     name: 'name',
     required: true,
