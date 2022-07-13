@@ -30,7 +30,7 @@ const { getSession, commitSession, destroySession } = createCookieSessionStorage
     httpOnly: true,
     path: '/',
     sameSite: 'lax',
-    //secrets: [process.env.SESSION_SECRET],
+    secrets: [process.env.SESSION_SECRET],
     //secure: true,
   },
 })
