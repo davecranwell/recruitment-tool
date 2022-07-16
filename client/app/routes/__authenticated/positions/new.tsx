@@ -28,8 +28,6 @@ export const loader: LoaderFunction = async (data) => {
   const projectsRes = await api(data, `/organisation/${sessionData.activeOrganisation.id}/projects`)
   const projects = await projectsRes.clone().json()
 
-  console.log(projects.data)
-
   return jsonWithHeaders({ fields: formFields(sessionData, projects.data), projects: projectsRes })
 }
 

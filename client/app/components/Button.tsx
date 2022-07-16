@@ -1,6 +1,5 @@
 import type { Transition } from '@remix-run/react/transition'
 import classNames from 'classnames'
-import type { MouseEventHandler } from 'react'
 
 type Props = {
   type?: 'submit' | 'reset' | 'button'
@@ -9,12 +8,8 @@ type Props = {
   textLoading?: string
   color?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark'
   width?: 'auto' | 'full' | 'half'
-  onClick?: MouseEventHandler
   component?: React.ElementType
-  to?: string
 }
-
-// a react comp[] that can be a link or a button
 
 const Button: React.FC<Props> = ({
   children,
@@ -24,9 +19,8 @@ const Button: React.FC<Props> = ({
   textLoading = 'Loading...',
   color = 'primary',
   width = 'auto',
-  onClick = () => {},
   component,
-  to,
+  ...props
 }) => {
   const ButtonRoot: React.ElementType = component ?? 'button'
 
@@ -44,8 +38,7 @@ const Button: React.FC<Props> = ({
           'w-1/2': width === 'half',
         }
       )}
-      onClick={onClick}
-      to={to}
+      {...props}
     >
       {transition && transition.state !== 'idle' ? textLoading : text}
     </ButtonRoot>

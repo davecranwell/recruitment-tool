@@ -16,14 +16,12 @@ export default function Authenticated() {
   const abilities = new Ability(session.user.abilities)
 
   return (
-    <div>
-      <AbilityProvider abilities={abilities}>
-        <React.StrictMode>
-          <Layout session={session}>
-            <Outlet context={session} />
-          </Layout>
-        </React.StrictMode>
-      </AbilityProvider>
-    </div>
+    <AbilityProvider abilities={abilities}>
+      <React.StrictMode>
+        <Layout session={session}>
+          <Outlet context={session} />
+        </Layout>
+      </React.StrictMode>
+    </AbilityProvider>
   )
 }

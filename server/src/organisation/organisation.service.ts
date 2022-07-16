@@ -49,7 +49,7 @@ export class OrganisationService {
       { ...paginationArgs }
     )
 
-    ;(userOrgs as unknown as PaginatedDto<UserEntity>).data = userOrgs.data.map((userOrg) => ({ ...userOrg.user }))
+    //;(userOrgs as unknown as PaginatedDto<UserEntity>).data = userOrgs.data.map((userOrg) => ({ ...userOrg.user }))
 
     return userOrgs
   }
@@ -60,7 +60,7 @@ export class OrganisationService {
     const ability = new Ability(user.abilities)
 
     if (ability.can(Action.Manage, new Organisation({ id: organisationId }))) {
-      return await paginate<Position, Prisma.PositionFindManyArgs>(
+      return await paginate<Project, Prisma.ProjectFindManyArgs>(
         this.prisma.project,
         { where: { organisationId } },
         { ...paginationArgs }
@@ -87,7 +87,7 @@ export class OrganisationService {
     )
   }
 
-  async findPositions(organisationId: number, user: UserEntity, paginationArgs: PaginationArgsDto) {
+  async findPositions(organisationId: number, user: UserEntity, byProject: boolean, paginationArgs: PaginationArgsDto) {
     // if you're an org admin, get all positions
     // if you're a regular user, get all positions within theprojects you're allocated to
     const ability = new Ability(user.abilities)
@@ -95,7 +95,7 @@ export class OrganisationService {
     if (ability.can(Action.Manage, new Organisation({ id: organisationId }))) {
       return await paginate<Position, Prisma.PositionFindManyArgs>(
         this.prisma.position,
-        { where: { project: { organisationId } } },
+        { where: { project: { organisationId } }, include: { project: true } },
         { ...paginationArgs }
       )
     }
@@ -103,6 +103,11 @@ export class OrganisationService {
     const results = await paginate<Position, Prisma.PositionFindManyArgs>(
       this.prisma.position,
       {
+        orderBy: {
+          project: {
+            name: 'asc',
+          },
+        },
         where: {
           organisationId,
           project: {
@@ -117,6 +122,7 @@ export class OrganisationService {
             },
           },
         },
+        include: { project: true },
       },
       { ...paginationArgs }
     )

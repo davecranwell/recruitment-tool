@@ -65,6 +65,7 @@ const formFields = (session: SessionData, projects: Project[]): FieldDef[] => [
   },
   { name: 'description', label: 'Description', type: 'textarea', size: 3 },
   { name: 'organisationId', type: 'hidden', defaultValue: session.activeOrganisation.id },
+  { name: 'pipelineId', type: 'hidden', defaultValue: 2 },
 ]
 
 export default formFields

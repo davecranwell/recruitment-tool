@@ -73,13 +73,13 @@ const Layout: React.FC<Props> = ({ children, session }) => {
   const handleSidebarOpen = useCallback(() => setSidebarOpen(true), [])
 
   return (
-    <div>
+    <>
       <Sidebar onSidebarClose={handleSidebarClose} onSidebarOpen={handleSidebarOpen} sidebarOpen={sidebarOpen}>
         <SiteNav navItems={navigation} />
       </Sidebar>
 
       <div className="hidden md:fixed md:inset-y-0 md:flex md:w-72 md:flex-col">
-        <div className="bg-primary-700 flex flex-grow flex-col overflow-y-auto border-r border-gray-200 px-2 pt-5">
+        <div className="flex flex-grow flex-col overflow-y-auto border-r border-gray-200 bg-white px-2 pt-5">
           <div className="flex flex-shrink-0 items-center px-4">
             {/* <img
               className="h-8 w-auto"
@@ -92,7 +92,7 @@ const Layout: React.FC<Props> = ({ children, session }) => {
             navItems={userNavigation}
             positionClasses="right-0 left-0"
             button={() => (
-              <Menu.Button className="group w-full rounded-md bg-indigo-700 px-3.5 py-2 text-left text-sm font-medium text-indigo-100 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-gray-100">
+              <Menu.Button className="hover:bg-primary-100 group w-full rounded-md px-3.5 py-2 text-left text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-gray-100">
                 <span className="flex w-full items-center justify-between">
                   <span className="flex min-w-0 items-center justify-between space-x-3">
                     <img
@@ -102,7 +102,7 @@ const Layout: React.FC<Props> = ({ children, session }) => {
                     />
                     <span className="flex min-w-0 flex-1 flex-col">
                       <span className="truncate text-sm font-medium">{session?.user?.name}</span>
-                      <span className="truncate text-sm text-indigo-200">{session?.activeOrganisation?.name}</span>
+                      <span className="truncate text-sm text-gray-400">{session?.activeOrganisation?.name}</span>
                     </span>
                   </span>
                   <SelectorIcon
@@ -122,11 +122,11 @@ const Layout: React.FC<Props> = ({ children, session }) => {
 
       <div className="md:pl-72">
         <MobileTopNav userNavigation={userNavigation} onSidebarOpen={handleSidebarOpen} />
-        <div className="mt-8">
+        <div className="pt-8">
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">{children}</div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 export default Layout

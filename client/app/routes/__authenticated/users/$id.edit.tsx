@@ -9,7 +9,7 @@ import { requireAuth } from 'app/sessions.server'
 import Content from 'app/components/Content'
 import Form, { withValues } from 'app/components/Forms'
 
-import formFields from 'app/models/positions/form'
+import formFields from 'app/models/users/form'
 
 export const action: ActionFunction = async (data) => {
   const { request, params } = data
@@ -26,22 +26,22 @@ export const loader: LoaderFunction = async (data) => {
   // return invariant(params.id, 'Expected position ID')
 
   const session = await requireAuth(request)
-  const projectsRes = await api(data, `/organisation/${session.activeOrganisation.id}/projects`)
-  const projects = await projectsRes.clone().json()
-  const position = await api(data, `/position/${params.id}`)
+  // const projectsRes = await api(data, `/organisation/${session.activeOrganisation.id}/projects`)
+  // const projects = await projectsRes.clone().json()
+  // const position = await api(data, `/position/${params.id}`)
 
-  return jsonWithHeaders({ position, fields: withValues(formFields(session, projects), position) })
+  return jsonWithHeaders({ fields: withValues(formFields(session), {}) })
 }
 
-const EditPosition = () => {
-  const { position, fields } = useLoaderData()
+const EditUser = () => {
+  const { fields } = useLoaderData()
   const errors = useActionData()
   const transition = useTransition()
 
   return (
-    <Content title={position.name}>
+    <Content title={'user name goes here'}>
       <Form submitText="Save changes" fields={fields} errors={errors} transition={transition} />
     </Content>
   )
 }
-export default EditPosition
+export default EditUser

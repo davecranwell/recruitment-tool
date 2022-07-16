@@ -34,6 +34,7 @@ import { UserEntity } from 'src/user/entities/user.entity'
 import { CreateOrganisationDto } from './dto/create-organisation.dto'
 import { Organisation } from './entities/organisation.entity'
 import { OrganisationService } from './organisation.service'
+import { UsersInOrganisation } from 'src/users-in-organisation/entities/users-in-organisation.entity'
 
 @ApiTags('Organisations')
 @ApiBearerAuth('access-token')
@@ -76,8 +77,8 @@ export class OrganisationController {
   @Get(':id/users')
   @ApiOperation({ summary: 'List all users invited to an organisation' })
   @ApiExtraModels(PaginatedDto)
-  @ApiPaginatedResponse(UserEntity)
-  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(UserEntity))
+  @ApiPaginatedResponse(UsersInOrganisation)
+  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(UsersInOrganisation))
   async findUsers(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
@@ -114,7 +115,7 @@ export class OrganisationController {
   //   return this.positionService.findByOrg(+orgId, paginationArgs)
   // }
 
-  @Get(':id/positions')
+  @Get(':id/positions/')
   @ApiOperation({ summary: 'List all positions created for an organisation' })
   @ApiExtraModels(PaginatedDto)
   @ApiPaginatedResponse(Position)
@@ -128,7 +129,24 @@ export class OrganisationController {
 
     if (!ability.can(Action.Read, new Organisation({ id }))) throw new ForbiddenException()
 
-    return this.organisationService.findPositions(id, request.user, paginationArgs)
+    return this.organisationService.findPositions(id, request.user, false, paginationArgs)
+  }
+
+  @Get(':id/positions/group-by-project')
+  @ApiOperation({ summary: 'List all positions created for an organisation' })
+  @ApiExtraModels(PaginatedDto)
+  @ApiPaginatedResponse(Position)
+  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Position))
+  async findPositionByProject(
+    @Req() request: RequestWithUser,
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
+    @Query() paginationArgs: PaginationArgsDto
+  ) {
+    const ability = new Ability(request.user.abilities)
+
+    if (!ability.can(Action.Read, new Organisation({ id }))) throw new ForbiddenException()
+
+    return this.organisationService.findPositions(id, request.user, true, paginationArgs)
   }
 
   // @Patch(':id')

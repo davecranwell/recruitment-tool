@@ -8,10 +8,16 @@ import { camelToSentence } from 'app/utils'
 import Button from './Button'
 import Alert from './Alert'
 
+export type Option = {
+  key: string
+  value: any
+  description?: string
+}
+
 export type FieldDef = {
   name: string
   type: string
-  options?: any[]
+  options?: Option[]
   hint?: string
   cols?: number
   colspan?: number
@@ -117,10 +123,19 @@ const Field: React.FC<FieldProps> = ({ field }) => {
             field.content.map((field) => <Field key={field.name} field={field} />)}
           {field.type !== 'row' && (
             <>
-              <label htmlFor={field.name} className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor={field.type !== 'radio' ? field.name : undefined}
+                className={classNames('block font-medium text-gray-700', {
+                  'text-base': field.type === 'radio',
+                  'text-sm': field.type !== 'radio',
+                })}
+              >
                 {field.label}
                 {/* {field.required && <span className="text-red-600">(Required)</span>} */}
               </label>
+              {field.type === 'radio' && field.hint && (
+                <p className="text-sm leading-5 text-gray-500">How do you prefer to receive notifications?</p>
+              )}
               <div className="relative mt-1">
                 {['text', 'email', 'number', 'password', 'url', 'date', 'datetime-local'].includes(field.type) && (
                   <input
@@ -169,13 +184,42 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                         })}
                   </select>
                 )}
+                {field.type === 'radio' && (
+                  <fieldset className="mt-4">
+                    <div className="space-y-5">
+                      {field?.options?.map((option) => {
+                        return (
+                          <div key={option.key} className="relative flex items-start">
+                            <div className="flex h-5 items-center">
+                              <input
+                                id={option.key}
+                                aria-describedby="small-description"
+                                name={field.name}
+                                type="radio"
+                                className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                              />
+                            </div>
+                            <div className="ml-3 text-sm">
+                              <label htmlFor={option.key} className="font-medium text-gray-700">
+                                {option.key}
+                              </label>
+                              <p id="small-description" className="mt-2 text-gray-500">
+                                {option.description}
+                              </p>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </fieldset>
+                )}
                 {field.errors && field.errors.length > 0 && (
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                     <ExclamationCircleIcon className="h-5 w-5 text-red-500" aria-hidden="true" />
                   </div>
                 )}
               </div>
-              {field.hint && (
+              {field.type !== 'radio' && field.hint && (
                 <p className="mt-2 text-sm text-gray-500" id={`${field.name}-description`}>
                   {field.hint}
                 </p>
@@ -207,9 +251,7 @@ type FormLayoutProps = {
 const FormLayout: React.FC<FormLayoutProps> = ({ fields, submitText = 'Submit', intro, errors, transition }) => {
   const processedFields = withActionErrors(fields, errors?.message)
 
-  const { fields: fieldsWithValidation, orphanedErrors } = processedFields
-
-  console.log({ orphanedErrors })
+  const { fields: fieldsWithValidation, orphanedErrors = [] } = processedFields
 
   return (
     <Form method="post">
@@ -221,7 +263,7 @@ const FormLayout: React.FC<FormLayoutProps> = ({ fields, submitText = 'Submit', 
             </div>
           )}
 
-          {orphanedErrors && orphanedErrors.length > 0 && (
+          {orphanedErrors.length > 0 && (
             <Alert type="error" message={orphanedErrors.flatMap((error) => Object.values(error.constraints))} />
           )}
 
