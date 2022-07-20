@@ -41,12 +41,17 @@ const Users = () => {
         users.data.length &&
         canCreateProject && {
           label: 'Invite',
-          link: '/users/new',
+          link: '/users/invite',
         }
       }
     >
       {users.data.length < 1 && (
-        <Empty Icon={UserIcon} title={'No users have been added'} createLink={canCreateProject ? '/users/new' : null} />
+        <Empty
+          Icon={UserIcon}
+          title={'No users have been added'}
+          createText={'Invite some now '}
+          createLink={canCreateProject ? '/users/invite' : null}
+        />
       )}
       {users.data.length > 0 && (
         <StackedList>

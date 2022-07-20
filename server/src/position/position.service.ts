@@ -1,5 +1,6 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common'
 import { ApplicantProfile, Prisma } from '@prisma/client'
+import { Ability } from '@casl/ability'
 
 import { PrismaService } from 'src/prisma/prisma.service'
 
@@ -14,7 +15,6 @@ import { Action } from 'src/casl/actions'
 import { UserEntity } from 'src/user/entities/user.entity'
 import { UpdateApplicantStageDto } from './dto/update-applicant-stage.dto'
 import { Position } from './entities/position.entity'
-import { Ability } from '@casl/ability'
 
 const paginate = createPaginator({ perPage: 20 })
 @Injectable()

@@ -81,6 +81,7 @@ export class PositionController {
   @Get(':id/applicant/:applicantId')
   @ApiExtraModels(ApplicantProfileWithUser)
   @ApiResponse({ type: ApplicantProfileWithUser })
+  @UseInterceptors(ClassSerializerInterceptor)
   findApplicant(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
@@ -92,6 +93,7 @@ export class PositionController {
   @Patch(':id/applicant/:applicantProfileId')
   @ApiExtraModels(ApplicantProfileWithUser)
   @ApiResponse({ type: ApplicantProfileWithUser })
+  @UseInterceptors(ClassSerializerInterceptor)
   changeApplicantStage(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,

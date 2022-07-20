@@ -15,7 +15,7 @@ export class PrismaClientExceptionFilter extends BaseExceptionFilter {
       case PostgresErrorCode.RecordDependencyFailed:
       case PostgresErrorCode.UniqueViolation:
         response
-          .status(HttpStatus.BAD_REQUEST)
+          .status(HttpStatus.CONFLICT)
           .json({ statusCode: HttpStatus.CONFLICT, message: exception.message.replace(/\n/g, '') })
         break
       default:

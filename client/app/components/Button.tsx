@@ -40,7 +40,7 @@ const Button: React.FC<Props> = ({
       )}
       {...props}
     >
-      {transition && transition.state !== 'idle' ? textLoading : text}
+      {transition && transition.state === 'submitting' ? textLoading : text}
     </ButtonRoot>
   )
 }

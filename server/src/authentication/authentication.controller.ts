@@ -12,13 +12,14 @@ import {
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiOkResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Request, Response } from 'express'
+import { ExtractJwt, Strategy } from 'passport-jwt'
 
 import { PrismaClassSerializerInterceptorPaginated } from 'src/class-serializer-paginated.interceptor'
 import { LowerCasePipe } from 'src/app.pipes'
 import { UserEntity } from 'src/user/entities/user.entity'
 import { UserService } from 'src/user/user.service'
 
-import RegisterDto from './dto/register.dto'
+import { RegisterDto, RegisterFromInvitationDto } from './dto/register.dto'
 import { LoginResponseDto, LoginDto, MagicLoginDto } from './dto/login.dto'
 
 import { AuthenticationService } from './authentication.service'
@@ -26,11 +27,11 @@ import { LocalAuthenticationGuard } from './guards/localAuthentication.guard'
 import JwtAuthenticationGuard from './guards/jwtAuthentication.guard'
 import JwtRefreshGuard from './guards/jwtRefresh.guard'
 import { MagicLinkGuard } from './guards/magiclink.guard'
+import { InvitationCodeGuardBody } from './guards/invitationCode.guard'
 export interface RequestWithUser extends Request {
   user: UserEntity
 }
 @ApiTags('Authentication')
-// @UseGuards(ThrottlerGuard)
 @Controller('authentication')
 export class AuthenticationController {
   constructor(
@@ -48,6 +49,16 @@ export class AuthenticationController {
   @UseInterceptors(ClassSerializerInterceptor)
   async register(@Body() registrationData: RegisterDto) {
     return new UserEntity(await this.registerAccount(registrationData))
+  }
+
+  @ApiOkResponse({ type: UserEntity })
+  @Post('accept-invitation')
+  @UseGuards(InvitationCodeGuardBody)
+  @UseInterceptors(ClassSerializerInterceptor)
+  async acceptInvitation(@Req() request, @Body() registrationData: RegisterFromInvitationDto) {
+    const { user } = request
+
+    return new UserEntity(await this.registerAccount(user))
   }
 
   @ApiOkResponse({ type: LoginResponseDto })

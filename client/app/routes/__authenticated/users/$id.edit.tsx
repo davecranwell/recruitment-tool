@@ -9,7 +9,7 @@ import { requireAuth } from 'app/sessions.server'
 import Content from 'app/components/Content'
 import Form, { withValues } from 'app/components/Forms'
 
-import formFields from 'app/models/users/form'
+import { editUserFormFields } from 'app/models/users/form'
 
 export const action: ActionFunction = async (data) => {
   const { request, params } = data
@@ -29,8 +29,8 @@ export const loader: LoaderFunction = async (data) => {
   // const projectsRes = await api(data, `/organisation/${session.activeOrganisation.id}/projects`)
   // const projects = await projectsRes.clone().json()
   // const position = await api(data, `/position/${params.id}`)
-
-  return jsonWithHeaders({ fields: withValues(formFields(session), {}) })
+  // TODO make this work properly to load a user's data
+  return jsonWithHeaders({ fields: withValues(editUserFormFields(), {}) })
 }
 
 const EditUser = () => {

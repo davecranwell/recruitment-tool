@@ -1,5 +1,12 @@
 import { Response } from '@remix-run/node'
 
+export const UnauthorisedResponse = ({ headers }: { headers?: Headers } = {}) =>
+  new Response('Unauthorised', {
+    status: 401,
+    statusText: 'Unauthorised',
+    headers,
+  })
+
 export const ForbiddenResponse = ({ headers }: { headers?: Headers } = {}) =>
   new Response('Forbidden', {
     status: 403,

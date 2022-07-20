@@ -141,6 +141,14 @@ INTERVIEWER INTERVIEWER
     DateTime updatedAt  
     }
   
+
+  Invitation {
+    Int id PK 
+    String email  
+    UserRoleType role  "nullable"
+    DateTime createdAt  
+    }
+  
     ApplicantProfile o{--|| User : "user"
     ApplicantProfileForOrganisation o{--|| ApplicantProfile : "applicantProfile"
     ApplicantProfileForOrganisation o{--|| Organisation : "organisation"
@@ -164,4 +172,6 @@ INTERVIEWER INTERVIEWER
     ProjectUserRole o|--|| ProjectRoleType : "enum:role"
     StagesInPipeline o{--|| Stage : "stage"
     StagesInPipeline o{--|| Pipeline : "pipeline"
+    Invitation o{--|| Organisation : "organisation"
+    Invitation o|--|| UserRoleType : "enum:role"
 ```

@@ -39,5 +39,9 @@ export function formDataToJson(formData: any) {
 }
 
 export function camelToSentence(string: string) {
-  return string.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())
+  return toSentence(string.replace(/([A-Z])/g, ' $1'))
+}
+
+export function toSentence(string: string) {
+  return string.toLowerCase().replace(/^./, (str) => str.toUpperCase())
 }

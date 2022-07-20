@@ -28,6 +28,8 @@
 - [x] Pagination
 - [x] Rate limiting
 - [ ] Share back end types with front end
+- [ ] Invitations to an org expire
+- [ ] Ensure prisma exception filter doesn't throw verbose errors in production
 
 ## Features
 

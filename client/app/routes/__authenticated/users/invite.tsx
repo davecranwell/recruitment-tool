@@ -9,7 +9,7 @@ import { requireAuth } from 'app/sessions.server'
 import Content from 'app/components/Content'
 import Form, { withValues } from 'app/components/Forms'
 
-import formFields from 'app/models/users/form'
+import { inviteUserformFields } from 'app/models/users/form'
 
 export const action: ActionFunction = async (data) => {
   const { request, params } = data
@@ -30,18 +30,29 @@ export const loader: LoaderFunction = async (data) => {
   // const projects = await projectsRes.clone().json()
   // const position = await api(data, `/position/${params.id}`)
 
-  return jsonWithHeaders({ fields: withValues(formFields(session), {}) })
+  return jsonWithHeaders({ fields: inviteUserformFields() })
 }
 
-const EditUser = () => {
+const NewUser = () => {
   const { fields } = useLoaderData()
   const errors = useActionData()
   const transition = useTransition()
 
   return (
     <Content title={'Invite a user to the organisation'}>
-      <Form submitText="Send invitation" fields={fields} errors={errors} transition={transition} />
+      <Form
+        submitText="Send invitation"
+        intro={
+          <>
+            We'll send your invitation to their email address so they can join with the role you give them, below.
+            Invitations expire after <strong>2 days</strong>.
+          </>
+        }
+        fields={fields}
+        errors={errors}
+        transition={transition}
+      />
     </Content>
   )
 }
-export default EditUser
+export default NewUser

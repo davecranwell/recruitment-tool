@@ -25,13 +25,14 @@ import {
 import { PaginationArgsDto, PaginatedDto, ApiPaginatedResponse } from 'src/page/pagination-args.dto'
 import { PrismaClassSerializerInterceptorPaginated } from 'src/class-serializer-paginated.interceptor'
 
-import { ApplicantProfileService } from './applicant-profile.service'
+import JwtAuthenticationGuard from 'src/authentication/guards/jwtAuthentication.guard'
 
+import { ApplicantProfileService } from './applicant-profile.service'
 import { CreateApplicantProfileDto } from './dto/create-applicant-profile.dto'
 import { UpdateApplicantProfileDto } from './dto/update-applicant-profile.dto'
 import { ApplicantProfile } from './entities/applicant-profile.entity'
-import JwtAuthenticationGuard from 'src/authentication/guards/jwtAuthentication.guard'
 
+@ApiBearerAuth('access-token')
 @ApiTags('Applicant Profiles')
 @Controller('applicant-profile')
 @UseGuards(JwtAuthenticationGuard)

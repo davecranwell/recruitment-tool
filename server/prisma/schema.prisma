@@ -62,6 +62,7 @@ model Organisation {
   applicantProfiles ApplicantProfileForOrganisation[]
   projects          Project[]
   Position          Position[]
+  invitations       Invitation[]
 }
 
 model ApplicantProfileForOrganisation {
@@ -234,6 +235,15 @@ model StagesInPipeline {
   updatedAt  DateTime @default(now())
 
   @@id([stageId, pipelineId])
+}
+
+model Invitation {
+  id             Int           @id @default(autoincrement())
+  email          String
+  organisation   Organisation  @relation(fields: [organisationId], references: [id])
+  organisationId Int
+  role           UserRoleType?
+  createdAt      DateTime      @default(now())
 }
 
 // model ProcessForPosition {

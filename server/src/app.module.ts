@@ -22,6 +22,7 @@ import { UserRolesOfUserModule } from './user-roles-of-user/user-roles-of-user.m
 import { PrismaModule } from './prisma/prisma.module'
 import { ProjectController } from './project/project.controller';
 import { ProjectService } from './project/project.service';
+import { InvitationModule } from './invitation/invitation.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { ProjectService } from './project/project.service';
     ApplicantProfileForPositionModule,
     ProjectUserRoleModule,
     UserRolesOfUserModule,
+    InvitationModule,
   ],
   controllers: [AppController, ProjectController],
   providers: [

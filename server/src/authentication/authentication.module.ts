@@ -3,15 +3,16 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { PassportModule } from '@nestjs/passport'
 import { JwtModule } from '@nestjs/jwt'
 
+import { CaslModule } from 'src/casl/casl.module'
 import { UserModule } from 'src/user/user.module'
 import { AuthenticationService } from './authentication.service'
 import { AuthenticationController } from './authentication.controller'
+import { InvitationService } from 'src/invitation/invitation.service'
 import { LocalStrategy } from './strategies/local.strategy'
 import { JwtStrategy } from './strategies/jwt.strategy'
 import { JwtRefreshTokenStrategy } from './strategies/jwtRefreshToken.strategy'
 import { MagicLinkStrategy } from './strategies/magicLink.strategy'
-import { CaslModule } from 'src/casl/casl.module'
-
+import { InvitationCodeStrategyByBody } from './strategies/invitationCode.strategy'
 @Module({
   imports: [
     UserModule,
@@ -28,7 +29,16 @@ import { CaslModule } from 'src/casl/casl.module'
       }),
     }),
   ],
-  providers: [AuthenticationService, LocalStrategy, JwtStrategy, MagicLinkStrategy, JwtRefreshTokenStrategy],
+  providers: [
+    AuthenticationService,
+    InvitationService,
+    LocalStrategy,
+    JwtStrategy,
+    MagicLinkStrategy,
+    JwtRefreshTokenStrategy,
+    InvitationCodeStrategyByBody,
+  ],
   controllers: [AuthenticationController],
+  exports: [AuthenticationService],
 })
 export class AuthenticationModule {}

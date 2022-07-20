@@ -16,6 +16,7 @@ export type Option = {
 
 export type FieldDef = {
   name: string
+  enabled?: boolean
   type: string
   options?: Option[]
   hint?: string
@@ -29,6 +30,7 @@ export type FieldDef = {
   placeholder?: string
   errors?: string[]
   valueTransform?: (value: any) => any
+  props?: any
 }
 
 export type NestValidationError = {
@@ -93,7 +95,7 @@ export const withValues = (formFields: FieldDef[], values: any) => {
       if (field.content) {
         field.content = enumerateFields(field.content)
       }
-      if (field.name) {
+      if (field.name && values[field.name] !== undefined) {
         field.defaultValue = field.valueTransform ? field.valueTransform(values[field.name]) : values[field.name]
       }
       return field
@@ -108,6 +110,8 @@ type FieldProps = {
 }
 
 const Field: React.FC<FieldProps> = ({ field }) => {
+  if (field.enabled === false) return null
+
   return (
     <React.Fragment key={field.name}>
       {field.type !== 'hidden' && (
@@ -131,7 +135,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                 })}
               >
                 {field.label}
-                {/* {field.required && <span className="text-red-600">(Required)</span>} */}
+                {field.required && <span className="text-sm text-red-600">&nbsp; *</span>}
               </label>
               {field.type === 'radio' && field.hint && (
                 <p className="text-sm leading-5 text-gray-500">How do you prefer to receive notifications?</p>
@@ -153,6 +157,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                     aria-describedby={
                       field.errors && field.errors.length ? `${field.name}-errors` : `${field.name}-description`
                     }
+                    {...field.props}
                   />
                 )}
                 {field.type === 'textarea' && (
@@ -196,6 +201,8 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                                 aria-describedby="small-description"
                                 name={field.name}
                                 type="radio"
+                                value={option.value}
+                                defaultChecked={field.defaultValue === option.value}
                                 className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
                               />
                             </div>
@@ -241,7 +248,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
 }
 
 type FormLayoutProps = {
-  intro?: string
+  intro?: React.ReactNode | string
   fields: FieldDef[]
   submitText?: string
   errors?: NestValidationError
