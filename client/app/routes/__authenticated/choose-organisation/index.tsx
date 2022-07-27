@@ -22,7 +22,7 @@ const ChooseOrganisation = () => {
         {organisations.map((orgRec: Organisation) => (
           <div
             key={orgRec.organisation.id}
-            className="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400"
+            className="focus-within:ring-primary-500 relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-offset-2 hover:border-gray-400"
           >
             <div className="flex-shrink-0">
               {/* <img className="h-10 w-10 rounded-full" src={organisation.imageUrl} alt="" /> */}
@@ -43,7 +43,7 @@ const ChooseOrganisation = () => {
           //   <Link to={`/applicant-profiles/${profile.id}`} className="block hover:bg-gray-50">
           //     <div className="px-4 py-4 sm:px-6">
           //       <div className="flex items-center justify-between">
-          //         <p className="truncate text-sm font-medium text-indigo-600">{profile.profileName}</p>
+          //         <p className="truncate text-sm font-medium text-primary-600">{profile.profileName}</p>
           //         <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0" title={profile.updatedAt}>
           //           <CalendarIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
           //           <p>

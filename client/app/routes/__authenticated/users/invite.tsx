@@ -3,7 +3,7 @@ import { redirect } from '@remix-run/node'
 
 import { useActionData, useLoaderData, useTransition } from '@remix-run/react'
 
-import { api, jsonWithHeaders } from 'app/api.server'
+import { api, jsonWithHeaders, redirectWithHeaders } from 'app/api.server'
 import { requireAuth } from 'app/sessions.server'
 
 import Content from 'app/components/Content'
@@ -12,25 +12,25 @@ import Form, { withValues } from 'app/components/Forms'
 import { inviteUserformFields } from 'app/models/users/form'
 
 export const action: ActionFunction = async (data) => {
-  const { request, params } = data
+  const { request } = data
   const body = await request.formData()
 
-  const result = await api(data, `/position/${params.id}`, 'PATCH', body)
-  if (result.ok) return redirect(`/positions/${params.id}`)
+  await requireAuth(request)
+  const invitation = await api(data, `/invitation/`, 'POST', body)
 
-  return result
+  if (invitation.ok) return redirectWithHeaders(invitation, `/users`)
+
+  return invitation
 }
 
 export const loader: LoaderFunction = async (data) => {
-  const { request, params } = data
-  // return invariant(params.id, 'Expected position ID')
+  const { request } = data
 
   const session = await requireAuth(request)
-  // const projectsRes = await api(data, `/organisation/${session.activeOrganisation.id}/projects`)
-  // const projects = await projectsRes.clone().json()
-  // const position = await api(data, `/position/${params.id}`)
 
-  return jsonWithHeaders({ fields: inviteUserformFields() })
+  return jsonWithHeaders({
+    fields: withValues(inviteUserformFields(), { organisationId: session.activeOrganisation.id }),
+  })
 }
 
 const NewUser = () => {

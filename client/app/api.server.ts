@@ -45,13 +45,7 @@ export async function api(data: DataFunctionArgs, url: string, method: string = 
   return json(await apiRes.json(), { status: apiRes.status, headers })
 }
 
-/**
- * Converts a data object containing potential Response objects in which headers are set, into the same data with the headers forwarded as appropriate
- *
- * @param data an object containing data to be returned as json, can include Response objects
- * @returns
- */
-export async function jsonWithHeaders(data: any) {
+async function getHeadersFromData(data: any) {
   let headers = new Headers()
 
   for (let datum of Object.keys(data)) {
@@ -70,5 +64,23 @@ export async function jsonWithHeaders(data: any) {
     }
   }
 
-  return json(data, { headers })
+  return { data, headers }
+}
+
+/**
+ * Converts a data object containing potential Response objects in which headers are set, into the same data with the headers forwarded as appropriate
+ *
+ * @param data an object containing data to be returned as json, can include Response objects
+ * @returns
+ */
+export async function jsonWithHeaders(data: any) {
+  const { data: newData, headers } = await getHeadersFromData(data)
+
+  return json(newData, { headers })
+}
+
+export async function redirectWithHeaders(data: any, url: string) {
+  const { headers } = await getHeadersFromData(data)
+
+  return redirect(url, { headers })
 }

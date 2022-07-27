@@ -1,11 +1,13 @@
 import { PlusIcon } from '@heroicons/react/solid'
 import { Link } from '@remix-run/react'
+import classNames from 'classnames'
 import type { ReactChildren } from 'react'
 import Button from './Button'
 
 type Props = {
   children: React.ReactNode
   title?: string
+  titleSize?: 'largest' | 'larger' | 'large'
   primaryAction?: {
     label: string
     link: string
@@ -16,12 +18,18 @@ type Props = {
   }
 }
 
-const Content: React.FC<Props> = ({ children, title, primaryAction, secondaryAction }) => {
+const Content: React.FC<Props> = ({ children, title, primaryAction, secondaryAction, titleSize = 'largest' }) => {
   return (
     <main className="flex-1">
       <div className="md:flex md:items-center md:justify-between">
         <div className="min-w-0 flex-1">
-          <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl" id="content-title">
+          <h2
+            className={classNames('font-bold sm:truncate', {
+              'text-2xl leading-7 sm:text-3xl': titleSize === 'largest',
+              'text-lg leading-7 sm:text-2xl': titleSize === 'larger',
+            })}
+            id="content-title"
+          >
             {title}
           </h2>
         </div>
@@ -38,16 +46,6 @@ const Content: React.FC<Props> = ({ children, title, primaryAction, secondaryAct
             )}
           </div>
         )}
-
-        {/* <div className="mt-4 flex md:mt-0 md:ml-4">
-          <button
-            type="button"
-            className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          >
-            <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-            Create
-          </button>
-        </div> */}
       </div>
 
       <div className="py-4">{children}</div>

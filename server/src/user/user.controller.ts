@@ -1,6 +1,7 @@
 import { Ability } from '@casl/ability'
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   ForbiddenException,
   Get,
@@ -54,17 +55,13 @@ export class UserController {
 
   // @ApiParam({ name: 'id', type: 'number', required: true })
   @Get(':id')
-  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(User))
+  @UseInterceptors(ClassSerializerInterceptor)
   @ApiOkResponse({ type: User })
   async findOne(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number
   ) {
-    const ability = new Ability(request.user.abilities)
-
-    if (!ability.can(Action.Read, new UserEntity({ id }))) throw new ForbiddenException()
-
-    return this.userService.findOne(id)
+    return this.userService.findOne(id, request.user)
   }
 
   // Don't really need this as no user should be able to see the organisations of another user

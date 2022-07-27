@@ -1,7 +1,8 @@
-import { Ability } from '@casl/ability'
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common'
+import { Ability, subject } from '@casl/ability'
+import { ForbiddenException, Injectable, NotFoundException, BadRequestException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
+import * as sendgrid from '@sendgrid/mail'
 
 import { Action } from 'src/casl/actions'
 import { PrismaService } from 'src/prisma/prisma.service'
@@ -10,6 +11,7 @@ import { UserEntity } from 'src/user/entities/user.entity'
 import { Organisation } from 'src/organisation/entities/organisation.entity'
 import { CreateInvitationDto } from './dto/create-invitation.dto'
 import { Invitation } from './entities/invitation.entity'
+import { text } from 'stream/consumers'
 
 @Injectable()
 export class InvitationService {
@@ -20,6 +22,16 @@ export class InvitationService {
   ) {}
 
   async getById(id: number) {
+    const invitation = await this.prisma.invitation.findUnique({
+      where: { id },
+    })
+
+    if (invitation) {
+      return new Invitation(invitation)
+    }
+  }
+
+  async getByIdWithOrg(id: number) {
     const invitation = await this.prisma.invitation.findUnique({
       where: { id },
       include: { organisation: true },
@@ -48,13 +60,28 @@ export class InvitationService {
       },
     })
 
+    if (!invitation) throw new BadRequestException('This invitation could not be completed')
+
     const payload = { id: invitation.id }
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get('INVITATION_CODE_SECRET'),
       expiresIn: `${this.configService.get('INVITATION_CODE_EXPIRATION_TIME')}s`,
     })
 
-    if (invitation) return token
+    const invitationMsg = {
+      to: email.toLowerCase(),
+      from: this.configService.get('EMAIL_FROM'),
+      templateId: 'd-2bd9612619864fbcb8993050e871d5a8',
+      dynamicTemplateData: {
+        organisationName: organisation.name,
+        invitationUrl: `http://localhost:3001/invitation-sign-in?token=${token}`,
+      },
+    }
+
+    sendgrid.setApiKey(this.configService.get('SENDGRID_API_KEY'))
+    await sendgrid.send(invitationMsg)
+
+    return new Invitation(invitation)
   }
 
   // findAll() {
@@ -90,7 +117,9 @@ export class InvitationService {
   //   return `This action updates a #${id} invitation`;
   // }
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} invitation`;
-  // }
+  async remove(id: number) {
+    return await this.prisma.invitation.delete({
+      where: { id },
+    })
+  }
 }

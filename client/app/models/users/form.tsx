@@ -1,5 +1,36 @@
 import type { FieldDef } from 'app/components/Forms'
 
+export const loginFields = (redirectTo?: string, token?: string): FieldDef[] => [
+  {
+    name: 'email',
+    required: true,
+    label: 'Email address',
+    type: 'text',
+    props: {
+      autoComplete: 'email',
+    },
+  },
+  {
+    name: 'password',
+    required: true,
+    label: 'Password',
+    type: 'password',
+    props: {
+      autoComplete: 'current-password',
+    },
+  },
+  {
+    name: 'redirect-to',
+    type: 'hidden',
+    defaultValue: redirectTo,
+  },
+  {
+    name: 'token',
+    type: 'hidden',
+    defaultValue: token,
+  },
+]
+
 export const newUserFormFields = (): FieldDef[] => [
   {
     name: 'name',
@@ -12,6 +43,8 @@ export const newUserFormFields = (): FieldDef[] => [
     required: true,
     label: 'Email address',
     type: 'email',
+    disabled: true,
+    hint: 'If this email address is not suitable, it can be changed after completing registration',
   },
   {
     name: 'password',
@@ -25,6 +58,10 @@ export const newUserFormFields = (): FieldDef[] => [
     required: true,
     label: 'Password confirmation',
     type: 'password',
+  },
+  {
+    name: 'token',
+    type: 'hidden',
   },
 ]
 
@@ -47,12 +84,16 @@ export const inviteUserformFields = (): FieldDef[] => [
         description: "Can only access positions within projects to which they're invited.",
       },
       {
-        key: 'Organisation admin',
-        value: 'ORGANISATION_ADMIN',
+        key: 'Organisation owner',
+        value: 'ORGANISATION_OWNER',
         description: 'Can access all projects and positions and can invite users to the organisation, or remove them.',
       },
     ],
     defaultValue: 'STANDARD',
+  },
+  {
+    name: 'organisationId',
+    type: 'hidden',
   },
 ]
 

@@ -1,15 +1,16 @@
 import { Link } from '@remix-run/react'
-import classNames from 'classnames'
 import React from 'react'
 
-type MessageBody = {
-  title: string
-  description?: string | string[]
+type Props = {
+  items?: any[]
+  fallback?: React.ElementType
 }
 
-type Props = {}
+export const StackedList: React.FC<Props> = ({ items, fallback, children }) => {
+  const FallbackElement = fallback
 
-export const StackedList: React.FC<Props> = ({ children }) => {
+  if (!items?.length && FallbackElement) return <FallbackElement />
+
   return (
     <div className="overflow-hidden bg-white shadow sm:rounded-md">
       <ul className="divide-y divide-gray-200">{children}</ul>

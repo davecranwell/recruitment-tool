@@ -1,20 +1,26 @@
-import { NotFoundException, HttpStatus, Injectable } from '@nestjs/common'
+import { NotFoundException, HttpStatus, Injectable, ForbiddenException } from '@nestjs/common'
 import * as bcrypt from 'bcrypt'
 
 import { PrismaService } from 'src/prisma/prisma.service'
 import { UserEntity } from './entities/user.entity'
 import { FindOneDto } from 'src/util/shared.dto'
 import { CaslPermissions } from 'src/casl/casl.permissions'
+import { Invitation, User } from '@prisma/client'
+import { Ability } from '@casl/ability'
+import { Action } from 'src/casl/actions'
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService, private readonly caslPermissions: CaslPermissions) {}
 
-  async findOne(id: number) {
+  async findOne(id: number, requestUser: UserEntity) {
     const record = await this.prisma.user.findUnique({ where: { id }, include: { organisations: true } })
     if (!record) throw new NotFoundException('Organisation with this ID does not exist')
 
-    return record
+    const ability = new Ability(requestUser.abilities)
+    if (!ability.can(Action.Read, new UserEntity(record))) throw new ForbiddenException()
+
+    return new UserEntity(record)
   }
 
   async getById(id: number) {
@@ -66,8 +72,29 @@ export class UserService {
     throw new NotFoundException('User with this email does not exist')
   }
 
-  async create(accountData: { email: string; password?: string }): Promise<UserEntity> {
-    return new UserEntity(await this.prisma.user.create({ data: accountData }))
+  async create(
+    accountData: {
+      name: string
+      email: string
+      password?: string
+    },
+    invitation?: Invitation
+  ): Promise<UserEntity> {
+    const { role, organisationId } = invitation || {}
+
+    return new UserEntity(
+      await this.prisma.user.create({
+        data: {
+          ...accountData,
+          organisations: invitation && {
+            create: {
+              role,
+              organisationId,
+            },
+          },
+        },
+      })
+    )
   }
 
   async setRefreshToken(refreshToken: string, userId: number) {

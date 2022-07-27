@@ -16,6 +16,10 @@ export class LoginDto {
   @IsNotEmpty()
   // @MinLength(8)
   password: string
+
+  // this field is really only for browser-based login
+  // therefore not mentioned in API docs
+  token: string
 }
 
 export class LoginResponseDto {

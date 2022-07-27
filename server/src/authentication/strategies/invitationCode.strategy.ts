@@ -20,7 +20,7 @@ export class InvitationCodeStrategyByBody extends PassportStrategy(Strategy, 'in
   async validate(payload: InvitationTokenPayload) {
     const { id } = payload
     try {
-      return await this.invitationService.getById(id)
+      return await this.invitationService.getByIdWithOrg(id)
     } catch {
       return { id }
     }

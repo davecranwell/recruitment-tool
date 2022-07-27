@@ -30,6 +30,7 @@ export type FieldDef = {
   placeholder?: string
   errors?: string[]
   valueTransform?: (value: any) => any
+  disabled?: boolean
   props?: any
 }
 
@@ -51,7 +52,8 @@ export type NestTargetMessage = {
  * a new array of form fields with errors added to the corresponding fields.
  */
 export const withActionErrors = (formFields: FieldDef[], errors?: NestTargetMessage[]) => {
-  if (!errors?.length) return { fields: formFields, errors }
+  if (!errors) return { fields: formFields }
+  if (!errors?.length || !Array.isArray(errors)) return { fields: formFields, orphanedErrors: [errors] }
 
   const orphanedErrors = ([] as NestTargetMessage[]).concat(errors)
 
@@ -146,8 +148,10 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                     type={field.type}
                     name={field.name}
                     id={field.name}
+                    disabled={field.disabled}
+                    required={field.required}
                     className={classNames(
-                      `focus:border-primary-500 focus:ring-primary-500 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm`,
+                      `focus:border-primary-500 focus:ring-primary-500 block w-full rounded-md border-gray-300 shadow-sm disabled:border-gray-200 disabled:text-slate-400 disabled:shadow-none sm:text-sm`,
                       {
                         'border-red-700': field.errors && field.errors.length,
                       }
@@ -165,7 +169,8 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                     id={field.name}
                     name={field.name}
                     rows={field.size}
-                    className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-md border border-gray-300 shadow-sm sm:text-sm"
+                    required={field.required}
+                    className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-md border border-gray-300 shadow-sm disabled:border-gray-200 disabled:text-slate-400 disabled:shadow-none sm:text-sm"
                     defaultValue={field.defaultValue}
                   />
                 )}
@@ -173,7 +178,8 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                   <select
                     id={field.name}
                     name={field.name}
-                    className="focus:ring-primary-500 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none sm:text-sm"
+                    required={field.required}
+                    className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:outline-none disabled:border-gray-200 disabled:text-slate-400 disabled:shadow-none sm:text-sm"
                     defaultValue={field.defaultValue}
                   >
                     {field.options &&
@@ -203,7 +209,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                                 type="radio"
                                 value={option.value}
                                 defaultChecked={field.defaultValue === option.value}
-                                className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                className="text-primary-600 focus:ring-primary-500 h-4 w-4 border-gray-300"
                               />
                             </div>
                             <div className="ml-3 text-sm">
@@ -251,19 +257,39 @@ type FormLayoutProps = {
   intro?: React.ReactNode | string
   fields: FieldDef[]
   submitText?: string
+  submitWidth?: 'full' | 'auto' | 'half' | undefined
   errors?: NestValidationError
   transition: Transition
+  wrapper?: 'auto' | 'none' | undefined
+  [x: string]: any
 }
 
-const FormLayout: React.FC<FormLayoutProps> = ({ fields, submitText = 'Submit', intro, errors, transition }) => {
+const FormLayout: React.FC<FormLayoutProps> = ({
+  fields,
+  submitText = 'Submit',
+  submitWidth,
+  intro,
+  errors,
+  transition,
+  wrapper = 'auto',
+  ...props
+}) => {
   const processedFields = withActionErrors(fields, errors?.message)
 
   const { fields: fieldsWithValidation, orphanedErrors = [] } = processedFields
 
   return (
-    <Form method="post">
-      <div className="shadow sm:overflow-hidden sm:rounded-md">
-        <div className="space-y-6 bg-white py-6 px-4 sm:p-6">
+    <Form method="post" {...props}>
+      <div
+        className={classNames({
+          'shadow sm:overflow-hidden sm:rounded-md': wrapper === 'auto',
+        })}
+      >
+        <div
+          className={classNames('space-y-6', {
+            'bg-white py-6 px-4 sm:p-6': wrapper === 'auto',
+          })}
+        >
           {intro && (
             <div>
               <p className="mt-1 text-sm text-gray-500">{intro}</p>
@@ -271,16 +297,21 @@ const FormLayout: React.FC<FormLayoutProps> = ({ fields, submitText = 'Submit', 
           )}
 
           {orphanedErrors.length > 0 && (
-            <Alert type="error" message={orphanedErrors.flatMap((error) => Object.values(error.constraints))} />
+            <Alert type="error" message={orphanedErrors.flatMap((error) => Object.values(error?.constraints))} />
           )}
 
           {fieldsWithValidation.map((field) => (
             <Field key={field.name} field={field} />
           ))}
         </div>
-        <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
+        <div
+          className={classNames({
+            'bg-gray-50 px-4 py-3 text-right sm:px-6': wrapper === 'auto',
+            'mt-8': wrapper !== 'auto',
+          })}
+        >
           <div className="flex justify-end">
-            <Button type="submit" text={submitText} transition={transition} />
+            <Button type="submit" width={submitWidth} text={submitText} transition={transition} />
           </div>
         </div>
       </div>

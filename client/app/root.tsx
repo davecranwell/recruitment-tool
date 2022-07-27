@@ -1,7 +1,5 @@
-import { json } from '@remix-run/node'
-import type { MetaFunction, LinksFunction, LoaderFunction } from '@remix-run/node'
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from '@remix-run/react'
-import { getUserSession } from 'app/sessions.server'
+import type { MetaFunction, LinksFunction } from '@remix-run/node'
+import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react'
 
 import styles from './tailwind.css'
 
@@ -10,7 +8,7 @@ export const links: LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
   { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous' },
   {
-    href: 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap',
+    href: 'https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800&display=swap',
     rel: 'stylesheet',
   },
 ]
@@ -21,21 +19,14 @@ export const meta: MetaFunction = () => ({
   viewport: 'width=device-width,initial-scale=1',
 })
 
-export const loader: LoaderFunction = async ({ request }) => {
-  const session = await getUserSession(request)
-  return json(session.has('user'))
-}
-
 export default function App() {
-  const hasSession = useLoaderData()
-
   return (
-    <html lang="en" className={`h-full ${!hasSession ? 'bg-gray-50' : 'bg-gray-100'}`}>
+    <html lang="en" className="bg-secondary-100 h-full">
       <head>
         <Meta />
         <Links />
       </head>
-      <body className="h-full">
+      <body className="h-full text-slate-800">
         <Outlet />
         <ScrollRestoration />
         <Scripts />

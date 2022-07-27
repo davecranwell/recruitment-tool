@@ -1,4 +1,4 @@
-import { NavLink, useMatches } from '@remix-run/react'
+import { NavLink } from '@remix-run/react'
 import classNames from 'classnames'
 
 type Props = {
@@ -11,7 +11,6 @@ type Tab = {
   count?: string
 }
 
-// TODO migrate to compound component?
 const Tabs: React.FC<Props> = ({ tabs }) => {
   if (!tabs.length) return null
 
@@ -33,7 +32,7 @@ const Tabs: React.FC<Props> = ({ tabs }) => {
         </select>
       </div>
       <div className="hidden sm:block">
-        <div className="border-b border-gray-200">
+        <div className="mb-6 border-b border-gray-300">
           <nav className="mt-2 -mb-px flex space-x-8" aria-label="Tabs">
             {tabs.map((tab: Tab) => (
               <NavLink
@@ -43,9 +42,9 @@ const Tabs: React.FC<Props> = ({ tabs }) => {
                 className={({ isActive }) =>
                   classNames(
                     isActive
-                      ? 'border-primary-500 text-primary-600'
-                      : 'border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700',
-                    'whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium'
+                      ? 'border-primary-600 text-primary-600'
+                      : 'hover:border-primary-400 border-transparent text-gray-500 hover:text-gray-700',
+                    'whitespace-nowrap border-b-4 py-4 px-6 text-sm font-medium'
                   )
                 }
               >
@@ -53,7 +52,7 @@ const Tabs: React.FC<Props> = ({ tabs }) => {
                 {tab.count ? (
                   <span
                     className={
-                      'bg-primary-100 text-primary-600 ml-2 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block'
+                      'bg-primary-100 text-primary-600 ml-4 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block'
                     }
                   >
                     {tab.count}

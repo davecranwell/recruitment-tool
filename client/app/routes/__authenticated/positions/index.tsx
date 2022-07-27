@@ -38,37 +38,38 @@ const Positions = () => {
       title={'Positions'}
       primaryAction={positions.data.length && can('create', 'Position') && { label: 'Create', link: '/positions/new' }}
     >
-      {positions.data.length < 1 && (
-        <Empty
-          Icon={BriefcaseIcon}
-          title={'No positions have been created'}
-          createLink={can('create', 'Position') ? '/positions/new' : null}
-        />
-      )}
-      {positions.data.length > 0 && (
-        <StackedList>
-          {positions.data.map((position: Position) => (
-            <StackedListItem key={position.id} link={`/positions/${position.id}`}>
-              <div className="flex items-center justify-between">
-                <p className="truncate text-sm font-medium text-indigo-600">{position.name}</p>
-                <div className="ml-2 flex flex-shrink-0">
-                  {/* <p className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
+      <StackedList
+        items={positions.data}
+        fallback={() => (
+          <Empty
+            icon={BriefcaseIcon}
+            title={'No positions have been created'}
+            createLink={can('create', 'Position') ? '/positions/new' : null}
+          />
+        )}
+      >
+        {positions.data.map((position: Position) => (
+          <StackedListItem key={position.id} link={`/positions/${position.id}`}>
+            <div className="flex items-center justify-between">
+              <p className="text-primary-600 truncate text-sm font-medium">{position.name}</p>
+              <div className="ml-2 flex flex-shrink-0">
+                {/* <p className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
                         {position.type}
                       </p> */}
-                </div>
               </div>
-              <MetaList className="mt-2">
-                <MetaListItem value={position.salaryRange!} icon={CurrencyDollarIcon}></MetaListItem>
-                <MetaListItem value={position.location!} icon={LocationMarkerIcon}></MetaListItem>
-                <MetaListItem
-                  value={`Closing on ${dateTimeFormat(position.closingDate!)}`}
-                  icon={CalendarIcon}
-                ></MetaListItem>
-              </MetaList>
-            </StackedListItem>
-          ))}
-        </StackedList>
-      )}
+            </div>
+            <MetaList className="mt-2">
+              <MetaListItem value={position.salaryRange!} icon={CurrencyDollarIcon}></MetaListItem>
+              <MetaListItem value={position.location!} icon={LocationMarkerIcon}></MetaListItem>
+              <MetaListItem
+                value={`Closing on ${dateTimeFormat(position.closingDate!)}`}
+                icon={CalendarIcon}
+              ></MetaListItem>
+            </MetaList>
+          </StackedListItem>
+        ))}
+      </StackedList>
+
       <Outlet />
     </Content>
   )

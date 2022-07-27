@@ -1,15 +1,5 @@
-import {
-  BellIcon,
-  CalendarIcon,
-  CogIcon,
-  FolderIcon,
-  HomeIcon,
-  MenuAlt2Icon,
-  UserGroupIcon,
-  UsersIcon,
-  XIcon,
-} from '@heroicons/react/outline'
-import { Dialog, Menu, Transition } from '@headlessui/react'
+import { Menu } from '@headlessui/react'
+import { MenuAlt2Icon } from '@heroicons/react/outline'
 import type { MouseEventHandler } from 'react'
 
 import UserNav from './UserNav'
@@ -26,7 +16,7 @@ const MobileTopNav: React.FC<Props> = ({ userNavigation, onSidebarOpen }) => {
         <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 border-b border-gray-200 bg-white">
           <button
             type="button"
-            className="border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden"
+            className="focus:ring-primary-500 border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset md:hidden"
             onClick={onSidebarOpen}
           >
             <span className="sr-only">Open sidebar</span>
@@ -55,7 +45,7 @@ const MobileTopNav: React.FC<Props> = ({ userNavigation, onSidebarOpen }) => {
             <div className="ml-4 flex items-center md:ml-6">
               {/* <button
                     type="button"
-                    className="rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   >
                     <span className="sr-only">View notifications</span>
                     <BellIcon className="h-6 w-6" aria-hidden="true" />
@@ -65,8 +55,9 @@ const MobileTopNav: React.FC<Props> = ({ userNavigation, onSidebarOpen }) => {
                 navItems={userNavigation}
                 positionClasses="right-0 w-48"
                 button={() => (
-                  <Menu.Button className="flex max-w-xs items-center rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  <Menu.Button className="focus:ring-primary-500 flex max-w-xs items-center rounded-full text-sm focus:outline-none focus:ring-2">
                     <span className="sr-only">Open user menu</span>
+                    {/* <Avatar name={session?.user.name} /> */}
                     <img
                       className="h-8 w-8 rounded-full"
                       src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"

@@ -9,24 +9,65 @@ import { UserService } from '../user/user.service'
 
 import { JwtTokenPayload, MagicTokenPayload } from './strategies/types'
 import { CaslPermissions } from 'src/casl/casl.permissions'
+import { Invitation } from 'src/invitation/entities/invitation.entity'
+import { RegisterFromInvitationDto } from './dto/register.dto'
+import { UserEntity } from 'src/user/entities/user.entity'
+import { User } from '@prisma/client'
+import { InvitationService } from 'src/invitation/invitation.service'
 
 @Injectable()
 export class AuthenticationService {
   constructor(
     private readonly userService: UserService,
+    private readonly invitationService: InvitationService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly caslPermissions: CaslPermissions
   ) {}
 
-  public async register(registrationData) {
+  // public async register(registrationData) {
+  //   const hashedPassword = registrationData.password ? await bcrypt.hash(registrationData.password, 10) : null
+
+  //   try {
+  //     return await this.userService.create({
+  //       ...registrationData,
+  //       password: hashedPassword,
+  //     })
+  //   } catch (error) {
+  //     if (error?.code === PostgresErrorCode.UniqueViolation) {
+  //       throw new BadRequestException('User with that email already exists')
+  //     }
+  //     throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR)
+  //   }
+  // }
+
+  public async signInById(userId: number) {
+    const user = await this.getAuthenticatedUserById(userId)
+
+    const { token: accessToken } = this.generateJwtToken(userId)
+    const { token: refreshToken, jwtid } = this.generateJwtRefreshToken(userId)
+
+    await this.userService.setRefreshToken(jwtid, userId)
+
+    return { user, accessToken, refreshToken }
+  }
+
+  public async registerFromInvitation(invitation: Invitation, registrationData: RegisterFromInvitationDto) {
     const hashedPassword = registrationData.password ? await bcrypt.hash(registrationData.password, 10) : null
 
     try {
-      return await this.userService.create({
-        ...registrationData,
-        password: hashedPassword,
-      })
+      const user = await this.userService.create(
+        {
+          name: registrationData.name,
+          email: invitation.email,
+          password: hashedPassword,
+        },
+        invitation
+      )
+
+      await this.invitationService.remove(invitation.id)
+
+      return user
     } catch (error) {
       if (error?.code === PostgresErrorCode.UniqueViolation) {
         throw new BadRequestException('User with that email already exists')
@@ -64,15 +105,23 @@ export class AuthenticationService {
     }
   }
 
-  public async getAuthenticatedUser(email: string, plainTextPassword: string) {
+  private async addAbilities(user: UserEntity) {
+    user.abilities = await this.caslPermissions.asJsonForUser(user)
+    return user
+  }
+
+  public async getAuthenticatedUserById(id: number) {
+    return this.addAbilities(await this.userService.getById(id))
+  }
+
+  public async authenticateEmailPassword(email: string, plainTextPassword: string) {
     try {
       const user = await this.userService.getByEmailWithDetailedOrgs(email)
       await this.verifyPassword(plainTextPassword, user.password)
 
       user.password = undefined
-      user.abilities = await this.caslPermissions.asJsonForUser(user)
 
-      return user
+      return this.addAbilities(user)
     } catch (error) {
       throw new UnauthorizedException('Wrong credentials provided')
     }

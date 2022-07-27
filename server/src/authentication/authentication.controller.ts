@@ -39,26 +39,29 @@ export class AuthenticationController {
     private readonly userService: UserService
   ) {}
 
-  private async registerAccount(registrationData: RegisterDto) {
-    return this.authenticationService.register(registrationData)
-  }
+  // private async registerAccount(registrationData: RegisterDto) {
+  //   return this.authenticationService.register(registrationData)
+  // }
 
-  @ApiOkResponse({ type: UserEntity })
-  @UsePipes(new LowerCasePipe('body', ['email']))
-  @Post('register')
-  @UseInterceptors(ClassSerializerInterceptor)
-  async register(@Body() registrationData: RegisterDto) {
-    return new UserEntity(await this.registerAccount(registrationData))
-  }
+  // @ApiOkResponse({ type: UserEntity })
+  // @UsePipes(new LowerCasePipe('body', ['email']))
+  // @Post('register')
+  // @UseInterceptors(ClassSerializerInterceptor)
+  // async register(@Body() registrationData: RegisterDto) {
+  //   return new UserEntity(await this.registerAccount(registrationData))
+  // }
 
-  @ApiOkResponse({ type: UserEntity })
-  @Post('accept-invitation')
+  @ApiOkResponse({ type: LoginResponseDto })
+  @Post('register/invitation')
   @UseGuards(InvitationCodeGuardBody)
   @UseInterceptors(ClassSerializerInterceptor)
   async acceptInvitation(@Req() request, @Body() registrationData: RegisterFromInvitationDto) {
-    const { user } = request
+    const { user: invitation } = request
 
-    return new UserEntity(await this.registerAccount(user))
+    const registeredUser = await this.authenticationService.registerFromInvitation(invitation, registrationData)
+
+    // Immediately log in. Invitations are by email so we've already verified their email is real.
+    return await this.authenticationService.signInById(registeredUser.id)
   }
 
   @ApiOkResponse({ type: LoginResponseDto })
@@ -68,19 +71,7 @@ export class AuthenticationController {
   async logIn(@Req() request: RequestWithUser) {
     const { user } = request
 
-    const { token: accessToken, cookie: accessTokenCookie } = this.authenticationService.generateJwtToken(user.id)
-    const {
-      token: refreshToken,
-      jwtid,
-      cookie: refreshTokenCookie,
-    } = this.authenticationService.generateJwtRefreshToken(user.id)
-
-    await this.userService.setRefreshToken(jwtid, user.id)
-
-    // TODO disabled until we understand how to use it better
-    //request.res.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie])
-
-    return <LoginResponseDto>{ user, accessToken, refreshToken }
+    return await this.authenticationService.signInById(user.id)
   }
 
   @ApiOkResponse()
@@ -113,36 +104,27 @@ export class AuthenticationController {
     return this.logIn(request)
   }
 
-  // @ApiBearerAuth('access-token')
-  // @ApiOkResponse({ type: UserEntity })
-  // @UseGuards(JwtAuthenticationGuard)
-  // @UseInterceptors(ClassSerializerInterceptor)
-  // @Get()
-  // authenticate(@Req() { user }: RequestWithUser) {
-  //   return new UserEntity(user)
+  // @Post('log-in/magic')
+  // async magicLogin(@Body() { email }: MagicLoginDto) {
+  //   return this.authenticationService.sendMagicLink(email)
   // }
 
-  @Post('log-in/magic')
-  async magicLogin(@Body() { email }: MagicLoginDto) {
-    return this.authenticationService.sendMagicLink(email)
-  }
+  // @UseGuards(MagicLinkGuard)
+  // @ApiQuery({ name: 'token', type: 'string' })
+  // @ApiOkResponse({ type: UserEntity })
+  // @UseInterceptors(ClassSerializerInterceptor)
+  // @Get('log-in/magic/callback')
+  // async magicLoginCallback(@Req() request: RequestWithUser) {
+  //   const { user } = request
 
-  @UseGuards(MagicLinkGuard)
-  @ApiQuery({ name: 'token', type: 'string' })
-  @ApiOkResponse({ type: UserEntity })
-  @UseInterceptors(ClassSerializerInterceptor)
-  @Get('log-in/magic/callback')
-  async magicLoginCallback(@Req() request: RequestWithUser) {
-    const { user } = request
+  //   // if no user found, they're newly registering for the first time
+  //   if (!user.id) {
+  //     request.user = await this.registerAccount({
+  //       email: user.email,
+  //       password: null,
+  //     })
+  //   }
 
-    // if no user found, they're newly registering for the first time
-    if (!user.id) {
-      request.user = await this.registerAccount({
-        email: user.email,
-        password: null,
-      })
-    }
-
-    return this.logIn(request)
-  }
+  //   return this.logIn(request)
+  // }
 }

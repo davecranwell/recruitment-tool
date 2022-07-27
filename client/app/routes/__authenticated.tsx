@@ -11,6 +11,7 @@ export async function loader({ request }: { request: Request }) {
   return await requireAuth(request)
 }
 
+// TODO load abilities from the loader, not the session cookie (which is nearing its max size)
 export default function Authenticated() {
   const session = useLoaderData()
   const abilities = new Ability(session.user.abilities)

@@ -23,23 +23,23 @@ export const action: ActionFunction = async (data) => {
 
 export const loader: LoaderFunction = async (data) => {
   const { request, params } = data
-  // return invariant(params.id, 'Expected position ID')
 
-  const session = await requireAuth(request)
-  // const projectsRes = await api(data, `/organisation/${session.activeOrganisation.id}/projects`)
+  await requireAuth(request)
+  const user = await api(data, `/user/${params.id}`)
+  console.log(await user.clone().json())
   // const projects = await projectsRes.clone().json()
   // const position = await api(data, `/position/${params.id}`)
   // TODO make this work properly to load a user's data
-  return jsonWithHeaders({ fields: withValues(editUserFormFields(), {}) })
+  return jsonWithHeaders({ user, fields: withValues(editUserFormFields(), user) })
 }
 
 const EditUser = () => {
-  const { fields } = useLoaderData()
+  const { user, fields } = useLoaderData()
   const errors = useActionData()
   const transition = useTransition()
 
   return (
-    <Content title={'user name goes here'}>
+    <Content title={user.name}>
       <Form submitText="Save changes" fields={fields} errors={errors} transition={transition} />
     </Content>
   )

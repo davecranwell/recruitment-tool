@@ -52,12 +52,10 @@ const PositionDetail = () => {
       )}
 
       <main className="pt-8 pb-16">
-        <div className="px-4 sm:px-0">
-          <h2 className="text-lg font-medium text-gray-900">Candidates</h2>
-
+        <Content title="Candidates" titleSize="larger">
           <Tabs tabs={tabs} />
           <Outlet />
-        </div>
+        </Content>
       </main>
     </Content>
   )

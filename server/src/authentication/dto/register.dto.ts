@@ -25,7 +25,7 @@ export class RegisterFromInvitationDto {
   @IsNotEmpty()
   @MinLength(12)
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)\S+$/, {
-    message: 'Password should contain lowercase and uppercase letters, as well as numbers',
+    message: 'Password did not meet complexity requirements',
   })
   password: string
 

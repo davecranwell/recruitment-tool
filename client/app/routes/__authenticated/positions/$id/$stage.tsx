@@ -9,6 +9,7 @@ import type { LinkedApplicantProfile } from 'app/models/applicant-profiles/Appli
 
 import Tabs from 'app/components/Tabs'
 import ApplicantList from '~/components/ApplicantList'
+import Content from '~/components/Content'
 
 export const loader: LoaderFunction = async (data) => {
   const { request, params } = data
@@ -50,12 +51,10 @@ const Stage = () => {
   )
 
   return (
-    <div className="py-6">
-      <h2 className="text-lg font-medium text-gray-900">Candidates</h2>
-
+    <Content title="Candidates" titleSize="larger">
       <Tabs tabs={tabs} />
       <ApplicantList applicants={applicants.data} />
-    </div>
+    </Content>
   )
 }
 

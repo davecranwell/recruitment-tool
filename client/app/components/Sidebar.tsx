@@ -1,19 +1,7 @@
+import { Dialog, Transition } from '@headlessui/react'
+import { XIcon } from '@heroicons/react/outline'
 import type { MouseEventHandler } from 'react'
-import { Fragment, useState } from 'react'
-import { Dialog, Menu, Transition } from '@headlessui/react'
-import {
-  BellIcon,
-  CalendarIcon,
-  CogIcon,
-  FolderIcon,
-  HomeIcon,
-  MenuAlt2Icon,
-  UserGroupIcon,
-  UsersIcon,
-  XIcon,
-} from '@heroicons/react/outline'
-
-import SiteNav from './SiteNav'
+import { Fragment } from 'react'
 
 type Props = {
   children: React.ReactElement
@@ -72,7 +60,7 @@ const Sidebar: React.FC<Props> = ({ children, sidebarOpen, onSidebarOpen, onSide
               <div className="flex flex-shrink-0 items-center px-4">
                 {/* <img
                     className="h-8 w-auto"
-                    src="https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-800-text.svg"
+                    src="https://tailwindui.com/img/logos/workflow-logo-primary-600-mark-gray-800-text.svg"
                     alt="Workflow"
                   /> */}
               </div>

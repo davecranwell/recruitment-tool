@@ -44,29 +44,30 @@ const Projects = () => {
         }
       }
     >
-      {projects.data.length < 1 && (
-        <Empty
-          Icon={FolderIcon}
-          title={'No projects have been created'}
-          createLink={canCreateProject ? '/projects/new' : null}
-        />
-      )}
-      {projects.data.length > 0 && (
-        <StackedList>
-          {projects.data.map((position: Project) => (
-            <StackedListItem key={position.id} link={`/projects/${position.id}`}>
-              <div className="flex items-center justify-between">
-                <p className="truncate text-sm font-medium text-indigo-600">{position.name}</p>
-                <div className="ml-2 flex flex-shrink-0">
-                  {/* <p className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
+      <StackedList
+        items={projects.data}
+        fallback={() => (
+          <Empty
+            icon={FolderIcon}
+            title={'No projects have been created'}
+            createLink={canCreateProject ? '/projects/new' : null}
+          />
+        )}
+      >
+        {projects.data.map((position: Project) => (
+          <StackedListItem key={position.id} link={`/projects/${position.id}`}>
+            <div className="flex items-center justify-between">
+              <p className="text-primary-600 truncate text-sm font-medium">{position.name}</p>
+              <div className="ml-2 flex flex-shrink-0">
+                {/* <p className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
                         {position.type}
                       </p> */}
-                </div>
               </div>
-            </StackedListItem>
-          ))}
-        </StackedList>
-      )}
+            </div>
+          </StackedListItem>
+        ))}
+      </StackedList>
+
       <Outlet />
     </Content>
   )
