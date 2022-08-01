@@ -1,29 +1,23 @@
-import { CheckIcon, ThumbUpIcon, UserIcon } from '@heroicons/react/solid'
 import type { ActionFunction, LoaderFunction, MetaFunction } from '@remix-run/node'
 import { useActionData, useLoaderData, useOutletContext, useSubmit, useTransition } from '@remix-run/react'
 
-import { api } from '~/api.server'
+import { api, jsonWithHeaders } from '~/api.server'
+import { requireAuth } from '~/sessions.server'
 
 import type { StageInPipeline } from 'app/models/positions/Stage'
 
 import StageAdvance from '~/components/StageAdvance'
-import { requireAuth } from '~/sessions.server'
-
-export const meta: MetaFunction = ({ data }) => {
-  const { applicantProfile } = data
-  const { user } = applicantProfile
-  return { title: `Applicant - ${user?.name}` }
-}
+import Notifications, { notify } from '~/components/Notifications'
 
 export const action: ActionFunction = async (data) => {
   const { request, params } = data
   const { id, applicantId } = params
-  const session = await requireAuth(request)
-  const body = await request.formData()
-  const result = await api(data, `/position/${id}/applicant/${applicantId}`, 'PATCH', body)
-  //if (result.ok) return redirect('/projects')
+  await requireAuth(request)
 
-  return null
+  const updateResult = await api(data, `/position/${id}/applicant/${applicantId}`, 'PATCH', await request.formData())
+  return jsonWithHeaders({
+    messages: updateResult.ok ? notify.success('Applicant stage changed') : notify.error('An error occured'),
+  })
 }
 
 export const loader: LoaderFunction = async (data) => {
@@ -34,10 +28,18 @@ export const loader: LoaderFunction = async (data) => {
   return await api(data, `/position/${id}/applicant/${applicantId}`)
 }
 
+export const meta: MetaFunction = ({ data }) => {
+  const { applicantProfile } = data
+  const { user } = applicantProfile
+  return { title: `Applicant - ${user?.name}` }
+}
+
 const Profile = () => {
   const advanceStage = useSubmit()
   const { stages } = useOutletContext() as any
   const profile = useLoaderData()
+  const actionData = useActionData()
+  const { messages } = actionData || {}
 
   const { applicantProfile, stage } = profile
   const { user } = applicantProfile
@@ -52,6 +54,7 @@ const Profile = () => {
 
   return (
     <main className="py-10">
+      <Notifications messages={messages} />
       {/* Page header */}
       <div className="md:flex md:items-center md:justify-between">
         <div className="flex items-center space-x-5">

@@ -13,10 +13,9 @@ import { inviteUserformFields } from 'app/models/users/form'
 
 export const action: ActionFunction = async (data) => {
   const { request } = data
-  const body = await request.formData()
 
   await requireAuth(request)
-  const invitation = await api(data, `/invitation/`, 'POST', body)
+  const invitation = await api(data, `/invitation/`, 'POST', await request.formData())
 
   if (invitation.ok) return redirectWithHeaders(invitation, `/users`)
 

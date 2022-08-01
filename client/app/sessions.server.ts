@@ -123,6 +123,8 @@ export async function refreshTokensIfNeeded(request: Request, context: any) {
   const cachedRefreshPromise = context.cache[currentSession?.user?.id]
   if (cachedRefreshPromise) return cachedRefreshPromise
 
+  // we cache the promise returned from getRefreshToken which is async
+  // then return the cache WITHOUT awaiting anything - limiting us to one level of promises
   context.cache[currentSession.user.id] = getRefreshToken(request)
 
   setTimeout(() => {

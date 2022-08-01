@@ -17,6 +17,7 @@
 - [x] Form generation & validation system
 - [x] Form submission errors that are orphaned from fields need displaying somewhere
 - [x] Handle form submissions followed by redirects with expiring tokens
+- [ ] Support session.flash by reorganising how cookies are set
 - [ ] Need some dynamic project chooser UI so pagination of projects is still workable
 
 ## Nest
@@ -29,12 +30,13 @@
 - [x] Rate limiting
 - [x] CASL Permissions system for all entities in backend
 - [x] Throw suitable errors when API calls are wrong
-- [x] Cache permissions across session
+- [x] Cache permissions across session in JWT
 - [x] Send invitations to orgs via email
 - [ ] Edit users by getting them from DB based on their org relationship, not straight from users, which is basically too open
 - [ ] Share back end types with front end
 - [ ] Ensure prisma exception filter doesn't throw verbose errors in production
 - [ ] Trimming all user input with a Pipe
+- [ ] Move permissions to Redis to reduce size of cookie
 
 ## Features
 

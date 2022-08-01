@@ -2,17 +2,17 @@ import { XCircleIcon, ExclamationIcon, InformationCircleIcon, CheckCircleIcon } 
 
 import classNames from 'classnames'
 
-type MessageBody = {
+export type AlertMessageBody = {
   title: string
   description?: string | string[]
 }
 
-type Props = {
-  message: string | string[] | MessageBody
+export type AlertProps = {
+  message: string | string[] | AlertMessageBody
   type: 'success' | 'info' | 'warning' | 'error'
 }
 
-const Alert: React.FC<Props> = ({ message, type }) => {
+const Alert: React.FC<AlertProps> = ({ message, type }) => {
   return (
     <div
       className={classNames('rounded-md p-4', {
