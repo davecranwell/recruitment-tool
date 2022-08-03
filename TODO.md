@@ -4,10 +4,10 @@
 
 - [x] Sharing of backend permissions rules with front end via session
 - [x] Refresh tokens
+- [ ] Toast prompts for notifications
 - [ ] Pipelines must either be made public or finessed to a point where the stages are usable by anyone
 - [ ] Pipelines need to be automatically attributed to a project
 - [ ] Pipelines need to be automatically inheritted by a position from the project
-- [ ] Toast prompts for notifications
 - [ ] We're getting dangerously near to cookie limits (4096b) at 3135 already. Consider moving to a high-level provider served by an API call?
 
 ## Remix
