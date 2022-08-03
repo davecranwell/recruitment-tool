@@ -5,7 +5,7 @@ export const loginFields = (redirectTo?: string, token?: string): FieldDef[] => 
     name: 'email',
     required: true,
     label: 'Email address',
-    type: 'text',
+    type: 'email',
     props: {
       autoComplete: 'email',
     },
