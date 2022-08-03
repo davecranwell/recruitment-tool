@@ -55,15 +55,17 @@ export const withActionErrors = (formFields: FieldDef[], errors?: NestTargetMess
   if (!errors) return { fields: formFields }
   if (!errors?.length || !Array.isArray(errors)) return { fields: formFields, orphanedErrors: [errors] }
 
-  const orphanedErrors = ([] as NestTargetMessage[]).concat(errors)
+  const orphanErrorCollector = ([] as NestTargetMessage[]).concat(errors)
 
   const getTargetErrors = (fieldName: string): string[] => {
     const errorIdx = errors.findIndex((msg: NestTargetMessage) => msg.property === fieldName)
-    const orphanedErrorsIdx = orphanedErrors.findIndex((msg: NestTargetMessage) => msg.property === fieldName)
+    const orphanErrorCollectorIdx = orphanErrorCollector.findIndex(
+      (msg: NestTargetMessage) => msg.property === fieldName
+    )
 
     if (errorIdx === -1) return []
 
-    orphanedErrors.splice(orphanedErrorsIdx, 1)
+    orphanErrorCollector.splice(orphanErrorCollectorIdx, 1)
     const constraints = errors[errorIdx]?.constraints
 
     return constraints
@@ -82,6 +84,11 @@ export const withActionErrors = (formFields: FieldDef[], errors?: NestTargetMess
       return field
     })
   }
+
+  const orphanedErrors = orphanErrorCollector.flatMap((error) => {
+    if (typeof error === 'string') return error
+    if (error?.constraints) return Object.values(error?.constraints)
+  })
 
   return { fields: enumerateFields(formFields), orphanedErrors }
 }
@@ -296,9 +303,7 @@ const FormLayout: React.FC<FormLayoutProps> = ({
             </div>
           )}
 
-          {orphanedErrors.length > 0 && (
-            <Alert type="error" message={orphanedErrors.flatMap((error) => Object.values(error?.constraints))} />
-          )}
+          {orphanedErrors.length > 0 && <Alert type="error" message={orphanedErrors} />}
 
           {fieldsWithValidation.map((field) => (
             <Field key={field.name} field={field} />
