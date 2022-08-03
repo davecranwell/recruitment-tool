@@ -26,14 +26,14 @@ export const action: ActionFunction = async (data) => {
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const session = await requireAuth(request)
+  const { sessionData } = await requireAuth(request)
 
-  const ability = new Ability(session.user.abilities)
-  if (!ability.can('manage', subject('Organisation', session.activeOrganisation))) {
+  const ability = new Ability(sessionData.user.abilities)
+  if (!ability.can('manage', subject('Organisation', sessionData.activeOrganisation))) {
     throw ForbiddenResponse()
   }
 
-  return json(formFields(session))
+  return json(formFields(sessionData))
 }
 
 const NewProject = () => {

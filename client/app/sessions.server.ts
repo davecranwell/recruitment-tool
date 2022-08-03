@@ -1,9 +1,12 @@
 import type { Session } from '@remix-run/node'
-import { createCookieSessionStorage, redirect } from '@remix-run/node'
+import { createCookieSessionStorage } from '@remix-run/node'
+import { createCookie } from '@remix-run/node'
+import { createFileSessionStorage, redirect } from '@remix-run/node'
 import type { JwtPayload } from 'jsonwebtoken'
 import jwt from 'jsonwebtoken'
 import invariant from 'tiny-invariant'
 
+// import { notify } from '~/components/Notifications'
 import type { Organisation } from '~/models/organisation/Organisation'
 
 invariant(process.env.SESSION_SECRET, 'SESSION_SECRET must be set')
@@ -24,6 +27,7 @@ export type SessionData = {
 
 const { getSession, commitSession, destroySession } = createCookieSessionStorage({
   // a Cookie from `createCookie` or the CookieOptions to create one
+  //dir: 'sessions',
   cookie: {
     name: '__session',
     maxAge: +process.env.SESSION_EXPIRATION_TIME,
@@ -35,6 +39,37 @@ const { getSession, commitSession, destroySession } = createCookieSessionStorage
   },
 })
 
+export async function getSessionFromCookie(request: Request) {
+  return await getSession(request.headers.get('Cookie'))
+}
+
+export async function getSessionData(request: Request): Promise<SessionData> {
+  const session = await getSessionFromCookie(request)
+  return session.get('user')
+}
+
+export async function hasSession(request: Request): Promise<boolean> {
+  const session = await getSessionFromCookie(request)
+  return session.has('user')
+}
+
+export async function createNotice(session: Session, message: string, type: string, ttl: number = 3000) {
+  session.flash('global', {
+    type,
+    message,
+    ttl,
+  })
+}
+
+export function notify(session: Session) {
+  return {
+    success: (message: string, ttl?: number) => createNotice(session, message, 'success', ttl),
+    error: (message: string, ttl: number = 0) => createNotice(session, message, 'error', ttl),
+    warning: (message: string, ttl: number = 5000) => createNotice(session, message, 'warning', ttl),
+    info: (message: string, ttl?: number) => createNotice(session, message, 'info', ttl),
+  }
+}
+
 export async function createSession(authRecord: SessionData, redirectTo: string) {
   const session = await getSession() // empty session
 
@@ -45,6 +80,7 @@ export async function createSession(authRecord: SessionData, redirectTo: string)
   }
 
   session.set('user', authRecord)
+  //session.flash('global', notify.success('you did it!'))
 
   return redirect(redirectChoice, {
     headers: {
@@ -54,7 +90,7 @@ export async function createSession(authRecord: SessionData, redirectTo: string)
 }
 
 export async function setSessionOrganisation(request: Request, organisation: Organisation, redirectTo: string) {
-  const session = await getUserSession(request)
+  const session = await getSessionFromCookie(request)
   const user = session.get('user')
 
   user.activeOrganisation = organisation
@@ -79,12 +115,12 @@ export function sessionAccessTokenHasExpired(session: Session) {
     if (new Date().getTime() > expiry! * 1000) {
       return true
     }
-  }
+
   return false
 }
 
 export async function getRefreshToken(request: Request) {
-  const session = await getUserSession(request)
+  const session = await getSessionFromCookie(request)
   const currentSession = session.get('user')
 
   return fetch(`${process.env.BACKEND_ROOT_URL}/authentication/refresh`, {
@@ -114,7 +150,7 @@ export async function getRefreshToken(request: Request) {
 }
 
 export async function refreshTokensIfNeeded(request: Request, context: any) {
-  const session = await getUserSession(request)
+  const session = await getSessionFromCookie(request)
   const currentSession = session.get('user')
 
   // if session still active, send empty headers to tack onto next appropriate request
@@ -135,17 +171,8 @@ export async function refreshTokensIfNeeded(request: Request, context: any) {
   return context.cache[currentSession.user.id]
 }
 
-export async function getSessionData(request: Request): Promise<SessionData> {
-  const session = await getUserSession(request)
-  return session.get('user')
-}
-
-export async function hasSession(request: Request): Promise<boolean> {
-  const session = await getUserSession(request)
-  return session.has('user')
-}
-
 export async function requireAuth(request: Request, redirectTo: string = new URL(request.url).pathname) {
+  const session: Session = await getSessionFromCookie(request)
   const sessionData: SessionData = await getSessionData(request)
 
   if (!sessionData) {
@@ -159,11 +186,11 @@ export async function requireAuth(request: Request, redirectTo: string = new URL
     throw redirect(`/choose-organisation`)
   }
 
-  return sessionData
+  return { sessionData, session }
 }
 
 export async function logout(request: Request) {
-  const session = await getUserSession(request)
+  const session = await getSessionFromCookie(request)
   return redirect('/start', {
     headers: {
       'Set-Cookie': await destroySession(session),

@@ -26,10 +26,10 @@ export const action: ActionFunction = async (data) => {
 export const loader: LoaderFunction = async (data) => {
   const { request, params } = data
 
-  const session = await requireAuth(request)
+  const { sessionData } = await requireAuth(request)
   const project = await api(data, `/project/${params.id}`)
 
-  return jsonWithHeaders({ project, fields: withValues(formFields(session), project) })
+  return jsonWithHeaders({ project, fields: withValues(formFields(sessionData), project) })
 }
 
 const EditProject = () => {

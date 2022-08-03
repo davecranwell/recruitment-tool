@@ -9,7 +9,7 @@ import {
   UsersIcon,
 } from '@heroicons/react/outline'
 import { SelectorIcon } from '@heroicons/react/solid'
-import type { SessionData } from '@remix-run/node'
+import type { Session, SessionData } from '@remix-run/node'
 import * as React from 'react'
 import { useCallback, useState } from 'react'
 
@@ -19,10 +19,13 @@ import Sidebar from './Sidebar'
 import SiteNav from './SiteNav'
 import UserNav from './UserNav'
 import Avatar from './Avatar'
+import type { Notice } from './Notifications'
+import Notifications from './Notifications'
 
 type Props = {
   children: React.ReactNode
-  session?: SessionData
+  sessionData?: SessionData
+  globalMessage?: Notice
 }
 
 type NavItem = {
@@ -34,7 +37,7 @@ type NavItem = {
 
 type NavItems = [NavItem[]]
 
-const Layout: React.FC<Props> = ({ children, session }) => {
+const Layout: React.FC<Props> = ({ children, sessionData, globalMessage }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const { can, subject } = useAppAbility()
 
@@ -47,7 +50,7 @@ const Layout: React.FC<Props> = ({ children, session }) => {
     ],
   ]
 
-  if (can('manage', subject('Organisation', session?.activeOrganisation))) {
+  if (can('manage', subject('Organisation', sessionData?.activeOrganisation))) {
     navigation.push([
       { name: 'Organisation', type: 'heading' },
       // { name: 'Settings', href: '/config', icon: CogIcon },
@@ -62,7 +65,7 @@ const Layout: React.FC<Props> = ({ children, session }) => {
     { name: 'Sign out', href: '/sign-out' },
   ]
 
-  if (session?.activeOrganisation && session?.user?.organisations?.length > 1) {
+  if (sessionData?.activeOrganisation && sessionData?.user?.organisations?.length > 1) {
     userNavigation.push({
       name: 'Change organisation',
       href: '/choose-organisation',
@@ -98,10 +101,10 @@ const Layout: React.FC<Props> = ({ children, session }) => {
               <Menu.Button className="hover:bg-primary-100 group w-full rounded-md px-3.5 py-2 text-left text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-gray-100">
                 <span className="flex w-full items-center justify-between">
                   <span className="flex min-w-0 items-center justify-between space-x-3">
-                    <Avatar name={session?.user.name} size="m" />
+                    <Avatar name={sessionData?.user.name} size="m" />
                     <span className="flex min-w-0 flex-1 flex-col">
-                      <span className="text-primary-50 truncate text-sm font-medium">{session?.user?.name}</span>
-                      <span className="text-primary-100 truncate text-sm">{session?.activeOrganisation?.name}</span>
+                      <span className="text-primary-50 truncate text-sm font-medium">{sessionData?.user?.name}</span>
+                      <span className="text-primary-100 truncate text-sm">{sessionData?.activeOrganisation?.name}</span>
                     </span>
                   </span>
                   <SelectorIcon
@@ -125,6 +128,8 @@ const Layout: React.FC<Props> = ({ children, session }) => {
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">{children}</div>
         </div>
       </div>
+
+      {globalMessage && <Notifications messages={globalMessage} />}
     </>
   )
 }

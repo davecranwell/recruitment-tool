@@ -7,23 +7,12 @@ import classNames from 'classnames'
 
 import type { AlertProps } from './Alert'
 
-const createNotice = (message: string, type: string, ttl: number = 3000) => ({
-  type,
-  message,
-  ttl,
-})
-
-export const notify = {
-  success: (message: string, ttl?: number) => createNotice(message, 'success', ttl),
-  error: (message: string, ttl: number = 0) => createNotice(message, 'error', ttl),
-  warning: (message: string, ttl: number = 5000) => createNotice(message, 'warning', ttl),
-  info: (message: string, ttl?: number) => createNotice(message, 'info', ttl),
+export type Notice = AlertProps & {
+  ttl?: number
 }
 
 type Props = {
-  messages: AlertProps & {
-    ttl?: number
-  }
+  messages: Notice
 }
 
 const Notifications: React.FC<Props> = ({ messages }) => {

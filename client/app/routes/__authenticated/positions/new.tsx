@@ -23,7 +23,7 @@ export const action: ActionFunction = async (data) => {
 
 export const loader: LoaderFunction = async (data) => {
   const { request } = data
-  const sessionData = await requireAuth(request)
+  const { sessionData } = await requireAuth(request)
 
   const projectsRes = await api(data, `/organisation/${sessionData.activeOrganisation.id}/projects`)
   const projects = await projectsRes.clone().json()

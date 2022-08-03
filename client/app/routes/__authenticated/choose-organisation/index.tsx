@@ -8,9 +8,9 @@ import type { Organisation } from 'app/models/organisation/Organisation'
 
 export const loader: LoaderFunction = async (data) => {
   const { request } = data
-  const auth = await requireAuth(request)
+  const { sessionData } = await requireAuth(request)
 
-  return auth.user.organisations
+  return sessionData.user.organisations
 }
 
 const ChooseOrganisation = () => {

@@ -7,17 +7,17 @@ import { requireAuth } from '~/sessions.server'
 import type { StageInPipeline } from 'app/models/positions/Stage'
 
 import StageAdvance from '~/components/StageAdvance'
-import Notifications, { notify } from '~/components/Notifications'
 
 export const action: ActionFunction = async (data) => {
   const { request, params } = data
   const { id, applicantId } = params
-  await requireAuth(request)
+  const { session } = await requireAuth(request)
 
   const updateResult = await api(data, `/position/${id}/applicant/${applicantId}`, 'PATCH', await request.formData())
-  return jsonWithHeaders({
-    messages: updateResult.ok ? notify.success('Applicant stage changed') : notify.error('An error occured'),
-  })
+  return null
+  // return jsonWithHeaders({
+  //   messages: updateResult.ok ? notify.success('Applicant stage changed') : notify.error('An error occured'),
+  // })
 }
 
 export const loader: LoaderFunction = async (data) => {
@@ -54,7 +54,6 @@ const Profile = () => {
 
   return (
     <main className="py-10">
-      <Notifications messages={messages} />
       {/* Page header */}
       <div className="md:flex md:items-center md:justify-between">
         <div className="flex items-center space-x-5">

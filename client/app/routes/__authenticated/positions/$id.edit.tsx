@@ -24,8 +24,8 @@ export const loader: LoaderFunction = async (data) => {
   const { request, params } = data
   // return invariant(params.id, 'Expected position ID')
 
-  const session = await requireAuth(request)
-  const projectRes = await api(data, `/organisation/${session.activeOrganisation.id}/projects`)
+  const { sessionData } = await requireAuth(request)
+  const projectRes = await api(data, `/organisation/${sessionData.activeOrganisation.id}/projects`)
   const positionRes = await api(data, `/position/${params.id}`)
 
   // console.log(await projects.clone().json())
@@ -33,7 +33,7 @@ export const loader: LoaderFunction = async (data) => {
   const projects = await projectRes.json()
   const position = await positionRes.json()
 
-  return jsonWithHeaders({ position, fields: withValues(formFields(session, projects.data), position) })
+  return jsonWithHeaders({ position, fields: withValues(formFields(sessionData, projects.data), position) })
 }
 
 const EditPosition = () => {

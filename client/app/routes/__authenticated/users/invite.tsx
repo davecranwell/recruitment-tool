@@ -25,10 +25,10 @@ export const action: ActionFunction = async (data) => {
 export const loader: LoaderFunction = async (data) => {
   const { request } = data
 
-  const session = await requireAuth(request)
+  const { sessionData } = await requireAuth(request)
 
   return jsonWithHeaders({
-    fields: withValues(inviteUserformFields(), { organisationId: session.activeOrganisation.id }),
+    fields: withValues(inviteUserformFields(), { organisationId: sessionData.activeOrganisation.id }),
   })
 }
 

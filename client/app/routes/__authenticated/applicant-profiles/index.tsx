@@ -9,10 +9,10 @@ import ApplicantList from 'app/components/ApplicantList'
 
 export const loader: LoaderFunction = async (data) => {
   const { request } = data
-  const session = await requireAuth(request)
+  const { sessionData } = await requireAuth(request)
 
-  const profiles = await api(data, `/applicant-profile/by-user/${session.user.id}`)
-  return jsonWithHeaders({ session, profiles })
+  const profiles = await api(data, `/applicant-profile/by-user/${sessionData.user.id}`)
+  return jsonWithHeaders({ sessionData, profiles })
 }
 
 export const meta: MetaFunction = ({ data }) => {
