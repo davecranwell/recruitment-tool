@@ -16,9 +16,11 @@ export const action: ActionFunction = async (data) => {
 
   const update = await api(data, `/position/${id}/applicant/${applicantId}`, 'PATCH', await request.formData())
 
-  update.ok ? notify(session).success('Applicant stage changed') : notify(session).error('An error occured')
+  const headers = update.ok
+    ? await notify(session).success('Applicant stage changed')
+    : await notify(session).error('An error occured')
 
-  return null
+  return json({}, { headers })
 }
 
 export const loader: LoaderFunction = async (data) => {

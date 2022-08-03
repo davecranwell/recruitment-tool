@@ -114,14 +114,16 @@ async function createNotice(session: Session, message: string, type: string, ttl
     message,
     ttl,
   })
+
+  return { 'Set-Cookie': await commitSession(session) }
 }
 
 export function notify(session: Session) {
   return {
-    success: (message: string, ttl?: number) => createNotice(session, message, 'success', ttl),
-    error: (message: string, ttl: number = 0) => createNotice(session, message, 'error', ttl),
-    warning: (message: string, ttl: number = 5000) => createNotice(session, message, 'warning', ttl),
-    info: (message: string, ttl?: number) => createNotice(session, message, 'info', ttl),
+    success: async (message: string, ttl?: number) => await createNotice(session, message, 'success', ttl),
+    error: async (message: string, ttl: number = 0) => await createNotice(session, message, 'error', ttl),
+    warning: async (message: string, ttl: number = 5000) => await createNotice(session, message, 'warning', ttl),
+    info: async (message: string, ttl?: number) => await createNotice(session, message, 'info', ttl),
   }
 }
 
