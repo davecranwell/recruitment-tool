@@ -1,9 +1,10 @@
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
+import { json } from '@remix-run/node'
 import { redirect } from '@remix-run/node'
 
 import { useActionData, useLoaderData, useTransition } from '@remix-run/react'
 
-import { api, jsonWithHeaders } from 'app/api.server'
+import { api } from 'app/api.server'
 import { requireAuth } from 'app/sessions.server'
 
 import Content from 'app/components/Content'
@@ -25,12 +26,14 @@ export const loader: LoaderFunction = async (data) => {
   const { request, params } = data
 
   await requireAuth(request)
-  const user = await api(data, `/user/${params.id}`)
-  console.log(await user.clone().json())
+
+  const userRes = await api(data, `/user/${params.id}`)
+  const user = userRes.json()
   // const projects = await projectsRes.clone().json()
   // const position = await api(data, `/position/${params.id}`)
   // TODO make this work properly to load a user's data
-  return jsonWithHeaders({ user, fields: withValues(editUserFormFields(), user) })
+
+  return json({ user, fields: withValues(editUserFormFields(), user) })
 }
 
 const EditUser = () => {

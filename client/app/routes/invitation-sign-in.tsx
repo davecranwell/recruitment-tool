@@ -1,20 +1,19 @@
 import { useActionData, useTransition, useSearchParams, useLoaderData, Link } from '@remix-run/react'
 import type { ActionFunction, LoaderFunction, MetaFunction } from '@remix-run/node'
-import { redirect } from '@remix-run/node'
+import { redirect, json } from '@remix-run/node'
 
 import { createSession, hasSession } from 'app/sessions.server'
-import { api, jsonWithHeaders } from 'app/api.server'
+import { api } from 'app/api.server'
 import { safeRedirect, toSentence } from 'app/utils'
 import Alert from 'app/components/Alert'
 import Button from 'app/components/Button'
 import Form, { withValues } from 'app/components/Forms'
+import SignInForm from '~/components/SignInForm'
+import Divider from '~/components/Divider'
 
 import { loginFields, newUserFormFields } from '~/models/users/form'
 
 import { UnauthorisedResponse } from '~/utils/errors'
-import { json } from 'express'
-import SignInForm from '~/components/SignInForm'
-import Divider from '~/components/Divider'
 
 export const meta: MetaFunction = () => {
   return { title: `Accept invitation` }
@@ -26,12 +25,11 @@ export const loader: LoaderFunction = async (data) => {
 
   const url = new URL(request.url)
   const token = url.searchParams.get('token')
-  // const { request } = data
 
   const invitation = await api(data, `/invitation/check/?token=${token}`)
   if (!invitation.ok) throw UnauthorisedResponse()
 
-  return jsonWithHeaders({ session, invitation })
+  return json({ session, invitation: await invitation.json() })
 }
 
 export const action: ActionFunction = async (data) => {

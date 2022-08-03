@@ -1,7 +1,8 @@
 import type { LoaderFunction, MetaFunction } from '@remix-run/node'
+import { json } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 
-import { api, jsonWithHeaders } from 'app/api.server'
+import { api } from 'app/api.server'
 import { requireAuth } from 'app/sessions.server'
 
 import Content from 'app/components/Content'
@@ -12,7 +13,8 @@ export const loader: LoaderFunction = async (data) => {
   const { sessionData } = await requireAuth(request)
 
   const profiles = await api(data, `/applicant-profile/by-user/${sessionData.user.id}`)
-  return jsonWithHeaders({ sessionData, profiles })
+
+  return json({ sessionData, profiles: await profiles.json() })
 }
 
 export const meta: MetaFunction = ({ data }) => {

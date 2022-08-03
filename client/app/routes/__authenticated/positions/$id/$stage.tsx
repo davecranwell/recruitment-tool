@@ -2,7 +2,7 @@ import type { LoaderFunction } from '@remix-run/node'
 import { useLoaderData, useOutletContext, useParams } from '@remix-run/react'
 import invariant from 'tiny-invariant'
 
-import { api, jsonWithHeaders } from '~/api.server'
+import { api } from '~/api.server'
 import { requireAuth } from '~/sessions.server'
 
 import type { LinkedApplicantProfile } from 'app/models/applicant-profiles/ApplicantProfile'

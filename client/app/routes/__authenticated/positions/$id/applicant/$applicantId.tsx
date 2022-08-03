@@ -1,8 +1,9 @@
 import type { ActionFunction, LoaderFunction, MetaFunction } from '@remix-run/node'
+import { json } from '@remix-run/node'
 import { useActionData, useLoaderData, useOutletContext, useSubmit, useTransition } from '@remix-run/react'
 
-import { api, jsonWithHeaders } from '~/api.server'
-import { requireAuth } from '~/sessions.server'
+import { api } from '~/api.server'
+import { notify, requireAuth } from '~/sessions.server'
 
 import type { StageInPipeline } from 'app/models/positions/Stage'
 
@@ -13,11 +14,11 @@ export const action: ActionFunction = async (data) => {
   const { id, applicantId } = params
   const { session } = await requireAuth(request)
 
-  const updateResult = await api(data, `/position/${id}/applicant/${applicantId}`, 'PATCH', await request.formData())
+  const update = await api(data, `/position/${id}/applicant/${applicantId}`, 'PATCH', await request.formData())
+
+  update.ok ? notify(session).success('Applicant stage changed') : notify(session).error('An error occured')
+
   return null
-  // return jsonWithHeaders({
-  //   messages: updateResult.ok ? notify.success('Applicant stage changed') : notify.error('An error occured'),
-  // })
 }
 
 export const loader: LoaderFunction = async (data) => {
@@ -39,7 +40,6 @@ const Profile = () => {
   const { stages } = useOutletContext() as any
   const profile = useLoaderData()
   const actionData = useActionData()
-  const { messages } = actionData || {}
 
   const { applicantProfile, stage } = profile
   const { user } = applicantProfile

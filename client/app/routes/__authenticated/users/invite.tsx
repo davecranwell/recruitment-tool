@@ -1,9 +1,9 @@
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
+import { json } from '@remix-run/node'
 import { redirect } from '@remix-run/node'
-
 import { useActionData, useLoaderData, useTransition } from '@remix-run/react'
 
-import { api, jsonWithHeaders, redirectWithHeaders } from 'app/api.server'
+import { api } from 'app/api.server'
 import { requireAuth } from 'app/sessions.server'
 
 import Content from 'app/components/Content'
@@ -17,7 +17,7 @@ export const action: ActionFunction = async (data) => {
   await requireAuth(request)
   const invitation = await api(data, `/invitation/`, 'POST', await request.formData())
 
-  if (invitation.ok) return redirectWithHeaders(invitation, `/users`)
+  if (invitation.ok) return redirect(invitation, `/users`)
 
   return invitation
 }
@@ -27,7 +27,7 @@ export const loader: LoaderFunction = async (data) => {
 
   const { sessionData } = await requireAuth(request)
 
-  return jsonWithHeaders({
+  return json({
     fields: withValues(inviteUserformFields(), { organisationId: sessionData.activeOrganisation.id }),
   })
 }

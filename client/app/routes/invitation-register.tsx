@@ -1,7 +1,8 @@
 import type { ActionFunction, LoaderFunction, MetaFunction } from '@remix-run/node'
+import { json } from '@remix-run/node'
 import { Link, useActionData, useLoaderData, useSearchParams, useTransition } from '@remix-run/react'
 
-import { api, jsonWithHeaders } from 'app/api.server'
+import { api } from 'app/api.server'
 import { hasSession } from 'app/sessions.server'
 import { safeRedirect, toSentence } from 'app/utils'
 import { UnauthorisedResponse } from '~/utils/errors'
@@ -27,7 +28,7 @@ export const loader: LoaderFunction = async (data) => {
   const invitation = await api(data, `/invitation/check/?token=${token}`)
   if (!invitation.ok) throw UnauthorisedResponse()
 
-  return jsonWithHeaders({ session, invitation })
+  return json({ session, invitation: await invitation.json() })
 }
 
 export const action: ActionFunction = async (data) => {

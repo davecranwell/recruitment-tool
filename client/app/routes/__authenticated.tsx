@@ -15,6 +15,9 @@ export async function loader({ request }: { request: Request }) {
 
   return json(
     { sessionData, globalMessage },
+    // Setting headers here is problematic, if another fetch running in another route suddenly encounters a need
+    // to generate new access tokens. How does that route commit the new tokens to the session, if this page is also committing
+    // a new session at the same time.
     // this can't happen here because if a subroute loads the session as this route saves it, the file appears corrupted
     { headers: { 'Set-Cookie': await commitSession(session) } }
   )

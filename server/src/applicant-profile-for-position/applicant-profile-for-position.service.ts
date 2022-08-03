@@ -5,15 +5,15 @@ import { UpdateApplicantProfileForPositionDto } from './dto/update-applicant-pro
 @Injectable()
 export class ApplicantProfileForPositionService {
   create(createApplicantProfileForPositionDto: CreateApplicantProfileForPositionDto) {
-    return 'This action adds a new applicantProfileForPosition'
+    return { msg: 'This action adds a new applicantProfileForPosition' }
   }
 
   findAll() {
-    return `This action returns all applicantProfileForPosition`
+    return { msg: `This action returns all applicantProfileForPosition` }
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} applicantProfileForPosition`
+    return { msg: `This action returns a #${id} applicantProfileForPosition` }
   }
 
   update(id: number, updateApplicantProfileForPositionDto: UpdateApplicantProfileForPositionDto) {

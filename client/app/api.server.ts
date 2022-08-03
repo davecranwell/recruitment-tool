@@ -1,25 +1,14 @@
 import type { DataFunctionArgs } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 
-import { getSession, refreshTokensIfNeeded } from 'app/sessions.server'
+import { getSessionData } from 'app/sessions.server'
 import { formDataToJson } from 'app/utils'
 import { ErrorResponse, ForbiddenResponse, NotFoundResponse } from 'app/utils/errors'
 
 export async function api(data: DataFunctionArgs, url: string, method: string = 'GET', body?: any): Promise<any> {
-  const { request, context } = data
+  const { request } = data
 
-  const session = await getSession(request.headers.get('Cookie'))
-  let accessToken = session?.get('user')?.accessToken
-
-  // Refresh token of existing session first before attempting API request
-  const { headers, refreshedAccessToken } = await refreshTokensIfNeeded(request, context)
-  if (!headers) return redirect('/sign-out')
-
-  // We won't have accessToken or a session if we're not logging in.
-  // NB: the accessToken may have just this instant been refreshed by refreshTokensIfNeeded()
-  // but it is yet to be committed to the cookie, done by setting headers at the very
-  // end of this function.
-  if (refreshedAccessToken) accessToken = refreshedAccessToken
+  const { accessToken } = (await getSessionData(request)) || {}
 
   const apiRes = await fetch(`${process.env.BACKEND_ROOT_URL}${url}`, {
     method,
@@ -33,54 +22,14 @@ export async function api(data: DataFunctionArgs, url: string, method: string = 
   switch (apiRes.status) {
     // NB: can't catch 400 here as 400 is a bad request i.e a request that had errors to be returned to user
     case 404:
-      throw NotFoundResponse({ headers })
+      throw NotFoundResponse()
 
     case 403:
-      throw ForbiddenResponse({ headers })
+      throw ForbiddenResponse()
 
     case 500:
-      throw ErrorResponse({ headers, statusText: apiRes.statusText })
+      throw ErrorResponse({ statusText: apiRes.statusText })
   }
 
-  return json(await apiRes.json(), { status: apiRes.status, headers })
-}
-
-async function getHeadersFromData(data: any) {
-  let headers = new Headers()
-
-  for (let datum of Object.keys(data)) {
-    const thisData = data[datum]
-
-    if (thisData instanceof Response) {
-      if (thisData.headers) {
-        for (let headerPair of thisData.headers.entries()) {
-          if (!headers.has(headerPair[0])) {
-            headers.append(headerPair[0], headerPair[1])
-          }
-        }
-      }
-
-      data[datum] = await thisData.json()
-    }
-  }
-
-  return { data, headers }
-}
-
-/**
- * Converts a data object containing potential Response objects in which headers are set, into the same data with the headers forwarded as appropriate
- *
- * @param data an object containing data to be returned as json, can include Response objects
- * @returns
- */
-export async function jsonWithHeaders(data: any) {
-  const { data: newData, headers } = await getHeadersFromData(data)
-
-  return json(newData, { headers })
-}
-
-export async function redirectWithHeaders(data: any, url: string) {
-  const { headers } = await getHeadersFromData(data)
-
-  return redirect(url, { headers })
+  return json(await apiRes.json(), { status: apiRes.status })
 }

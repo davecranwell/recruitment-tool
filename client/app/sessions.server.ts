@@ -1,9 +1,5 @@
 import type { Session } from '@remix-run/node'
-import { createCookieSessionStorage } from '@remix-run/node'
-import { createCookie } from '@remix-run/node'
-import { createFileSessionStorage, redirect } from '@remix-run/node'
-import type { JwtPayload } from 'jsonwebtoken'
-import jwt from 'jsonwebtoken'
+import { createCookieSessionStorage, redirect } from '@remix-run/node'
 import invariant from 'tiny-invariant'
 
 // import { notify } from '~/components/Notifications'
@@ -53,23 +49,6 @@ export async function hasSession(request: Request): Promise<boolean> {
   return session.has('user')
 }
 
-export async function createNotice(session: Session, message: string, type: string, ttl: number = 3000) {
-  session.flash('global', {
-    type,
-    message,
-    ttl,
-  })
-}
-
-export function notify(session: Session) {
-  return {
-    success: (message: string, ttl?: number) => createNotice(session, message, 'success', ttl),
-    error: (message: string, ttl: number = 0) => createNotice(session, message, 'error', ttl),
-    warning: (message: string, ttl: number = 5000) => createNotice(session, message, 'warning', ttl),
-    info: (message: string, ttl?: number) => createNotice(session, message, 'info', ttl),
-  }
-}
-
 export async function createSession(authRecord: SessionData, redirectTo: string) {
   const session = await getSession() // empty session
 
@@ -80,7 +59,6 @@ export async function createSession(authRecord: SessionData, redirectTo: string)
   }
 
   session.set('user', authRecord)
-  //session.flash('global', notify.success('you did it!'))
 
   return redirect(redirectChoice, {
     headers: {
@@ -101,74 +79,6 @@ export async function setSessionOrganisation(request: Request, organisation: Org
       'Set-Cookie': await commitSession(session),
     },
   })
-}
-
-export async function getUserSession(request: Request) {
-  return await getSession(request.headers.get('Cookie'))
-}
-
-export function sessionAccessTokenHasExpired(session: Session) {
-  if (session.has('user')) {
-    const { accessToken } = session.get('user')
-
-    const expiry = (jwt.decode(accessToken) as JwtPayload).exp
-    if (new Date().getTime() > expiry! * 1000) {
-      return true
-    }
-
-  return false
-}
-
-export async function getRefreshToken(request: Request) {
-  const session = await getSessionFromCookie(request)
-  const currentSession = session.get('user')
-
-  return fetch(`${process.env.BACKEND_ROOT_URL}/authentication/refresh`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${currentSession.refreshToken}`,
-    },
-  })
-    .then((res) => {
-      if (res.ok) return res.json()
-      throw redirect('/sign-out')
-    })
-    .then(({ accessToken, refreshToken }) => {
-      // replace only the tokens.
-      currentSession.accessToken = accessToken
-      currentSession.refreshToken = refreshToken
-
-      session.set('user', currentSession)
-
-      return commitSession(session).then((cookie) => {
-        return {
-          refreshedAccessToken: accessToken,
-          headers: new Headers({ 'Set-Cookie': cookie }),
-        }
-      })
-    })
-}
-
-export async function refreshTokensIfNeeded(request: Request, context: any) {
-  const session = await getSessionFromCookie(request)
-  const currentSession = session.get('user')
-
-  // if session still active, send empty headers to tack onto next appropriate request
-  if (!sessionAccessTokenHasExpired(session)) return { headers: new Headers() }
-
-  const cachedRefreshPromise = context.cache[currentSession?.user?.id]
-  if (cachedRefreshPromise) return cachedRefreshPromise
-
-  // we cache the promise returned from getRefreshToken which is async
-  // then return the cache WITHOUT awaiting anything - limiting us to one level of promises
-  context.cache[currentSession.user.id] = getRefreshToken(request)
-
-  setTimeout(() => {
-    // delete this cache after 20s because no request could ahve taken that long
-    delete context.cache[currentSession.user.id]
-  }, 20_000)
-
-  return context.cache[currentSession.user.id]
 }
 
 export async function requireAuth(request: Request, redirectTo: string = new URL(request.url).pathname) {
@@ -196,6 +106,23 @@ export async function logout(request: Request) {
       'Set-Cookie': await destroySession(session),
     },
   })
+}
+
+async function createNotice(session: Session, message: string, type: string, ttl: number = 3000) {
+  session.flash('global', {
+    type,
+    message,
+    ttl,
+  })
+}
+
+export function notify(session: Session) {
+  return {
+    success: (message: string, ttl?: number) => createNotice(session, message, 'success', ttl),
+    error: (message: string, ttl: number = 0) => createNotice(session, message, 'error', ttl),
+    warning: (message: string, ttl: number = 5000) => createNotice(session, message, 'warning', ttl),
+    info: (message: string, ttl?: number) => createNotice(session, message, 'info', ttl),
+  }
 }
 
 export { getSession, commitSession, destroySession }

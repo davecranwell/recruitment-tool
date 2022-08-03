@@ -1,9 +1,10 @@
 import { CalendarIcon, CurrencyDollarIcon, LocationMarkerIcon } from '@heroicons/react/solid'
 import type { LoaderFunction } from '@remix-run/node'
+import { json } from '@remix-run/node'
 import { Outlet, useLoaderData } from '@remix-run/react'
 import type { MetaFunction } from '@remix-run/react/routeModules'
 
-import { api, jsonWithHeaders } from 'app/api.server'
+import { api } from 'app/api.server'
 import { requireAuth } from '~/sessions.server'
 
 import Content from 'app/components/Content'
@@ -24,7 +25,7 @@ export const loader: LoaderFunction = async (data) => {
 
   const stages = await api(data, `/position/${params.id}/pipeline`)
   const position = await api(data, `/position/${params.id}`)
-  return jsonWithHeaders({ stages, position })
+  return json({ stages: await stages.json(), position: await position.json() })
 }
 
 const PositionDetail = () => {

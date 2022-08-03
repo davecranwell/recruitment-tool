@@ -2,7 +2,7 @@ import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { useActionData, useLoaderData, useTransition } from '@remix-run/react'
 
-import { api, jsonWithHeaders } from 'app/api.server'
+import { api } from 'app/api.server'
 import { requireAuth } from 'app/sessions.server'
 
 import Content from 'app/components/Content'
@@ -26,9 +26,9 @@ export const loader: LoaderFunction = async (data) => {
   const { sessionData } = await requireAuth(request)
 
   const projectsRes = await api(data, `/organisation/${sessionData.activeOrganisation.id}/projects`)
-  const projects = await projectsRes.clone().json()
+  const projects = await projectsRes.json()
 
-  return jsonWithHeaders({ fields: formFields(sessionData, projects.data), projects: projectsRes })
+  return json({ fields: formFields(sessionData, projects.data) })
 }
 
 const NewPosition = () => {
