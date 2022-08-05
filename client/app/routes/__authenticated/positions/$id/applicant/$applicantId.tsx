@@ -1,6 +1,7 @@
 import type { ActionFunction, LoaderFunction, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { useActionData, useLoaderData, useOutletContext, useSubmit, useTransition } from '@remix-run/react'
+import { LockClosedIcon } from '@heroicons/react/solid'
 
 import { api } from '~/api.server'
 import { notify, requireAuth } from '~/sessions.server'
@@ -105,10 +106,15 @@ const Profile = () => {
                     <dt className="text-sm font-medium text-gray-500">Email address</dt>
                     <dd className="mt-1 text-sm text-gray-900">{user.email}</dd>
                   </div>
-                  <div className="sm:col-span-1">
-                    <dt className="text-sm font-medium text-gray-500">Salary expectation</dt>
-                    <dd className="mt-1 text-sm text-gray-900">{applicantProfile.askingSalary}</dd>
-                  </div>
+                  {applicantProfile.askingSalary && (
+                    <div className="sm:col-span-1">
+                      <dt className="flex items-center text-sm font-medium text-gray-500">
+                        Salary expectation{' '}
+                        <LockClosedIcon className="h-4 w-4 flex-shrink-0 text-yellow-600" aria-hidden="true" />
+                      </dt>
+                      <dd className="mt-1 text-sm text-gray-900">{applicantProfile.askingSalary}</dd>
+                    </div>
+                  )}
                   {/* <div className="sm:col-span-1">
                       <dt className="text-sm font-medium text-gray-500">Phone</dt>
                       <dd className="mt-1 text-sm text-gray-900">+1 555-555-5555</dd>

@@ -5,5 +5,5 @@ import { CreateApplicantProfileDto } from './create-applicant-profile.dto'
 
 export class UpdateApplicantProfileDto extends PartialType(CreateApplicantProfileDto) {
   profileName?: string
-  askingSalary?: number
+  askingSalary?: string
 }

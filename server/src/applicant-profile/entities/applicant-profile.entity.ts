@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { ApplicantProfile as ApplicantProfileModel } from '@prisma/client'
 import { ValidateNested } from 'class-validator'
-import { Exclude, Type } from 'class-transformer'
+import { Exclude, Expose, Type } from 'class-transformer'
 
 import { UserEntity as User, UserEntity } from 'src/user/entities/user.entity'
 import { Position } from 'src/position/entities/position.entity'
@@ -18,7 +18,8 @@ export class ApplicantProfile implements ApplicantProfileModel {
   profileName: string
 
   @ApiProperty()
-  askingSalary: number
+  @Expose({ groups: ['manage', 'review'] })
+  askingSalary: string
 
   @ApiProperty()
   createdAt: Date

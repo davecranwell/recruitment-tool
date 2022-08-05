@@ -44,7 +44,7 @@ const Layout: React.FC<Props> = ({ children, sessionData, globalMessage }) => {
   const navigation: NavItems = [
     [
       { name: 'Home', href: '/start', icon: HomeIcon },
-      { name: 'Applicants', href: '/applicant-profiles', icon: UsersIcon },
+      // { name: 'Applicants', href: '/applicant-profiles', icon: UsersIcon },
       { name: 'Positions', href: '/positions', icon: BriefcaseIcon },
       // { name: 'Timeline', href: '/timeline', icon: CalendarIcon },
     ],

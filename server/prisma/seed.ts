@@ -295,7 +295,7 @@ async function main() {
   const applicant1Profile = await prisma.applicantProfile.create({
     data: {
       profileName: 'Applicant 1 General profile',
-      askingSalary: 100000,
+      askingSalary: '$100000',
       userId: applicantUser1.id,
       organisations: {
         create: {
@@ -314,7 +314,7 @@ async function main() {
   const applicant2Profile = await prisma.applicantProfile.create({
     data: {
       profileName: 'Applicant 2 My profile',
-      askingSalary: 1500000,
+      askingSalary: '£1500000',
       userId: applicantUser2.id,
       // organisations: {
       //   create: [{ organisationId: vocovo.id }],
@@ -325,7 +325,7 @@ async function main() {
   const applicant3Profile = await prisma.applicantProfile.create({
     data: {
       profileName: 'Applicant 3 First profile',
-      askingSalary: 50000,
+      askingSalary: '£50000 - £70000',
       userId: applicantUser3.id,
       // organisations: {
       //   create: [{ organisationId: vocovo.id }],

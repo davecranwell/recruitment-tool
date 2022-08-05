@@ -4,7 +4,7 @@
 
 - [x] Sharing of backend permissions rules with front end via session
 - [x] Refresh tokens
-- [ ] Toast prompts for notifications
+- [x] Toast prompts for notifications
 - [ ] Pipelines must either be made public or finessed to a point where the stages are usable by anyone
 - [ ] Pipelines need to be automatically attributed to a project
 - [ ] Pipelines need to be automatically inheritted by a position from the project
@@ -17,7 +17,7 @@
 - [x] Form generation & validation system
 - [x] Form submission errors that are orphaned from fields need displaying somewhere
 - [x] Handle form submissions followed by redirects with expiring tokens
-- [ ] Support session.flash by reorganising how cookies are set
+- [x] Support session.flash by reorganising how cookies are set
 - [ ] Need some dynamic project chooser UI so pagination of projects is still workable
 
 ## Nest
@@ -32,11 +32,21 @@
 - [x] Throw suitable errors when API calls are wrong
 - [x] Cache permissions across session in JWT
 - [x] Send invitations to orgs via email
+- [ ] Finish applying permissions to all entities
+  - [ ] Applicant Profiles
+  - [ ] Invitations
+  - [ ] Organisations
+  - [ ] Pipelines
+  - [ ] Positions
+  - [ ] Projects
+  - [ ] Stages
+  - [ ] Users
 - [ ] Edit users by getting them from DB based on their org relationship, not straight from users, which is basically too open
 - [ ] Share back end types with front end
 - [ ] Ensure prisma exception filter doesn't throw verbose errors in production
 - [ ] Trimming all user input with a Pipe
 - [ ] Move permissions to Redis to reduce size of cookie
+- [ ] ClassSerializerInterceptor doesn't allow you to specify groups (move to PrismaClasSerializerInterceptorPaginated for now)
 
 ## Features
 

@@ -15,5 +15,5 @@ export class CreateApplicantProfileDto {
   @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsNumber()
-  askingSalary: number
+  askingSalary: string
 }

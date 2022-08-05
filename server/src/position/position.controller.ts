@@ -24,11 +24,13 @@ import { CreatePositionDto } from './dto/create-position.dto'
 import { UpdateApplicantStageDto } from './dto/update-applicant-stage.dto'
 import { UpdatePositionDto } from './dto/update-position.dto'
 
-import { ApplicantProfileWithUser } from 'src/applicant-profile/entities/applicant-profile.entity'
+import { ApplicantProfile, ApplicantProfileWithUser } from 'src/applicant-profile/entities/applicant-profile.entity'
 import { RequestWithUser } from 'src/authentication/authentication.controller'
 import JwtAuthenticationGuard from 'src/authentication/guards/jwtAuthentication.guard'
 import { Pipeline } from 'src/pipeline/entities/pipeline.entity'
 import { Position } from './entities/position.entity'
+import { ApplicantProfileForPositionWithStage } from 'src/applicant-profile-for-position/entities/applicant-profile-for-position.entity'
+import { Stage } from 'src/stage/entities/stage.entity'
 
 @ApiTags('Positions')
 @ApiBearerAuth('access-token')
@@ -45,7 +47,7 @@ export class PositionController {
 
   @Get(':id')
   @ApiOkResponse({ type: Position })
-  @UseInterceptors(ClassSerializerInterceptor)
+  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Position))
   findOne(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number
@@ -79,9 +81,9 @@ export class PositionController {
   }
 
   @Get(':id/applicant/:applicantId')
-  @ApiExtraModels(ApplicantProfileWithUser)
-  @ApiResponse({ type: ApplicantProfileWithUser })
-  @UseInterceptors(ClassSerializerInterceptor)
+  @ApiExtraModels(Stage, ApplicantProfileForPositionWithStage)
+  @ApiResponse({ type: ApplicantProfileForPositionWithStage })
+  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(ApplicantProfileForPositionWithStage))
   findApplicant(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
@@ -90,18 +92,18 @@ export class PositionController {
     return this.positionService.findApplicant(id, applicantId, request.user)
   }
 
-  @Patch(':id/applicant/:applicantProfileId')
+  @Patch(':id/applicant/:applicantId')
   @ApiExtraModels(ApplicantProfileWithUser)
   @ApiResponse({ type: ApplicantProfileWithUser })
   @UseInterceptors(ClassSerializerInterceptor)
   changeApplicantStage(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
-    @Param('applicantProfileId', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND }))
-    applicantProfileId: number,
+    @Param('applicantId', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND }))
+    applicantId: number,
     @Body() data: UpdateApplicantStageDto
   ) {
-    return this.positionService.changeApplicantStage(id, applicantProfileId, data, request.user)
+    return this.positionService.changeApplicantStage(id, applicantId, data, request.user)
   }
 
   @Get(':id/pipeline')

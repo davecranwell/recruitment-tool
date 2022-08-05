@@ -17,7 +17,7 @@ export const action: ActionFunction = async (data) => {
   await requireAuth(request)
   const invitation = await api(data, `/invitation/`, 'POST', await request.formData())
 
-  if (invitation.ok) return redirect(invitation, `/users`)
+  if (invitation.ok) return redirect(`/users`)
 
   return invitation
 }

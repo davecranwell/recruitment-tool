@@ -38,7 +38,7 @@ INTERVIEWER INTERVIEWER
   ApplicantProfile {
     Int id PK 
     String profileName  
-    Int askingSalary  "nullable"
+    String askingSalary  "nullable"
     DateTime createdAt  
     DateTime updatedAt  
     }

@@ -24,8 +24,13 @@ export function PrismaClassSerializerInterceptorPaginated(classToIntercept: Type
 
     changePlainObjectToClass(response: PlainLiteralObject, abilities: Ability) {
       const canManage = abilities.can(Action.Manage, plainToClass(classToIntercept, response))
+      const canReview = abilities.can(Action.Review, plainToClass(classToIntercept, response))
 
-      return plainToClass(classToIntercept, response, canManage && { groups: ['manager'] })
+      const groups = []
+      canManage && groups.push('manage')
+      canReview && groups.push('review')
+
+      return plainToClass(classToIntercept, response, { groups })
     }
 
     intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> {

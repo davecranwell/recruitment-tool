@@ -3,19 +3,19 @@ type MetaListProps = {
 }
 
 type ItemProps = {
-  value: string
   icon: React.ElementType
+  children: any
 }
 
-export const MetaListItem: React.FC<ItemProps> = ({ value, icon }) => {
+export const MetaListItem: React.FC<ItemProps> = ({ icon, children }) => {
   const Icon = icon
 
-  if (!value) return null
+  if (!children) return null
 
   return (
     <div className="mt-2 flex items-center text-sm text-gray-500">
       <Icon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-      {value}
+      {children}
     </div>
   )
 }

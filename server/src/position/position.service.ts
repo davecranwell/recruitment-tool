@@ -10,7 +10,10 @@ import { createPaginator } from 'src/util/pagination'
 import { CreatePositionDto } from './dto/create-position.dto'
 import { UpdatePositionDto } from './dto/update-position.dto'
 
-import { ApplicantProfileForPosition } from 'src/applicant-profile-for-position/entities/applicant-profile-for-position.entity'
+import {
+  ApplicantProfileForPosition,
+  ApplicantProfileForPositionWithStage,
+} from 'src/applicant-profile-for-position/entities/applicant-profile-for-position.entity'
 import { Action } from 'src/casl/actions'
 import { UserEntity } from 'src/user/entities/user.entity'
 import { UpdateApplicantStageDto } from './dto/update-applicant-stage.dto'
@@ -127,12 +130,13 @@ export class PositionService {
       include: {
         applicantProfile: { include: { user: { select: { name: true, email: true } } } },
         stage: true,
+        position: { select: { organisationId: true } },
       },
     })
 
     if (!applicant) throw new NotFoundException('Applicant is not associated with this position')
 
-    return applicant
+    return new ApplicantProfileForPositionWithStage(applicant)
   }
 
   async findPipelineWithStages(positionId: number, user: UserEntity) {

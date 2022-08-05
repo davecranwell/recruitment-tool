@@ -51,7 +51,7 @@ export class Position implements PositionModel {
   location: string | null
 
   @ApiProperty({ description: 'May not be present if unsufficiently privileged in position role' })
-  @Expose({ groups: ['manager'] })
+  @Expose({ groups: ['manage'] })
   salaryRange: string | null
 
   @ValidateNested()
@@ -67,6 +67,15 @@ export class Position implements PositionModel {
   applicantProfiles?: ApplicantProfileForPosition[]
 
   constructor(partial: Partial<Position>) {
+    Object.assign(this, partial)
+  }
+}
+
+export class PositionOnlyOrgId {
+  @ApiProperty()
+  organisationId: number
+
+  constructor(partial: Partial<PositionOnlyOrgId>) {
     Object.assign(this, partial)
   }
 }

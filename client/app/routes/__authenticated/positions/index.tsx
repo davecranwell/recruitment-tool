@@ -1,4 +1,5 @@
 import { BriefcaseIcon, CalendarIcon, CurrencyDollarIcon, LocationMarkerIcon } from '@heroicons/react/outline'
+import { LockClosedIcon } from '@heroicons/react/solid'
 import type { LoaderFunction, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { Outlet, useLoaderData } from '@remix-run/react'
@@ -59,12 +60,16 @@ const Positions = () => {
               </div>
             </div>
             <MetaList className="mt-2">
-              <MetaListItem value={position.salaryRange!} icon={CurrencyDollarIcon}></MetaListItem>
-              <MetaListItem value={position.location!} icon={LocationMarkerIcon}></MetaListItem>
-              <MetaListItem
-                value={`Closing on ${dateTimeFormat(position.closingDate!)}`}
-                icon={CalendarIcon}
-              ></MetaListItem>
+              <MetaListItem icon={CurrencyDollarIcon}>
+                {position.salaryRange && (
+                  <>
+                    {position.salaryRange!}
+                    <LockClosedIcon className="h-4 w-4 flex-shrink-0 text-yellow-600" aria-hidden="true" />
+                  </>
+                )}
+              </MetaListItem>
+              <MetaListItem icon={LocationMarkerIcon}>{position.location!}</MetaListItem>
+              <MetaListItem icon={CalendarIcon}>{`Closing on ${dateTimeFormat(position.closingDate!)}`}</MetaListItem>
             </MetaList>
           </StackedListItem>
         ))}

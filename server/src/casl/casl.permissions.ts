@@ -137,6 +137,21 @@ export class CaslPermissions {
         subject: 'UserEntity',
         conditions: { id: user.id },
       },
+      {
+        action: Action.Manage,
+        subject: 'ApplicantProfile',
+        conditions: { userId: user.id },
+      },
+      {
+        action: Action.Review,
+        subject: 'ApplicantProfileForPositionWithStage',
+        conditions: { 'position.organisationId': { $in: orgIdsOwned } },
+      },
+      {
+        action: Action.Review,
+        subject: 'ApplicantProfileForPositionWithStage',
+        conditions: { positionId: { $in: projectIdsManaged } },
+      },
     ]
   }
 
