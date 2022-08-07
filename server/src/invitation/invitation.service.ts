@@ -71,10 +71,10 @@ export class InvitationService {
     const invitationMsg = {
       to: email.toLowerCase(),
       from: this.configService.get('EMAIL_FROM'),
-      templateId: 'd-2bd9612619864fbcb8993050e871d5a8',
+      templateId: this.configService.get('EMAIL_TEMPLATE_INVITATION'),
       dynamicTemplateData: {
         organisationName: organisation.name,
-        invitationUrl: `http://localhost:3001/invitation-sign-in?token=${token}`,
+        invitationUrl: `${this.configService.get('ROOT_URL')}/invitation-sign-in?token=${token}`,
       },
     }
 
