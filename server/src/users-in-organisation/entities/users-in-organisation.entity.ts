@@ -1,6 +1,6 @@
 import { UserRoleType } from '@prisma/client'
 import { ValidateNested } from 'class-validator'
-import { Type } from 'class-transformer'
+import { Exclude, Type } from 'class-transformer'
 
 import { UserEntity as User } from 'src/user/entities/user.entity'
 import { Organisation } from 'src/organisation/entities/organisation.entity'
@@ -13,6 +13,14 @@ export class UsersInOrganisation {
   userId: number
   organisation?: Organisation
   organisationId: number
+
+  @Exclude()
   createdAt: Date
+
+  @Exclude()
   updatedAt: Date
+}
+
+export class UsersInOrganisationIdonly {
+  organisationId: number
 }
