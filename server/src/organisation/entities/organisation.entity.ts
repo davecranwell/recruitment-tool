@@ -20,10 +20,10 @@ export class Organisation implements OrganisationModel {
   @ApiProperty()
   machineName: string
 
-  @ApiProperty()
+  @Exclude()
   createdAt: Date
 
-  @ApiProperty()
+  @Exclude()
   updatedAt: Date
 
   @ValidateNested()
