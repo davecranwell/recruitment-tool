@@ -3,7 +3,10 @@ import { User } from '@prisma/client'
 import { Exclude, Type } from 'class-transformer'
 import { IsOptional, ValidateNested } from 'class-validator'
 
-import { UsersInOrganisation } from 'src/users-in-organisation/entities/users-in-organisation.entity'
+import {
+  UsersInOrganisation,
+  UsersInOrganisationIdonly,
+} from 'src/users-in-organisation/entities/users-in-organisation.entity'
 import { UserRolesOfUser } from 'src/user-roles-of-user/entities/user-roles-of-user.entity'
 import { ProjectUserRole } from 'src/project-user-role/entities/project-user-role.entity'
 import { ApplicantProfile } from 'src/applicant-profile/entities/applicant-profile.entity'
@@ -35,6 +38,8 @@ export class UserEntity implements User {
   @ApiProperty({ required: true })
   updatedAt: Date
 
+  @ValidateNested()
+  @Type(() => UsersInOrganisation)
   organisations?: UsersInOrganisation[]
   userRoles?: UserRolesOfUser[]
   projectRoles?: ProjectUserRole[]
