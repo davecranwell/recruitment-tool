@@ -54,8 +54,6 @@ export async function createSession(authRecord: SessionData, redirectTo: string)
 
   const redirectChoice = authRecord.user.organisations.length > 1 ? '/choose-organisation' : redirectTo
 
-  console.log(authRecord)
-
   if (authRecord.user.organisations.length === 1) {
     authRecord.activeOrganisation = authRecord.user.organisations[0].organisation
   }

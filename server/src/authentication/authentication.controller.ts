@@ -82,7 +82,7 @@ export class AuthenticationController {
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('log-in/google')
   async logInGoogle(@Body() body: GoogleAuthDto) {
-    return await this.googleAuthenticationService.signinWithGoogle(body.access_token)
+    return await this.googleAuthenticationService.signinWithGoogle(body.code)
   }
 
   @ApiOkResponse()

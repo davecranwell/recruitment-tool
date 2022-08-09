@@ -87,13 +87,12 @@ export class UserService {
       email: string
       avatarUrl?: string
       password?: string
+      OAuth2Tokens?: object
       isRegisteredWithGoogle?: boolean
     },
     invitation?: Invitation
   ): Promise<UserEntity> {
     const { role, organisationId } = invitation || {}
-
-    console.log({ accountData })
 
     return new UserEntity(
       await this.prisma.user.create({

@@ -51,6 +51,9 @@ export class UserEntity implements User {
   @ApiProperty()
   avatarUrl: string
 
+  @Exclude()
+  OAuth2Tokens: any
+
   isRegisteredWithGoogle: boolean
 
   constructor(partial: Partial<UserEntity>) {

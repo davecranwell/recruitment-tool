@@ -6,6 +6,14 @@ import { UserService } from '../user/user.service'
 import { PostgresErrorCode } from '../util/db-types'
 import { AuthenticationService } from './authentication.service'
 
+type OAuthExchangedTokens = {
+  access_token: string
+  refresh_token: string
+  token_type: string
+  id_token: string
+  expiry_date: number
+}
+
 @Injectable()
 export class GoogleAuthenticationService {
   oauthClient: Auth.OAuth2Client
@@ -18,34 +26,16 @@ export class GoogleAuthenticationService {
     const clientId = this.configService.get('GOOGLE_AUTH_CLIENT_ID')
     const clientSecret = this.configService.get('GOOGLE_AUTH_CLIENT_SECRET')
 
-    this.oauthClient = new google.auth.OAuth2(clientId, clientSecret)
+    this.oauthClient = new google.auth.OAuth2(clientId, clientSecret, 'postmessage')
   }
 
-  public async register(token: string, email: string) {
-    const userData = await this.getUserData(token)
+  async signinWithGoogle(code: string) {
+    //exchange code for access_token and refresh token
+    const { tokens } = await this.oauthClient.getToken(code)
 
-    console.log(userData)
-    const { name, picture } = userData
+    this.oauthClient.setCredentials(tokens)
 
-    try {
-      return await this.userService.create({
-        email,
-        name,
-        avatarUrl: picture,
-        isRegisteredWithGoogle: true,
-      })
-    } catch (error) {
-      if (error?.code === PostgresErrorCode.UniqueViolation) {
-        throw new BadRequestException('User with that email already exists')
-      }
-      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-  }
-
-  async signinWithGoogle(token: string) {
-    const tokenInfo = await this.oauthClient.getTokenInfo(token)
-
-    const email = tokenInfo.email
+    const { email } = await this.oauthClient.getTokenInfo(tokens.access_token)
 
     try {
       const user = await this.userService.getByEmail(email)
@@ -60,19 +50,34 @@ export class GoogleAuthenticationService {
         throw new error()
       }
 
-      const newUser = await this.register(token, email)
+      const newUser = await this.register(tokens, email)
 
       return this.authenticationService.signInById(newUser.id)
     }
-    return tokenInfo
   }
 
-  async getUserData(token: string) {
-    const userInfoClient = google.oauth2('v2').userinfo
+  public async register(tokens: Auth.Credentials, email: string) {
+    const userData = await this.getUserData()
+    const { name, picture } = userData
 
-    this.oauthClient.setCredentials({
-      access_token: token,
-    })
+    try {
+      return await this.userService.create({
+        email,
+        name,
+        avatarUrl: picture,
+        isRegisteredWithGoogle: true,
+        OAuth2Tokens: tokens,
+      })
+    } catch (error) {
+      if (error?.code === PostgresErrorCode.UniqueViolation) {
+        throw new BadRequestException('User with that email already exists')
+      }
+      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  async getUserData() {
+    const userInfoClient = google.oauth2('v2').userinfo
 
     const userInfoResponse = await userInfoClient.get({
       auth: this.oauthClient,

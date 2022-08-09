@@ -47,23 +47,17 @@ export class MagicLoginDto {
 
 export class GoogleAuthDto {
   @IsNotEmpty()
-  access_token: string
-
-  @IsNotEmpty()
-  token_type: string
-
-  @IsNotEmpty()
-  expires_in: number
-
-  @IsNotEmpty()
-  scope: string
-
-  @IsNotEmpty()
   authuser: string
+
+  @IsNotEmpty()
+  code: string
 
   @IsNotEmpty()
   hd: string
 
   @IsNotEmpty()
   prompt: string
+
+  @IsNotEmpty()
+  scope: string
 }

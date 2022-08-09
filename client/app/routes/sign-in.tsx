@@ -1,18 +1,17 @@
-import { useActionData, useTransition, useSearchParams, useFetcher, useSubmit } from '@remix-run/react'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
-import { json } from '@remix-run/node'
-import { redirect } from '@remix-run/node'
+import { useActionData, useFetcher, useSearchParams, useTransition } from '@remix-run/react'
 import { useGoogleLogin } from '@react-oauth/google'
+import { redirect } from '@remix-run/node'
 
-import { createSession, hasSession } from 'app/sessions.server'
 import { api } from 'app/api.server'
+import { createSession, hasSession } from 'app/sessions.server'
 import { safeRedirect } from 'app/utils'
 
 import { loginFields } from '~/models/users/form'
 
 import Form from 'app/components/Forms'
-import Divider from '~/components/Divider'
 import Button from '~/components/Button'
+import Divider from '~/components/Divider'
 
 import googlelogo from '../../images/GoogleLogo.svg'
 
@@ -59,13 +58,11 @@ const SignIn = () => {
 
   const redirectTo = searchParams.get('redirectTo') ?? undefined
 
-  console.log('fetcherdata', fetcher.data)
-
   const googleLogin = useGoogleLogin({
     onSuccess: (codeResponse) => {
       fetcher.submit({ googleResponse: JSON.stringify(codeResponse) }, { method: 'post' })
     },
-    flow: 'implicit',
+    flow: 'auth-code',
     scope: 'https://www.googleapis.com/auth/calendar.events',
   })
 

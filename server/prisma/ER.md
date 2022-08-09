@@ -34,6 +34,7 @@ INTERVIEWER INTERVIEWER
     DateTime updatedAt  
     Boolean isRegisteredWithGoogle  
     String avatarUrl  "nullable"
+    Json OAuth2Tokens  "nullable"
     }
   
 
