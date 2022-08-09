@@ -24,17 +24,19 @@ datasource db {
 }
 
 model User {
-  id                Int                   @id @default(autoincrement())
-  name              String?
-  email             String                @unique(map: "Auth_email_unique_constraint")
-  password          String?
-  refreshTokenHash  String?
-  createdAt         DateTime              @default(now())
-  updatedAt         DateTime              @default(now())
-  organisations     UsersInOrganisation[]
-  userRoles         UserRolesOfUser[]
-  projectRoles      ProjectUserRole[]
-  applicantProfiles ApplicantProfile[]
+  id                     Int                   @id @default(autoincrement())
+  name                   String?
+  email                  String                @unique(map: "Auth_email_unique_constraint")
+  password               String?
+  refreshTokenHash       String?
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @default(now())
+  isRegisteredWithGoogle Boolean               @default(false)
+  avatarUrl              String?
+  organisations          UsersInOrganisation[]
+  userRoles              UserRolesOfUser[]
+  projectRoles           ProjectUserRole[]
+  applicantProfiles      ApplicantProfile[]
 }
 
 model ApplicantProfile {

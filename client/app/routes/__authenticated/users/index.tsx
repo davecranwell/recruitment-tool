@@ -59,7 +59,7 @@ const Users = () => {
         {users.data.map((user: UserInOrganisation) => (
           <StackedListItem key={user.user.id} link={`/users/${user.user.id}/edit`}>
             <div className="flex min-w-0 flex-1 items-center">
-              <Avatar name={user.user.name} size="m" />
+              <Avatar name={user.user.name} imageUrl={user.user.avatarUrl} size="m" />
               <div className="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
                 <div>
                   <p className="text-primary-600 truncate text-sm font-medium">{user.user.name}</p>

@@ -26,6 +26,7 @@ import { UserEntity as User, UserEntity } from './entities/user.entity'
 
 import { RequestWithUser } from 'src/authentication/authentication.controller'
 import { Action } from 'src/casl/actions'
+import { Organisation } from 'src/organisation/entities/organisation.entity'
 
 @ApiTags('Users')
 @UseGuards(JwtAuthenticationGuard)
@@ -64,14 +65,19 @@ export class UserController {
     return this.userService.findOne(id, request.user)
   }
 
-  // Don't really need this as no user should be able to see the organisations of another user
-  // and the users own organisations are found as part of their authentication
-  // @Get(':id/organisations')
-  // @ApiCreatedResponse({ type: Organisation, isArray: true })
-  // @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Organisation))
-  // async findUserOrganisations(@Param() params: FindOneDto) {
-  //   return this.userService.findOrganisations(params)
-  // }
+  // Only user for a user to get a list of their own organisations in detail
+  @Get(':id/organisations')
+  @ApiCreatedResponse({ type: Organisation, isArray: true })
+  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Organisation))
+  async findUserOrganisations(
+    @Req() request: RequestWithUser,
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number
+  ) {
+    const ability = new Ability(request.user.abilities)
+    if (!ability.can(Action.Read, new UserEntity({ id }))) throw new ForbiddenException()
+
+    return this.userService.findOrganisations(id, request.user)
+  }
 
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateOrganisationDto: UpdateOrganisationDto) {

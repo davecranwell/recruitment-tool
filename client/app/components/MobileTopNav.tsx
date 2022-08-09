@@ -1,15 +1,19 @@
+import type { MouseEventHandler } from 'react'
 import { Menu } from '@headlessui/react'
 import { MenuAlt2Icon } from '@heroicons/react/outline'
-import type { MouseEventHandler } from 'react'
+
+import type { User } from '~/models/users/User'
 
 import UserNav from './UserNav'
+import Avatar from './Avatar'
 
 type Props = {
   userNavigation: any[]
   onSidebarOpen: MouseEventHandler
+  user: User
 }
 
-const MobileTopNav: React.FC<Props> = ({ userNavigation, onSidebarOpen }) => {
+const MobileTopNav: React.FC<Props> = ({ userNavigation, onSidebarOpen, user }) => {
   return (
     <div className="bg-white shadow md:hidden">
       <div className="px-4 sm:px-6 lg:mx-auto lg:max-w-6xl lg:px-8">
@@ -57,12 +61,7 @@ const MobileTopNav: React.FC<Props> = ({ userNavigation, onSidebarOpen }) => {
                 button={() => (
                   <Menu.Button className="focus:ring-primary-500 flex max-w-xs items-center rounded-full text-sm focus:outline-none focus:ring-2">
                     <span className="sr-only">Open user menu</span>
-                    {/* <Avatar name={session?.user.name} /> */}
-                    <img
-                      className="h-8 w-8 rounded-full"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      alt=""
-                    />
+                    <Avatar name={user.name} imageUrl={user.avatarUrl} size="m" />
                   </Menu.Button>
                 )}
               />

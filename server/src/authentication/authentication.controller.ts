@@ -20,7 +20,7 @@ import { UserEntity } from 'src/user/entities/user.entity'
 import { UserService } from 'src/user/user.service'
 
 import { RegisterDto, RegisterFromInvitationDto } from './dto/register.dto'
-import { LoginResponseDto, LoginDto, MagicLoginDto } from './dto/login.dto'
+import { LoginResponseDto, LoginDto, MagicLoginDto, GoogleAuthDto } from './dto/login.dto'
 
 import { AuthenticationService } from './authentication.service'
 import { LocalAuthenticationGuard } from './guards/localAuthentication.guard'
@@ -28,13 +28,16 @@ import JwtAuthenticationGuard from './guards/jwtAuthentication.guard'
 import JwtRefreshGuard from './guards/jwtRefresh.guard'
 import { MagicLinkGuard } from './guards/magiclink.guard'
 import { InvitationCodeGuardBody } from './guards/invitationCode.guard'
+import { GoogleAuthenticationService } from './googleAuthentication.service'
 export interface RequestWithUser extends Request {
   user: UserEntity
 }
+
 @ApiTags('Authentication')
 @Controller('authentication')
 export class AuthenticationController {
   constructor(
+    private readonly googleAuthenticationService: GoogleAuthenticationService,
     private readonly authenticationService: AuthenticationService,
     private readonly userService: UserService
   ) {}
@@ -72,6 +75,14 @@ export class AuthenticationController {
     const { user } = request
 
     return await this.authenticationService.signInById(user.id)
+  }
+
+  //@ApiOkResponse({ type: LoginResponseDto })
+  //@UseGuards(LocalAuthenticationGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post('log-in/google')
+  async logInGoogle(@Body() body: GoogleAuthDto) {
+    return await this.googleAuthenticationService.signinWithGoogle(body.access_token)
   }
 
   @ApiOkResponse()

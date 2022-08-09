@@ -6,6 +6,7 @@ import { JwtModule } from '@nestjs/jwt'
 import { CaslModule } from 'src/casl/casl.module'
 import { UserModule } from 'src/user/user.module'
 import { AuthenticationService } from './authentication.service'
+import { GoogleAuthenticationService } from './googleAuthentication.service'
 import { AuthenticationController } from './authentication.controller'
 import { InvitationService } from 'src/invitation/invitation.service'
 import { LocalStrategy } from './strategies/local.strategy'
@@ -31,6 +32,7 @@ import { InvitationCodeStrategyByBody } from './strategies/invitationCode.strate
   ],
   providers: [
     AuthenticationService,
+    GoogleAuthenticationService,
     InvitationService,
     LocalStrategy,
     JwtStrategy,
@@ -39,6 +41,6 @@ import { InvitationCodeStrategyByBody } from './strategies/invitationCode.strate
     InvitationCodeStrategyByBody,
   ],
   controllers: [AuthenticationController],
-  exports: [AuthenticationService],
+  exports: [AuthenticationService, GoogleAuthenticationService],
 })
 export class AuthenticationModule {}

@@ -5,6 +5,7 @@
 - [x] Sharing of backend permissions rules with front end via session
 - [x] Refresh tokens
 - [x] Toast prompts for notifications
+- [ ] Add Google Auth with calendar access
 - [ ] Pipelines must either be made public or finessed to a point where the stages are usable by anyone
 - [ ] Pipelines need to be automatically attributed to a project
 - [ ] Pipelines need to be automatically inheritted by a position from the project
@@ -47,6 +48,7 @@
 - [ ] Trimming all user input with a Pipe
 - [ ] Move permissions to Redis to reduce size of cookie
 - [ ] ClassSerializerInterceptor doesn't allow you to specify groups (move to PrismaClasSerializerInterceptorPaginated for now)
+- [ ] Sendgrid implementation in invitation service should be extracted to own service
 
 ## Features
 

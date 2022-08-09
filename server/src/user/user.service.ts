@@ -15,12 +15,21 @@ export class UserService {
 
   async findOne(id: number, requestUser: UserEntity) {
     const record = await this.prisma.user.findUnique({ where: { id }, include: { organisations: true } })
-    if (!record) throw new NotFoundException('Organisation with this ID does not exist')
+    if (!record) throw new NotFoundException('User with this ID does not exist')
 
+    // TODO: this ability check seems wrong
+    // It's intended for org admins to see about their users but that
+    // see clietn: __authenticated/users/$id.edit.tsx
     const ability = new Ability(requestUser.abilities)
     if (!ability.can(Action.Read, new UserEntity(record))) throw new ForbiddenException()
 
     return new UserEntity(record)
+  }
+
+  async findOrganisations(id: number, requestUser: UserEntity) {
+    return this.prisma.organisation.findMany({
+      where: { users: { some: { userId: id } } },
+    })
   }
 
   async getById(id: number) {
@@ -76,11 +85,15 @@ export class UserService {
     accountData: {
       name: string
       email: string
+      avatarUrl?: string
       password?: string
+      isRegisteredWithGoogle?: boolean
     },
     invitation?: Invitation
   ): Promise<UserEntity> {
     const { role, organisationId } = invitation || {}
+
+    console.log({ accountData })
 
     return new UserEntity(
       await this.prisma.user.create({
@@ -118,13 +131,5 @@ export class UserService {
     const isRefreshTokenMatching = await bcrypt.compare(jwtId, user.refreshTokenHash)
 
     if (isRefreshTokenMatching) return new UserEntity(user)
-  }
-
-  async findOrganisations(params: FindOneDto) {
-    const { id } = params
-
-    return this.prisma.organisation.findMany({
-      where: { users: { some: { userId: id } } },
-    })
   }
 }

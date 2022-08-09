@@ -32,6 +32,8 @@ INTERVIEWER INTERVIEWER
     String refreshTokenHash  "nullable"
     DateTime createdAt  
     DateTime updatedAt  
+    Boolean isRegisteredWithGoogle  
+    String avatarUrl  "nullable"
     }
   
 

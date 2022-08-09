@@ -5,10 +5,15 @@ import { getSessionData } from 'app/sessions.server'
 import { formDataToJson } from 'app/utils'
 import { ErrorResponse, ForbiddenResponse, NotFoundResponse } from 'app/utils/errors'
 
-export async function api(data: DataFunctionArgs, url: string, method: string = 'GET', body?: any): Promise<any> {
-  const { request } = data
+export async function api(
+  data: DataFunctionArgs | null,
+  url: string,
+  method: string = 'GET',
+  body?: any
+): Promise<any> {
+  const { request } = data || {}
 
-  const { accessToken } = (await getSessionData(request)) || {}
+  const { accessToken } = (request && (await getSessionData(request))) || {}
 
   const apiRes = await fetch(`${process.env.BACKEND_ROOT_URL}${url}`, {
     method,

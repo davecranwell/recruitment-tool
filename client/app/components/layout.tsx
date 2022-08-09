@@ -35,20 +35,22 @@ type NavItem = {
   type?: string
 }
 
-type NavItems = [NavItem[]]
+type NavItems = NavItem[][]
 
 const Layout: React.FC<Props> = ({ children, sessionData, globalMessage }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const { can, subject } = useAppAbility()
 
-  const navigation: NavItems = [
-    [
+  const navigation: NavItems = []
+
+  if (sessionData?.activeOrganisation) {
+    navigation.push([
       { name: 'Home', href: '/start', icon: HomeIcon },
       // { name: 'Applicants', href: '/applicant-profiles', icon: UsersIcon },
       { name: 'Positions', href: '/positions', icon: BriefcaseIcon },
       // { name: 'Timeline', href: '/timeline', icon: CalendarIcon },
-    ],
-  ]
+    ])
+  }
 
   if (can('manage', subject('Organisation', sessionData?.activeOrganisation))) {
     navigation.push([
@@ -101,7 +103,7 @@ const Layout: React.FC<Props> = ({ children, sessionData, globalMessage }) => {
               <Menu.Button className="hover:bg-primary-100 group w-full rounded-md px-3.5 py-2 text-left text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-gray-100">
                 <span className="flex w-full items-center justify-between">
                   <span className="flex min-w-0 items-center justify-between space-x-3">
-                    <Avatar name={sessionData?.user.name} size="m" />
+                    <Avatar name={sessionData?.user.name} imageUrl={sessionData?.user.avatarUrl} size="m" />
                     <span className="flex min-w-0 flex-1 flex-col">
                       <span className="text-primary-50 truncate text-sm font-medium">{sessionData?.user?.name}</span>
                       <span className="text-primary-100 truncate text-sm">{sessionData?.activeOrganisation?.name}</span>
@@ -123,7 +125,7 @@ const Layout: React.FC<Props> = ({ children, sessionData, globalMessage }) => {
       </div>
 
       <div className="md:pl-72">
-        <MobileTopNav userNavigation={userNavigation} onSidebarOpen={handleSidebarOpen} />
+        <MobileTopNav userNavigation={userNavigation} user={sessionData?.user} onSidebarOpen={handleSidebarOpen} />
         <div className="pt-8">
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">{children}</div>
         </div>

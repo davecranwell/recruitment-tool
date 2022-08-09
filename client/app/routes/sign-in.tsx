@@ -1,6 +1,8 @@
-import { useActionData, useTransition, useSearchParams } from '@remix-run/react'
+import { useActionData, useTransition, useSearchParams, useFetcher, useSubmit } from '@remix-run/react'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
+import { json } from '@remix-run/node'
 import { redirect } from '@remix-run/node'
+import { useGoogleLogin } from '@react-oauth/google'
 
 import { createSession, hasSession } from 'app/sessions.server'
 import { api } from 'app/api.server'
@@ -9,25 +11,38 @@ import { safeRedirect } from 'app/utils'
 import { loginFields } from '~/models/users/form'
 
 import Form from 'app/components/Forms'
+import Divider from '~/components/Divider'
+import Button from '~/components/Button'
+
+import googlelogo from '../../images/GoogleLogo.svg'
 
 export const loader: LoaderFunction = async ({ request }) => {
   if (await hasSession(request)) {
     return redirect('/')
   }
 
-  return request
+  return null
 }
 
 export const action: ActionFunction = async (data) => {
   const { request } = data
   const body = await request.formData()
 
+  const googleResponse = body.get('googleResponse') as string
+
   const redirectTo = safeRedirect(body.get('redirectTo'), '/')
 
-  const authentication = await api(data, '/authentication/log-in', 'POST', {
-    email: body.get('email'),
-    password: body.get('password'),
-  })
+  const authentication = await api(
+    data,
+    `/authentication/log-in${googleResponse ? '/google' : ''}`,
+    'POST',
+    googleResponse
+      ? JSON.parse(googleResponse)
+      : {
+          email: body.get('email'),
+          password: body.get('password'),
+        }
+  )
 
   if (authentication.ok) {
     return createSession(await authentication.json(), redirectTo)
@@ -37,11 +52,22 @@ export const action: ActionFunction = async (data) => {
 }
 
 const SignIn = () => {
+  const fetcher = useFetcher()
   const errors = useActionData()
   const transition = useTransition()
   const [searchParams] = useSearchParams()
 
   const redirectTo = searchParams.get('redirectTo') ?? undefined
+
+  console.log('fetcherdata', fetcher.data)
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: (codeResponse) => {
+      fetcher.submit({ googleResponse: JSON.stringify(codeResponse) }, { method: 'post' })
+    },
+    flow: 'implicit',
+    scope: 'https://www.googleapis.com/auth/calendar.events',
+  })
 
   return (
     <>
@@ -62,6 +88,15 @@ const SignIn = () => {
                 fields={loginFields(redirectTo)}
                 errors={errors}
                 transition={transition}
+              />
+              <Divider text="Or" />
+
+              <Button
+                color="secondary"
+                width="full"
+                text="Sign in with Google"
+                icon={<img src={googlelogo} alt="" className="mr-2 flex h-6 w-6" />}
+                onClick={() => googleLogin()}
               />
             </div>
           </div>

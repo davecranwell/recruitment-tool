@@ -31,7 +31,7 @@ export const loader: LoaderFunction = async (data) => {
   const user = userRes.json()
   // const projects = await projectsRes.clone().json()
   // const position = await api(data, `/position/${params.id}`)
-  // TODO make this work properly to load a user's data
+  // TODO make this work properly to load a user's data via their org so we can limit what org people see??
 
   return json({ user, fields: withValues(editUserFormFields(), user) })
 }

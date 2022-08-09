@@ -48,6 +48,11 @@ export class UserEntity implements User {
   @ApiProperty()
   abilities: any
 
+  @ApiProperty()
+  avatarUrl: string
+
+  isRegisteredWithGoogle: boolean
+
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial)
   }

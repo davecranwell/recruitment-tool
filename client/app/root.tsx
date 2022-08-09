@@ -1,5 +1,7 @@
-import type { MetaFunction, LinksFunction } from '@remix-run/node'
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react'
+import type { MetaFunction, LinksFunction, LoaderFunction } from '@remix-run/node'
+import { json } from '@remix-run/node'
+import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from '@remix-run/react'
+import { GoogleOAuthProvider } from '@react-oauth/google'
 
 import styles from './tailwind.css'
 
@@ -13,6 +15,10 @@ export const links: LinksFunction = () => [
   },
 ]
 
+export const loader: LoaderFunction = async ({ request }) => {
+  return json({ GOOGLE_AUTH_CLIENT_ID: process.env.GOOGLE_AUTH_CLIENT_ID })
+}
+
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
   title: 'New Remix App',
@@ -20,6 +26,8 @@ export const meta: MetaFunction = () => ({
 })
 
 export default function App() {
+  const { GOOGLE_AUTH_CLIENT_ID } = useLoaderData()
+
   return (
     <html lang="en" className="bg-secondary-100 h-full">
       <head>
@@ -27,7 +35,9 @@ export default function App() {
         <Links />
       </head>
       <body className="h-full text-slate-800">
-        <Outlet />
+        <GoogleOAuthProvider clientId={GOOGLE_AUTH_CLIENT_ID}>
+          <Outlet />
+        </GoogleOAuthProvider>
         <ScrollRestoration />
         <Scripts />
         <LiveReload port={8002} />

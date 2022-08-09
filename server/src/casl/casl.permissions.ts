@@ -16,6 +16,8 @@ export class CaslPermissions {
   constructor(private prismaService: PrismaService) {}
 
   async asJsonForUser(user: UserEntity) {
+    //const organisations = await this.prismaService.
+
     const orgIdsOwned: number[] =
       user?.organisations?.filter((org) => org.role === 'ORGANISATION_OWNER').map((orgs) => orgs.organisationId) || []
 
