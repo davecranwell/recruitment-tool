@@ -13,15 +13,15 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { PrismaClassSerializerInterceptorPaginated } from 'src/class-serializer-paginated.interceptor'
 
 import { CreateUserDto } from './dto/create-user.dto'
 import { UserService } from './user.service'
 
-// TODO fix this renaming
 import JwtAuthenticationGuard from 'src/authentication/guards/jwtAuthentication.guard'
+// TODO fix this renaming
 import { UserEntity as User, UserEntity } from './entities/user.entity'
 
 import { RequestWithUser } from 'src/authentication/authentication.controller'
@@ -29,41 +29,29 @@ import { Action } from 'src/casl/actions'
 import { Organisation } from 'src/organisation/entities/organisation.entity'
 
 @ApiTags('Users')
+@ApiBearerAuth('access-token')
 @UseGuards(JwtAuthenticationGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  @ApiCreatedResponse({ type: User })
-  create(@Body() data: CreateUserDto) {
-    return this.userService.create(data)
-  }
-
-  // @Get()
-  // @ApiOkResponse({ type: Organisation, isArray: true })
-  // findAll() {
-  //   return this.organisationService.findAll()
+  // @Post()
+  // @ApiCreatedResponse({ type: User })
+  // create(@Body() data: CreateUserDto) {
+  //   return this.userService.create(data)
   // }
 
-  // @Get('')
-  // @ApiExtraModels(PaginatedDto)
-  // @ApiPaginatedResponse(User)
-  // @UseInterceptors(PrismaClassSerializerInterceptorPaginated(User))
-  // async findUsers(@Param('id') id: number, @Query() paginationArgs: PaginationArgsDto) {
-  //   return this.userService.findUsers(+id, paginationArgs)
+  // Possibly no use for this. Users get access to themselves as their auth response
+  // and org admins who maintain users access them via org controller
+  // @Get(':id')
+  // @UseInterceptors(ClassSerializerInterceptor)
+  // @ApiOkResponse({ type: User })
+  // async findOne(
+  //   @Req() request: RequestWithUser,
+  //   @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number
+  // ) {
+  //   return this.userService.findOne(id, request.user)
   // }
-
-  // @ApiParam({ name: 'id', type: 'number', required: true })
-  @Get(':id')
-  @UseInterceptors(ClassSerializerInterceptor)
-  @ApiOkResponse({ type: User })
-  async findOne(
-    @Req() request: RequestWithUser,
-    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number
-  ) {
-    return this.userService.findOne(id, request.user)
-  }
 
   // Only user for a user to get a list of their own organisations in detail
   @Get(':id/organisations')
@@ -78,14 +66,4 @@ export class UserController {
 
     return this.userService.findOrganisations(id, request.user)
   }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateOrganisationDto: UpdateOrganisationDto) {
-  //   return this.organisationService.update(+id, updateOrganisationDto)
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.organisationService.remove(+id)
-  // }
 }

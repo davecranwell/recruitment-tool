@@ -14,11 +14,29 @@ export class UserService {
   constructor(private prisma: PrismaService, private readonly caslPermissions: CaslPermissions) {}
 
   async findOne(id: number, requestUser: UserEntity) {
-    const record = await this.prisma.user.findUnique({ where: { id }, include: { organisations: true } })
+    const record = await this.prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        avatarUrl: true,
+        organisations: {
+          where: {
+            organisationId: {
+              // Limit the organisations returned only to those the requesting user already
+              // has access to themselves
+              in: requestUser.organisations.map((org) => org.organisationId),
+            },
+          },
+        },
+      },
+    })
     if (!record) throw new NotFoundException('User with this ID does not exist')
 
     // TODO: this ability check seems wrong
-    // It's intended for org admins to see about their users but that
+    // It's intended for org admins to see about their users but they can see all that users organisations
+    // even the ones the admin is not part of.
     // see clietn: __authenticated/users/$id.edit.tsx
     const ability = new Ability(requestUser.abilities)
     if (!ability.can(Action.Read, new UserEntity(record))) throw new ForbiddenException()

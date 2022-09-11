@@ -86,7 +86,7 @@ export class AuthenticationController {
   }
 
   @ApiOkResponse()
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthenticationGuard)
   @Post('log-out')
   async logOut(@Req() request: RequestWithUser, @Res() response: Response) {
