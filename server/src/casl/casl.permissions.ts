@@ -1,4 +1,5 @@
 import { Ability } from '@casl/ability'
+import { packRules } from '@casl/ability/extra'
 import { Injectable } from '@nestjs/common'
 import { Project } from 'src/project/entities/project.entity'
 import { PrismaService } from 'src/prisma/prisma.service'
@@ -155,6 +156,10 @@ export class CaslPermissions {
         conditions: { positionId: { $in: projectIdsManaged } },
       },
     ]
+  }
+
+  async asPackedForUser(user: UserEntity) {
+    return packRules(await this.asJsonForUser(user))
   }
 
   async createForUser(user: UserEntity) {
