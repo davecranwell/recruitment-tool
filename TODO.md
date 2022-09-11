@@ -14,12 +14,13 @@
 ## Remix
 
 - [x] dynamic regeneration of access tokens with refresh token
-- [x] 404/500/403 errors handle by API call in client
+- [x] 404/500/403 errors handled generically by API call function in client
 - [x] Form generation & validation system
 - [x] Form submission errors that are orphaned from fields need displaying somewhere
 - [x] Handle form submissions followed by redirects with expiring tokens
 - [x] Support session.flash by reorganising how cookies are set
 - [ ] Need some dynamic project chooser UI so pagination of projects is still workable
+- [ ] Better ErrorBoundaries so we can still display some branded chrome around most error messages
 
 ## Nest
 
@@ -33,6 +34,8 @@
 - [x] Throw suitable errors when API calls are wrong
 - [x] Cache permissions across session in JWT
 - [x] Send invitations to orgs via email
+- [ ] Compress permissions in jwt using CASL pack/unpack
+- [ ] Ensure Google auth doesn't bypass invitation system
 - [ ] Finish applying permissions to all entities
   - [ ] Applicant Profiles
   - [ ] Invitations
@@ -63,3 +66,23 @@
 - [ ] Sending an email to candidates as they are invited to interview
 - [ ] internal email templating system using mjml
 - [ ] Invitations to an org expire
+- [ ] Saving unsubmitted form content
+
+## Names
+
+- Candidate
+- Hiring
+- job hunting
+- skills
+- Screening
+- Qualifing
+- Winner
+- Jobs
+- Placement
+- Careers
+- Prospect
+- Applicant
+- Recruiting
+- Selecting
+- Choosing
+- Interview: intrvoo (available) intavoo (not available) int
