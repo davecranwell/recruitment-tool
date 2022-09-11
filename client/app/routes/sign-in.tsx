@@ -62,6 +62,7 @@ const SignIn = () => {
     onSuccess: (codeResponse) => {
       fetcher.submit({ googleResponse: JSON.stringify(codeResponse) }, { method: 'post' })
     },
+    ux_mode: 'redirect',
     flow: 'auth-code',
     scope: 'https://www.googleapis.com/auth/calendar.events',
   })
