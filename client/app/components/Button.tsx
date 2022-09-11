@@ -10,7 +10,7 @@ type Props = {
   width?: 'auto' | 'full' | 'half'
   component?: React.ElementType
   [x: string]: any
-  icon: any
+  icon?: any
 }
 
 const Button: React.FC<Props> = ({
