@@ -2,11 +2,19 @@ import React from 'react'
 import { Outlet, useLoaderData } from '@remix-run/react'
 import { json } from '@remix-run/node'
 import { Ability } from '@casl/ability'
+import type { PackRule } from '@casl/ability/extra'
+import { unpackRules } from '@casl/ability/extra'
 
 import { requireAuth, getSessionFromCookie, commitSession } from 'app/sessions.server'
 
 import Layout from '~/components/Layout'
 import { AbilityProvider } from '~/hooks/useAppAbility'
+
+type Rule = {
+  action: any
+  subject: any
+  conditions?: any
+}
 
 export async function loader({ request }: { request: Request }) {
   const { sessionData, session } = await requireAuth(request)
@@ -26,7 +34,9 @@ export async function loader({ request }: { request: Request }) {
 // TODO load abilities from the loader, not the session cookie (which is nearing its max size)
 export default function Authenticated() {
   const { sessionData, globalMessage } = useLoaderData()
-  const abilities = new Ability(sessionData.user.abilities)
+
+  const abilities =
+    sessionData?.user?.abilities && new Ability(unpackRules(sessionData.user.abilities as PackRule<Rule>[]))
 
   return (
     <AbilityProvider abilities={abilities}>
