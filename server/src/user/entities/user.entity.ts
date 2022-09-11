@@ -23,27 +23,11 @@ export class UserEntity implements User {
   @ApiProperty({ required: true })
   name: string | null
 
-  @Exclude()
-  password: string
-
-  accessToken: string
-  refreshToken: string
-
-  @Exclude()
-  refreshTokenHash: string
-
   @ApiProperty({ required: true })
   createdAt: Date
 
   @ApiProperty({ required: true })
   updatedAt: Date
-
-  @ValidateNested()
-  @Type(() => UsersInOrganisation)
-  organisations?: UsersInOrganisation[]
-  userRoles?: UserRolesOfUser[]
-  projectRoles?: ProjectUserRole[]
-  applicantProfiles?: ApplicantProfile[]
 
   @ApiProperty()
   abilities: any
@@ -52,9 +36,26 @@ export class UserEntity implements User {
   avatarUrl: string
 
   @Exclude()
+  password: string
+
+  @Exclude()
+  refreshTokenHash: string
+
+  @Exclude()
   OAuth2Tokens: any
 
+  @Exclude()
   isRegisteredWithGoogle: boolean
+
+  accessToken: string
+  refreshToken: string
+
+  @ValidateNested()
+  @Type(() => UsersInOrganisation)
+  organisations?: UsersInOrganisation[]
+  userRoles?: UserRolesOfUser[]
+  projectRoles?: ProjectUserRole[]
+  applicantProfiles?: ApplicantProfile[]
 
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial)
