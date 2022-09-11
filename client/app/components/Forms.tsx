@@ -55,9 +55,12 @@ export const withActionErrors = (formFields: FieldDef[], errors?: NestTargetMess
   if (!errors) return { fields: formFields }
   if (!errors?.length || !Array.isArray(errors)) return { fields: formFields, orphanedErrors: [errors] }
 
+  // make a full copy of the original errors message array, so that as we take errors out of the original
+  // array, we still have a list of them here.
   const orphanErrorCollector = ([] as NestTargetMessage[]).concat(errors)
 
   const getTargetErrors = (fieldName: string): string[] => {
+    // find errors for this field by fieldName
     const errorIdx = errors.findIndex((msg: NestTargetMessage) => msg.property === fieldName)
     const orphanErrorCollectorIdx = orphanErrorCollector.findIndex(
       (msg: NestTargetMessage) => msg.property === fieldName
@@ -65,6 +68,8 @@ export const withActionErrors = (formFields: FieldDef[], errors?: NestTargetMess
 
     if (errorIdx === -1) return []
 
+    // every time we match an error against a field, remove it from the orphanedcollector
+    // so that only the errors that couldn't be matched - the orphans - remain at the end
     orphanErrorCollector.splice(orphanErrorCollectorIdx, 1)
     const constraints = errors[errorIdx]?.constraints
 
@@ -85,12 +90,14 @@ export const withActionErrors = (formFields: FieldDef[], errors?: NestTargetMess
     })
   }
 
+  const fields = enumerateFields(formFields)
+
   const orphanedErrors = orphanErrorCollector.flatMap((error) => {
     if (typeof error === 'string') return error
     if (error?.constraints) return Object.values(error?.constraints)
   })
 
-  return { fields: enumerateFields(formFields), orphanedErrors }
+  return { fields, orphanedErrors }
 }
 
 /**
