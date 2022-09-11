@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { HttpException, BadRequestException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
+import { plainToClass } from 'class-transformer'
 
 import { PostgresErrorCode } from '../util/db-types'
 import { UserService } from '../user/user.service'
@@ -14,6 +15,8 @@ import { RegisterFromInvitationDto } from './dto/register.dto'
 import { UserEntity } from 'src/user/entities/user.entity'
 import { User } from '@prisma/client'
 import { InvitationService } from 'src/invitation/invitation.service'
+import { PrismaClassSerializerInterceptorPaginated } from 'src/class-serializer-paginated.interceptor'
+import { LoginJwtDto, LoginResponseDto } from './dto/login.dto'
 
 @Injectable()
 export class AuthenticationService {
@@ -106,8 +109,8 @@ export class AuthenticationService {
   }
 
   private async addAbilities(user: UserEntity) {
-    user.abilities = await this.caslPermissions.asJsonForUser(user)
-    return user
+    user.abilities = await this.caslPermissions.asPackedForUser(user)
+    return new UserEntity(user)
   }
 
   public async getAuthenticatedUserById(id: number) {
@@ -118,8 +121,6 @@ export class AuthenticationService {
     try {
       const user = await this.userService.getByEmailWithDetailedOrgs(email)
       await this.verifyPassword(plainTextPassword, user.password)
-
-      user.password = undefined
 
       return this.addAbilities(user)
     } catch (error) {
