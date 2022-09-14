@@ -29,6 +29,7 @@ import JwtRefreshGuard from './guards/jwtRefresh.guard'
 import { MagicLinkGuard } from './guards/magiclink.guard'
 import { InvitationCodeGuardBody } from './guards/invitationCode.guard'
 import { GoogleAuthenticationService } from './googleAuthentication.service'
+import { UsersInOrganisation } from 'src/users-in-organisation/entities/users-in-organisation.entity'
 export interface RequestWithUser extends Request {
   user: UserEntity
 }
@@ -54,7 +55,7 @@ export class AuthenticationController {
   //   return new UserEntity(await this.registerAccount(registrationData))
   // }
 
-  @ApiOkResponse({ type: LoginResponseDto })
+  //@ApiOkResponse({ type: UsersInOrganisation })
   @Post('register/invitation')
   @UseGuards(InvitationCodeGuardBody)
   @UseInterceptors(ClassSerializerInterceptor)
@@ -67,7 +68,7 @@ export class AuthenticationController {
     return await this.authenticationService.signInById(registeredUser.id)
   }
 
-  @ApiOkResponse({ type: LoginResponseDto })
+  @ApiOkResponse({ type: () => LoginResponseDto })
   @UseGuards(LocalAuthenticationGuard)
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(LoginResponseDto))
   @Post('log-in')
@@ -100,7 +101,7 @@ export class AuthenticationController {
   }
 
   @ApiBearerAuth('refresh-token')
-  @ApiResponse({ type: LoginResponseDto })
+  @ApiResponse({ type: () => LoginResponseDto })
   @UseGuards(JwtRefreshGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('refresh')

@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   ForbiddenException,
   Get,
@@ -45,7 +46,7 @@ export class OrganisationController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get information about one organisation' })
-  @ApiOkResponse({ type: Organisation })
+  @ApiOkResponse({ type: () => Organisation })
   async findOne(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number
@@ -59,7 +60,7 @@ export class OrganisationController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new organisation' })
-  @ApiCreatedResponse({ type: Organisation, description: 'Organisation created' })
+  @ApiCreatedResponse({ type: () => Organisation, description: 'Organisation created' })
   async create(@Req() request: RequestWithUser, @Body() createOrganisationDto: CreateOrganisationDto) {
     const ability = new Ability(request.user.abilities)
 
@@ -89,6 +90,23 @@ export class OrganisationController {
     if (!ability.can(Action.Manage, new Organisation({ id }))) throw new ForbiddenException()
 
     return this.organisationService.findUsers(+id, paginationArgs)
+  }
+
+  @Get(':id/user/:userId')
+  @ApiOkResponse({ type: () => UsersInOrganisation })
+  @ApiOperation({ summary: 'Get one user in an organisation' })
+  @UseInterceptors(ClassSerializerInterceptor)
+  async findUser(
+    @Req() request: RequestWithUser,
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
+    @Param('userId', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) userId: number
+  ) {
+    const ability = new Ability(request.user.abilities)
+
+    if (!ability.can(Action.Manage, new Organisation({ id }))) throw new ForbiddenException()
+    console.log('here')
+
+    return this.organisationService.findUser(id, userId)
   }
 
   @Get(':id/projects')

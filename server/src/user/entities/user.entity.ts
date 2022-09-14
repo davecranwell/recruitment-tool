@@ -30,7 +30,7 @@ export class UserEntity implements User {
   updatedAt: Date
 
   @ApiProperty()
-  abilities: any
+  abilities?: any
 
   @ApiProperty()
   avatarUrl: string
@@ -47,11 +47,11 @@ export class UserEntity implements User {
   @Exclude()
   isRegisteredWithGoogle: boolean
 
-  accessToken: string
-  refreshToken: string
+  accessToken?: string
+  refreshToken?: string
 
-  @ValidateNested()
   @Type(() => UsersInOrganisation)
+  @ValidateNested()
   organisations?: UsersInOrganisation[]
   userRoles?: UserRolesOfUser[]
   projectRoles?: ProjectUserRole[]

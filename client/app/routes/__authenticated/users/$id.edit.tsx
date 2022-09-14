@@ -25,9 +25,9 @@ export const action: ActionFunction = async (data) => {
 export const loader: LoaderFunction = async (data) => {
   const { request, params } = data
 
-  await requireAuth(request)
+  const { sessionData } = await requireAuth(request)
 
-  const userRes = await api(data, `/user/${params.id}`)
+  const userRes = await api(data, `/organisation/${sessionData.activeOrganisation.id}/user/${params.id}`)
   const user = userRes.json()
   // const projects = await projectsRes.clone().json()
   // const position = await api(data, `/position/${params.id}`)

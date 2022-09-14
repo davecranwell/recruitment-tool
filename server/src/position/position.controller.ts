@@ -40,13 +40,13 @@ export class PositionController {
   constructor(private readonly positionService: PositionService) {}
 
   @Post()
-  @ApiCreatedResponse({ type: Position })
+  @ApiCreatedResponse({ type: () => Position })
   async create(@Req() request: RequestWithUser, @Body() data: CreatePositionDto) {
     return this.positionService.create(data, request.user)
   }
 
   @Get(':id')
-  @ApiOkResponse({ type: Position })
+  @ApiOkResponse({ type: () => Position })
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Position))
   findOne(
     @Req() request: RequestWithUser,
@@ -82,7 +82,7 @@ export class PositionController {
 
   @Get(':id/applicant/:applicantId')
   @ApiExtraModels(Stage, ApplicantProfileForPositionWithStage)
-  @ApiResponse({ type: ApplicantProfileForPositionWithStage })
+  @ApiResponse({ type: () => ApplicantProfileForPositionWithStage })
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(ApplicantProfileForPositionWithStage))
   findApplicant(
     @Req() request: RequestWithUser,
@@ -94,7 +94,7 @@ export class PositionController {
 
   @Patch(':id/applicant/:applicantId')
   @ApiExtraModels(ApplicantProfileWithUser)
-  @ApiResponse({ type: ApplicantProfileWithUser })
+  @ApiResponse({ type: () => ApplicantProfileWithUser })
   @UseInterceptors(ClassSerializerInterceptor)
   changeApplicantStage(
     @Req() request: RequestWithUser,
@@ -107,7 +107,7 @@ export class PositionController {
   }
 
   @Get(':id/pipeline')
-  @ApiOkResponse({ type: Pipeline })
+  @ApiOkResponse({ type: () => Pipeline })
   findPipelineWithStages(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number

@@ -54,6 +54,17 @@ export class OrganisationService {
     return userOrgs
   }
 
+  async findUser(organisationId: number, userId: number) {
+    const user: UsersInOrganisation = await this.prisma.usersInOrganisation.findFirst({
+      where: { organisationId, userId },
+      include: { user: true },
+    })
+
+    if (!user) throw new NotFoundException('User with this ID does not exist in this organisation')
+
+    return new UsersInOrganisation(user)
+  }
+
   async findProjects(organisationId: number, user: UserEntity, paginationArgs: PaginationArgsDto) {
     // if you're an org admin, get all projects
     // if you're a regular user, get all projects you're allocated to in some way

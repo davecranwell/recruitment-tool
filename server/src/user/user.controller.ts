@@ -55,7 +55,7 @@ export class UserController {
 
   // Only user for a user to get a list of their own organisations in detail
   @Get(':id/organisations')
-  @ApiCreatedResponse({ type: Organisation, isArray: true })
+  @ApiCreatedResponse({ type: () => Organisation, isArray: true })
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Organisation))
   async findUserOrganisations(
     @Req() request: RequestWithUser,

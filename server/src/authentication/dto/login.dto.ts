@@ -23,7 +23,7 @@ export class LoginDto {
 }
 
 export class LoginResponseDto {
-  @ApiProperty()
+  @ApiProperty({ type: () => User })
   @ValidateNested()
   @Type(() => User)
   user: User

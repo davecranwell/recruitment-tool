@@ -6,7 +6,7 @@ import { PositionOnlyOrgId } from 'src/position/entities/position.entity'
 import { Stage } from 'src/stage/entities/stage.entity'
 
 export class ApplicantProfileForPosition {
-  @ApiProperty()
+  @ApiProperty({ type: () => ApplicantProfile })
   @ValidateNested()
   @Type(() => ApplicantProfile)
   applicantProfile?: ApplicantProfile
@@ -33,7 +33,7 @@ export class ApplicantProfileForPosition {
 }
 
 export class ApplicantProfileForPositionWithStage extends ApplicantProfileForPosition {
-  @ApiProperty()
+  @ApiProperty({ type: () => Stage })
   @ValidateNested()
   @Type(() => Stage)
   stage: Stage

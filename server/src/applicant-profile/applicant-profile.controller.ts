@@ -41,7 +41,7 @@ export class ApplicantProfileController {
   constructor(private readonly applicantProfileService: ApplicantProfileService) {}
 
   @Post()
-  @ApiCreatedResponse({ type: ApplicantProfile })
+  @ApiCreatedResponse({ type: () => ApplicantProfile })
   // TODO, add RBAC to prevent users creating applicant profiles for other users
   async create(@Body() createApplicantProfileDto: CreateApplicantProfileDto) {
     return this.applicantProfileService.create(createApplicantProfileDto)
@@ -84,7 +84,7 @@ export class ApplicantProfileController {
   }
 
   @Get(':id')
-  @ApiOkResponse({ type: ApplicantProfile })
+  @ApiOkResponse({ type: () => ApplicantProfile })
   async findOne(@Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: string) {
     return this.applicantProfileService.findOne(+id)
   }
