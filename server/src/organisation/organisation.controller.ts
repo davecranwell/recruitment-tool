@@ -104,7 +104,6 @@ export class OrganisationController {
     const ability = new Ability(request.user.abilities)
 
     if (!ability.can(Action.Manage, new Organisation({ id }))) throw new ForbiddenException()
-    console.log('here')
 
     return this.organisationService.findUser(id, userId)
   }
