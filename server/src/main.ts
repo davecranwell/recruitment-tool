@@ -17,7 +17,7 @@ import { NotFoundExceptionFilter } from './not-found-exception.filter'
 const logger = new Logger()
 
 process.on('unhandledRejection', (err: PromiseRejectedResult) => {
-  logger.error(`Unhandled promise rejection reason: ${err?.reason}`)
+  logger.error(`Unhandled promise rejection reason: ${err}`)
   exit(1)
 })
 
