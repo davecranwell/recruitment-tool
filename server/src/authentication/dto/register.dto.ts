@@ -11,7 +11,7 @@ export class RegisterDto {
   @ApiProperty({ required: true })
   @IsString()
   @IsNotEmpty()
-  @MinLength(8)
+  @MinLength(12)
   password: string
 }
 
