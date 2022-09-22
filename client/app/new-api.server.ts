@@ -10,7 +10,6 @@ import { ErrorResponse, ForbiddenResponse, NotFoundResponse } from 'app/utils/er
 
 export class Api {
   session?: Session
-  headers?: Headers
 
   async initSession(data: DataFunctionArgs) {
     const { request, context } = data
