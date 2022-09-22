@@ -34,8 +34,8 @@
 - [x] Throw suitable errors when API calls are wrong
 - [x] Cache permissions across session in JWT
 - [x] Send invitations to orgs via email
-- [ ] Compress permissions in jwt using CASL pack/unpack
-- [ ] Ensure Google auth doesn't bypass invitation system
+- [x] Compress permissions in jwt using CASL pack/unpack
+- [x] Ensure Google auth doesn't bypass invitation system: [technically it can't because a user using google auth without registering would have no organisations associated]
 - [ ] Finish applying permissions to all entities
   - [ ] Applicant Profiles
   - [ ] Invitations
