@@ -47,7 +47,7 @@ export class GoogleAuthenticationService {
       return this.authenticationService.signInById(user.id)
     } catch (error) {
       if (error.status !== 404) {
-        throw new error()
+        throw new Error(error.message)
       }
 
       const newUser = await this.register(tokens, email)
