@@ -39,10 +39,13 @@ const PositionDetail = () => {
       secondaryAction={{ label: 'Edit', link: `/positions/${id}/edit` }}
     >
       <MetaList className="mt-2">
-        <MetaListItem icon={CurrencyDollarIcon}>
+        <MetaListItem
+          icon={CurrencyDollarIcon}
+          title="This is privileged information only available to certain roles in your organisation. Take care if taking screenshots of this page"
+        >
           {salaryRange && (
             <>
-              {salaryRange!} <LockClosedIcon className="h-4 w-4 flex-shrink-0 text-yellow-600" aria-hidden="true" />
+              {salaryRange!} <LockClosedIcon className="h-4 w-4 flex-shrink-0 text-yellow-600" />
             </>
           )}
         </MetaListItem>
@@ -57,9 +60,7 @@ const PositionDetail = () => {
       )}
 
       <main className="pt-8 pb-16">
-        <div className="px-4 sm:px-0">
-          <Outlet context={stages} />
-        </div>
+        <Outlet context={stages} />
       </main>
     </Content>
   )

@@ -1,5 +1,5 @@
 import { FolderIcon } from '@heroicons/react/outline'
-import type { LoaderFunction, MetaFunction } from '@remix-run/node'
+import { json, LoaderFunction, MetaFunction } from '@remix-run/node'
 import { Outlet, useLoaderData, useOutletContext } from '@remix-run/react'
 
 import { api } from 'app/api.server'
@@ -13,21 +13,23 @@ import { StackedList, StackedListItem } from 'app/components/StackedList'
 import { useAppAbility } from 'app/hooks/useAppAbility'
 import type { Project } from 'app/models/projects/Project'
 
-export const meta: MetaFunction = ({ data }) => {
-  return { title: `Projects at ${data?.sessionData?.activeOrganisation?.name}` }
-}
-
 export const loader: LoaderFunction = async (data) => {
   const { request } = data
   await requireAuth(request)
   const sessionData = await getSessionData(request)
 
-  return await api(data, `/organisation/${sessionData.activeOrganisation.id}/projects`)
+  const projects = await api(data, `/organisation/${sessionData.activeOrganisation.id}/projects`)
+
+  return json({ projects: await projects.json(), sessionData })
+}
+
+export const meta: MetaFunction = ({ data }) => {
+  return { title: `Projects at ${data?.sessionData?.activeOrganisation?.name}` }
 }
 
 const Projects = () => {
   const sessionData = useOutletContext<SessionData>()
-  const projects = useLoaderData()
+  const { projects } = useLoaderData()
 
   const { can, subject } = useAppAbility()
 

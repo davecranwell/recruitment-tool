@@ -10,6 +10,7 @@ import { createPaginator } from 'src/util/pagination'
 
 import { Position } from 'src/position/entities/position.entity'
 import { CreateOrganisationDto } from './dto/create-organisation.dto'
+import { PatchOrganisationUserDto } from './dto/patch-organisation-user.dto'
 import { Organisation } from './entities/organisation.entity'
 
 import { Action } from 'src/casl/actions'
@@ -63,6 +64,26 @@ export class OrganisationService {
     if (!user) throw new NotFoundException('User with this ID does not exist in this organisation')
 
     return new UsersInOrganisation(user)
+  }
+
+  async patchUser(organisationId: number, userId: number, patchData: PatchOrganisationUserDto) {
+    try {
+      const user: UsersInOrganisation = await this.prisma.usersInOrganisation.update({
+        where: {
+          userId_organisationId: {
+            userId,
+            organisationId,
+          },
+        },
+        data: {
+          role: patchData.role,
+        },
+      })
+
+      return new UsersInOrganisation(user)
+    } catch (e) {
+      throw new NotFoundException('User with this ID does not exist in this organisation')
+    }
   }
 
   async findProjects(organisationId: number, user: UserEntity, paginationArgs: PaginationArgsDto) {

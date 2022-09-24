@@ -110,8 +110,8 @@ export const editUserFormFields = (): FieldDef[] => [
         description: "Can only access positions within projects to which they're invited.",
       },
       {
-        key: 'Organisation admin',
-        value: 'ORGANISATION_ADMIN',
+        key: 'Organisation owner',
+        value: 'ORGANISATION_OWNER',
         description: 'Can access all projects and positions and can invite users to the organisation, or remove them.',
       },
     ],

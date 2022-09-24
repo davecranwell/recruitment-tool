@@ -60,7 +60,10 @@ const Positions = () => {
               </div>
             </div>
             <MetaList className="mt-2">
-              <MetaListItem icon={CurrencyDollarIcon}>
+              <MetaListItem
+                icon={CurrencyDollarIcon}
+                title="This is privileged information only available to certain roles in your organisation. Take care if taking screenshots of this page"
+              >
                 {position.salaryRange && (
                   <>
                     {position.salaryRange!}

@@ -1,5 +1,5 @@
 import { UserIcon } from '@heroicons/react/outline'
-import type { LoaderFunction, MetaFunction } from '@remix-run/node'
+import { json, LoaderFunction, MetaFunction } from '@remix-run/node'
 import { Outlet, useLoaderData, useOutletContext } from '@remix-run/react'
 
 import { api } from 'app/api.server'
@@ -14,21 +14,24 @@ import { StackedList, StackedListItem } from 'app/components/StackedList'
 import { useAppAbility } from 'app/hooks/useAppAbility'
 import type { UserInOrganisation } from 'app/models/users/User'
 
-export const meta: MetaFunction = ({ data }) => {
-  return { title: `Users in ${data?.sessionData?.activeOrganisation?.name}` }
-}
-
 export const loader: LoaderFunction = async (data) => {
   const { request } = data
   await requireAuth(request)
   const sessionData = await getSessionData(request)
 
-  return await api(data, `/organisation/${sessionData.activeOrganisation.id}/users`)
+  const users = await api(data, `/organisation/${sessionData.activeOrganisation.id}/users`)
+
+  return json({ users: await users.json(), sessionData })
+}
+
+export const meta: MetaFunction = ({ data }) => {
+  return { title: `Users in ${data.sessionData?.activeOrganisation?.name}` }
 }
 
 const Users = () => {
   const sessionData = useOutletContext<SessionData>()
-  const users = useLoaderData()
+  const { users } = useLoaderData()
+  console.log({ users })
 
   const { can, subject } = useAppAbility()
 

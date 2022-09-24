@@ -7,7 +7,9 @@ import {
   HttpStatus,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -31,11 +33,13 @@ import { ApiPaginatedResponse, PaginatedDto, PaginationArgsDto } from 'src/page/
 import { Action } from 'src/casl/actions'
 import { Position } from 'src/position/entities/position.entity'
 import { UserEntity } from 'src/user/entities/user.entity'
+import { UsersInOrganisation } from 'src/users-in-organisation/entities/users-in-organisation.entity'
 
 import { CreateOrganisationDto } from './dto/create-organisation.dto'
+import { PatchOrganisationUserDto } from './dto/patch-organisation-user.dto'
+
 import { Organisation } from './entities/organisation.entity'
 import { OrganisationService } from './organisation.service'
-import { UsersInOrganisation } from 'src/users-in-organisation/entities/users-in-organisation.entity'
 
 @ApiTags('Organisations')
 @ApiBearerAuth('access-token')
@@ -106,6 +110,23 @@ export class OrganisationController {
     if (!ability.can(Action.Manage, new Organisation({ id }))) throw new ForbiddenException()
 
     return this.organisationService.findUser(id, userId)
+  }
+
+  @Patch(':id/user/:userId')
+  @ApiOkResponse({ type: () => UsersInOrganisation })
+  @ApiOperation({ summary: 'Update one user in an organisation' })
+  @UseInterceptors(ClassSerializerInterceptor)
+  async patchUser(
+    @Req() request: RequestWithUser,
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
+    @Param('userId', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) userId: number,
+    @Body() patchData: PatchOrganisationUserDto
+  ) {
+    const ability = new Ability(request.user.abilities)
+
+    if (!ability.can(Action.Manage, new Organisation({ id }))) throw new ForbiddenException()
+
+    return this.organisationService.patchUser(id, userId, patchData)
   }
 
   @Get(':id/projects')
