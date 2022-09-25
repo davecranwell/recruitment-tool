@@ -106,6 +106,8 @@ export const withActionErrors = (formFields: FieldDef[], errors?: NestTargetMess
  */
 
 export const withValues = (formFields: FieldDef[], values: any) => {
+  console.log({ values })
+
   const enumerateFields = (fields: FieldDef[]): FieldDef[] => {
     return fields.map((field) => {
       if (field.content) {

@@ -25,13 +25,12 @@ export const loader: LoaderFunction = async (data) => {
 }
 
 export const meta: MetaFunction = ({ data }) => {
-  return { title: `Users in ${data.sessionData?.activeOrganisation?.name}` }
+  return { title: `Users in ${data?.sessionData?.activeOrganisation?.name}` }
 }
 
 const Users = () => {
   const sessionData = useOutletContext<SessionData>()
   const { users } = useLoaderData()
-  console.log({ users })
 
   const { can, subject } = useAppAbility()
 

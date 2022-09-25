@@ -12,7 +12,7 @@ export class UsersInOrganisation implements UsersInOrganisationModel {
   @Type(() => User)
   user?: User
 
-  @ApiProperty()
+  @ApiProperty({ enum: UserRoleType })
   role: UserRoleType
 
   @ApiProperty()

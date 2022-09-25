@@ -55,16 +55,18 @@ const MobileTopNav: React.FC<Props> = ({ userNavigation, onSidebarOpen, user }) 
                     <BellIcon className="h-6 w-6" aria-hidden="true" />
                   </button> */}
 
-              <UserNav
-                navItems={userNavigation}
-                positionClasses="right-0 w-48"
-                button={() => (
-                  <Menu.Button className="focus:ring-primary-500 flex max-w-xs items-center rounded-full text-sm focus:outline-none focus:ring-2">
-                    <span className="sr-only">Open user menu</span>
-                    <Avatar name={user.name} imageUrl={user.avatarUrl} size="m" />
-                  </Menu.Button>
-                )}
-              />
+              {user && (
+                <UserNav
+                  navItems={userNavigation}
+                  positionClasses="right-0 w-48"
+                  button={() => (
+                    <Menu.Button className="focus:ring-primary-500 flex max-w-xs items-center rounded-full text-sm focus:outline-none focus:ring-2">
+                      <span className="sr-only">Open user menu</span>
+                      <Avatar name={user.name} imageUrl={user.avatarUrl} size="m" />
+                    </Menu.Button>
+                  )}
+                />
+              )}
             </div>
           </div>
         </div>

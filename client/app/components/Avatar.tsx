@@ -6,7 +6,7 @@ type Props = {
   imageUrl?: string
 }
 
-const Avatar: React.FC<Props> = ({ name, size, imageUrl }) => {
+const Avatar: React.FC<Props> = ({ name = '', size, imageUrl }) => {
   const initials = name.replace(/(\w).*\b(\w).*\b/, '$1$2').toUpperCase()
 
   const dimensionClasses = classNames({

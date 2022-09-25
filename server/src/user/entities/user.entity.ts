@@ -1,17 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { User } from '@prisma/client'
 import { Exclude, Type } from 'class-transformer'
-import { IsOptional, ValidateNested } from 'class-validator'
+import { ValidateNested } from 'class-validator'
 
-import {
-  UsersInOrganisation,
-  UsersInOrganisationIdonly,
-} from 'src/users-in-organisation/entities/users-in-organisation.entity'
-import { UserRolesOfUser } from 'src/user-roles-of-user/entities/user-roles-of-user.entity'
-import { ProjectUserRole } from 'src/project-user-role/entities/project-user-role.entity'
 import { ApplicantProfile } from 'src/applicant-profile/entities/applicant-profile.entity'
-import { Organisation } from 'src/organisation/entities/organisation.entity'
-import { Ability } from '@casl/ability'
+import { ProjectUserRole } from 'src/project-user-role/entities/project-user-role.entity'
+import { UserRolesOfUser } from 'src/user-roles-of-user/entities/user-roles-of-user.entity'
+import { UsersInOrganisation } from 'src/users-in-organisation/entities/users-in-organisation.entity'
 
 export class UserEntity implements User {
   @ApiProperty({ required: true })
@@ -23,10 +18,10 @@ export class UserEntity implements User {
   @ApiProperty({ required: true })
   name: string | null
 
-  @ApiProperty({ required: true })
+  @Exclude()
   createdAt: Date
 
-  @ApiProperty({ required: true })
+  @Exclude()
   updatedAt: Date
 
   @ApiProperty()

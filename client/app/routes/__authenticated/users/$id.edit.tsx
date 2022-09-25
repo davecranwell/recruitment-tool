@@ -34,8 +34,11 @@ export const loader: LoaderFunction = async (data) => {
 
   const { sessionData } = await requireAuth(request)
 
-  const user = await api(data, `/organisation/${sessionData.activeOrganisation.id}/user/${params.id}`)
-  return json({ user: await user.json(), fields: withValues(editUserFormFields(), user) })
+  const userRes = await api(data, `/organisation/${sessionData.activeOrganisation.id}/user/${params.id}`)
+  const user = await userRes.json()
+  const fields = withValues(editUserFormFields(), user)
+
+  return json({ user, fields })
 }
 
 const EditUser = () => {
