@@ -106,7 +106,8 @@ export const withActionErrors = (formFields: FieldDef[], errors?: NestTargetMess
  */
 
 export const withValues = (formFields: FieldDef[], values: any) => {
-  console.log({ values })
+  if (values.constructor.name !== 'Object')
+    throw new Error(`withValues argument 'values' is not a plain javascript object`)
 
   const enumerateFields = (fields: FieldDef[]): FieldDef[] => {
     return fields.map((field) => {

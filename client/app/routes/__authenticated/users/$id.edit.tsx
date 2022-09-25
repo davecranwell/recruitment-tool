@@ -46,8 +46,6 @@ const EditUser = () => {
   const errors = useActionData()
   const transition = useTransition()
 
-  console.log({ user })
-
   return (
     <Content title={user.user.name}>
       <Form submitText="Save changes" fields={fields} errors={errors} transition={transition} />
