@@ -95,7 +95,7 @@ const SignIn = () => {
                 color="secondary"
                 width="full"
                 text="Sign in with Google"
-                icon={<img src={googlelogo} alt="" className="mr-2 flex h-6 w-6" />}
+                icon={() => <img src={googlelogo} alt="" className="mr-2 flex h-6 w-6" />}
                 onClick={() => googleLogin()}
               />
             </div>

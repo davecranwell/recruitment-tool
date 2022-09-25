@@ -75,20 +75,20 @@ INTERVIEWER INTERVIEWER
     Int id PK 
     String name  
     String description  "nullable"
-    PositionEmploymentType employment  "nullable"
-    String location  "nullable"
-    String salaryRange  "nullable"
     DateTime openingDate  "nullable"
     DateTime closingDate  "nullable"
     DateTime createdAt  
     DateTime updatedAt  
+    PositionEmploymentType employment  "nullable"
+    String location  "nullable"
+    String salaryRange  "nullable"
     }
   
 
   UsersInOrganisation {
-    UserRoleType role  
     DateTime createdAt  
     DateTime updatedAt  
+    UserRoleType role  
     }
   
 
@@ -152,29 +152,47 @@ INTERVIEWER INTERVIEWER
     DateTime createdAt  
     }
   
+
+  Interview {
+    Int id PK 
+    DateTime startDateTime  
+    DateTime endDateTime  
+    DateTime createdAt  
+    }
+  
+
+  InterviewAttendee {
+
+    }
+  
     ApplicantProfile o{--|| User : "user"
     ApplicantProfileForOrganisation o{--|| ApplicantProfile : "applicantProfile"
     ApplicantProfileForOrganisation o{--|| Organisation : "organisation"
     Project o{--|| Organisation : "organisation"
     Position o|--|| PositionEmploymentType : "enum:employment"
     Position o{--|| Organisation : "organisation"
-    Position o{--|| Project : "project"
     Position o{--|| Pipeline : "pipeline"
+    Position o{--|| Project : "project"
     UsersInOrganisation o|--|| UserRoleType : "enum:role"
-    UsersInOrganisation o{--|| User : "user"
     UsersInOrganisation o{--|| Organisation : "organisation"
+    UsersInOrganisation o{--|| User : "user"
     UserRole o|--|| UserRoleType : "enum:type"
     UserRole o{--|| Organisation : "organisation"
-    UserRolesOfUser o{--|| User : "user"
     UserRolesOfUser o{--|| UserRole : "role"
+    UserRolesOfUser o{--|| User : "user"
     ApplicantProfileForPosition o{--|| ApplicantProfile : "applicantProfile"
     ApplicantProfileForPosition o{--|| Position : "position"
     ApplicantProfileForPosition o{--|| Stage : "stage"
+    ProjectUserRole o|--|| ProjectRoleType : "enum:role"
     ProjectUserRole o{--|| Project : "project"
     ProjectUserRole o{--|| User : "user"
-    ProjectUserRole o|--|| ProjectRoleType : "enum:role"
-    StagesInPipeline o{--|| Stage : "stage"
     StagesInPipeline o{--|| Pipeline : "pipeline"
-    Invitation o{--|| Organisation : "organisation"
+    StagesInPipeline o{--|| Stage : "stage"
     Invitation o|--|| UserRoleType : "enum:role"
+    Invitation o{--|| Organisation : "organisation"
+    Interview o{--|| ApplicantProfile : "applicantProfile"
+    Interview o{--|| Position : "position"
+    Interview o{--|| Stage : "stage"
+    InterviewAttendee o{--|| Interview : "interview"
+    InterviewAttendee o{--|| User : "user"
 ```

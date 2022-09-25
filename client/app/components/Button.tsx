@@ -14,7 +14,6 @@ type Props = {
 }
 
 const Button: React.FC<Props> = ({
-  children,
   type,
   transition,
   text,
@@ -46,7 +45,6 @@ const Button: React.FC<Props> = ({
       {...props}
     >
       {icon && <Icon className="h-5 w-5" aria-hidden="true" />}
-      {children}
       {transition && transition.state === 'submitting' ? textLoading : text}
     </ButtonRoot>
   )
