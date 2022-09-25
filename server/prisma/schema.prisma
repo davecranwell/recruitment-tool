@@ -38,6 +38,7 @@ model User {
   userRoles              UserRolesOfUser[]
   projectRoles           ProjectUserRole[]
   applicantProfiles      ApplicantProfile[]
+  interviewsAttending    InterviewAttendee[]
 }
 
 model ApplicantProfile {
@@ -50,6 +51,7 @@ model ApplicantProfile {
   userId        Int
   positions     ApplicantProfileForPosition[]
   organisations ApplicantProfileForOrganisation[]
+  Interview     Interview[]
 
   @@index([userId])
 }
@@ -247,6 +249,25 @@ model Invitation {
   organisationId Int
   role           UserRoleType?
   createdAt      DateTime      @default(now())
+}
+
+model Interview {
+  id                 Int                 @id @default(autoincrement())
+  applicantProfile   ApplicantProfile    @relation(fields: [applicantProfileId], references: [id])
+  applicantProfileId Int
+  startDateTime      DateTime
+  endDateTime        DateTime
+  createdAt          DateTime            @default(now())
+  attendees          InterviewAttendee[]
+}
+
+model InterviewAttendee {
+  interview   Interview @relation(fields: [interviewId], references: [id])
+  interviewId Int
+  user        User      @relation(fields: [userId], references: [id])
+  userId      Int
+
+  @@id([interviewId, userId])
 }
 
 // model ProcessForPosition {

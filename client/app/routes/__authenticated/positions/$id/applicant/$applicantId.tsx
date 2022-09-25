@@ -1,7 +1,7 @@
 import type { ActionFunction, LoaderFunction, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { useActionData, useLoaderData, useOutletContext, useSubmit, useTransition } from '@remix-run/react'
-import { LockClosedIcon } from '@heroicons/react/solid'
+import { LockClosedIcon, CheckIcon } from '@heroicons/react/solid'
 
 import { api } from '~/api.server'
 import { notify, requireAuth } from '~/sessions.server'
@@ -10,6 +10,7 @@ import type { StageInPipeline } from 'app/models/positions/Stage'
 
 import StageAdvance from '~/components/StageAdvance'
 import PersonHeader from '~/components/PersonHeader'
+import Button from '~/components/Button'
 
 export const action: ActionFunction = async (data) => {
   const { request, params } = data
@@ -60,6 +61,7 @@ const Profile = () => {
     <main className="py-10">
       {/* Page header */}
       <PersonHeader user={user}>
+        <Button text="Invite to interview" icon={CheckIcon} />
         <StageAdvance stages={stages} currentStageIndex={stageIndex} onChange={handleAdvanceStage} />
       </PersonHeader>
 

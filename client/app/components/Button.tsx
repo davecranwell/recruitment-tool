@@ -4,7 +4,7 @@ import classNames from 'classnames'
 type Props = {
   type?: 'submit' | 'reset' | 'button'
   transition?: Transition
-  text: string
+  text?: string
   textLoading?: string
   color?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark'
   width?: 'auto' | 'full' | 'half'
@@ -27,6 +27,8 @@ const Button: React.FC<Props> = ({
 }) => {
   const ButtonRoot: React.ElementType = component ?? 'button'
 
+  const Icon = icon
+
   return (
     <ButtonRoot
       type={type}
@@ -43,7 +45,8 @@ const Button: React.FC<Props> = ({
       )}
       {...props}
     >
-      {icon}
+      {icon && <Icon className="h-5 w-5" aria-hidden="true" />}
+      {children}
       {transition && transition.state === 'submitting' ? textLoading : text}
     </ButtonRoot>
   )
