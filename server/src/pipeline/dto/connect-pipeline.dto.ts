@@ -1,5 +1,3 @@
-
-  export class ConnectPipelineDto {
-    id: number;
-  }
-  
+export class ConnectPipelineDto {
+  id: number
+}

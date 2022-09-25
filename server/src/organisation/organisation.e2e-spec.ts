@@ -11,7 +11,7 @@ import { PrismaModule } from 'src/prisma/prisma.module'
 
 describe('Organisation', () => {
   let app: INestApplication
-  let organisationService = {
+  const organisationService = {
     findOne: () => ['test'],
     findUsers: () => ['users'],
     create: () => 'ok',
@@ -21,7 +21,7 @@ describe('Organisation', () => {
 
   let jwtGuard
 
-  let prismaService = {
+  const prismaService = {
     project: {
       findMany: () => [],
     },
