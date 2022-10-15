@@ -1,4 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing'
+import { PrismaClient } from '@prisma/client'
+import { mockDeep, DeepMockProxy } from 'jest-mock-extended'
+
 import { RequestWithUser } from 'src/authentication/authentication.controller'
 import { CaslPermissions } from 'src/casl/casl.permissions'
 import { PrismaService } from 'src/prisma/prisma.service'
@@ -9,12 +12,16 @@ import { OrganisationService } from './organisation.service'
 describe('OrganisationController', () => {
   let controller: OrganisationController
   let service: OrganisationService
+  let prisma: DeepMockProxy<PrismaClient>
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [OrganisationController],
-      providers: [OrganisationService, PrismaService],
-    }).compile()
+      providers: [OrganisationService],
+    })
+      // .overrideProvider(PrismaService)
+      // .useValue(mockDeep<PrismaClient>())
+      .compile()
 
     controller = await module.resolve<OrganisationController>(OrganisationController)
     service = await module.resolve<OrganisationService>(OrganisationService)

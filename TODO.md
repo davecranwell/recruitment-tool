@@ -5,6 +5,7 @@
 - [x] Sharing of backend permissions rules with front end via session
 - [x] Refresh tokens
 - [x] Toast prompts for notifications
+- [x] Monorepo codebase
 - [ ] Add Google Auth with calendar access
 - [ ] Pipelines must either be made public or finessed to a point where the stages are usable by anyone
 - [ ] Pipelines need to be automatically attributed to a project

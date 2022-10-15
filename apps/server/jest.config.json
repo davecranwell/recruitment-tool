@@ -1,0 +1,19 @@
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "rootDir": "./",
+  "roots": ["<rootDir>/src"],
+  "modulePaths": ["<rootDir>"],
+  "testRegex": ".*\\.spec\\.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "esbuild-jest"
+  },
+  "collectCoverageFrom": ["**/*.(t|j)s"],
+  "coverageDirectory": "../coverage",
+  "testEnvironment": "node",
+  "testPathIgnorePatterns": ["/node_modules/", "/archive/", "/dist/", "/data/"]
+  // "globals": {
+  //   "ts-jest": {
+  //     "isolatedModules": true
+  //   }
+  // }
+}
