@@ -1,0 +1,13 @@
+{
+  "name": "recruiting-tool",
+  "private": true,
+  "scripts": {
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "db:generate": "turbo run db:generate",
+    "docker:build": "turbo run docker:build"
+  },
+  "devDependencies": {
+    "turbo": "^1.5.4"
+  }
+}
