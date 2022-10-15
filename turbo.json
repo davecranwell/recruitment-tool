@@ -16,6 +16,12 @@
     "db:generate": {
       "outputs": []
     },
+    "db:migrate": {
+      "outputs": []
+    },
+    "db:seed": {
+      "outputs": []
+    },
     "docker:build": {
       "dependsOn": ["test"],
       "outputs": []

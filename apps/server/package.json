@@ -18,7 +18,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register ../../node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./jest-e2e.json",
-    "db:generate": "npx prisma generate",
+    "db:generate": "pnpx prisma generate",
+    "db:migraten": "pnpx prisma migrate dev",
+    "db:seed": "pnpx prisma db seed",
     "docker:build": ""
   },
   "dependencies": {
@@ -70,12 +72,8 @@
     "@typescript-eslint/parser": "^5.12.1",
     "@vegardit/prisma-generator-nestjs-dto": "^1.5.1",
     "esbuild-jest": "^0.5.0",
-    "eslint": "^8.15.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-prettier": "^4.2.1",
     "jest": "^28.0.3",
     "jest-mock-extended": "^3.0.1",
-    "prettier": "^2.6.2",
     "prisma": "^4.3.1",
     "prisma-erd-generator": "^0.11.0",
     "source-map-support": "^0.5.20",
@@ -83,8 +81,7 @@
     "ts-jest": "^28.0.8",
     "ts-loader": "^9.2.6",
     "ts-node": "^10.3.0",
-    "tsconfig-paths": "^4.0.0",
-    "typescript": "^4.4.4"
+    "tsconfig-paths": "^4.0.0"
   },
   "prisma": {
     "seed": "ts-node ./prisma/seed.ts"
