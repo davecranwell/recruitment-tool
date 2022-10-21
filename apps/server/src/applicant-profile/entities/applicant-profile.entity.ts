@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { ApplicantProfile as ApplicantProfileModel } from '@prisma/client'
 import { ValidateNested } from 'class-validator'
-import { Exclude, Expose, Type } from 'class-transformer'
+import { Expose, Type } from 'class-transformer'
 
-import { UserEntity as User, UserEntity } from 'src/user/entities/user.entity'
+import { UserEntity as User } from 'src/user/entities/user.entity'
 import { Position } from 'src/position/entities/position.entity'
 import { Organisation } from 'src/organisation/entities/organisation.entity'
 
