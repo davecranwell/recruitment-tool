@@ -26,10 +26,12 @@ export const loader: LoaderFunction = async (data) => {
   const url = new URL(request.url)
   const token = url.searchParams.get('token')
 
-  const invitation = await api(data, `/invitation/check/?token=${token}`)
-  if (!invitation.ok) throw UnauthorisedResponse()
+  const invitationRes = await api(data, `/invitation/check/?token=${token}`)
+  if (!invitationRes.ok) throw UnauthorisedResponse()
 
-  return json({ session, invitation: await invitation.json() })
+  const invitation = await invitationRes.json()
+
+  return json({ session, invitation })
 }
 
 export const action: ActionFunction = async (data) => {
@@ -88,7 +90,7 @@ const AcceptInvitation = () => {
                   />
                   <Divider text="Or if you don't have an account yet" className="py-8" />
                   <Link to={`/invitation-register?token=${token}`}>
-                    <Button text="Register now" color="secondary" width="full" />
+                    <Button text="Register now to accept invitation" color="secondary" width="full" />
                   </Link>
                 </div>
               </div>

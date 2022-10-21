@@ -89,7 +89,7 @@ const AcceptInvitation = () => {
                   />
                   <Divider text="If you've already got an account" className="py-8" />
                   <Link to={`/invitation-sign-in?token=${token}`}>
-                    <Button text="Sign in" color="secondary" width="full" />
+                    <Button text="Sign in to accept invitation" color="secondary" width="full" />
                   </Link>
                 </div>
               </div>
