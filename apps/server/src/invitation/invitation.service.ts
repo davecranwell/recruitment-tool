@@ -84,10 +84,6 @@ export class InvitationService {
     return new Invitation(invitation)
   }
 
-  // findAll() {
-  //   return `This action returns all invitation`;
-  // }
-
   // async getByEmailAndOrg(email: string, organisationId: number): Promise<Invitation> {
   //   const invitation = await this.prisma.invitation.findUnique({
   //     where: {
