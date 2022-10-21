@@ -44,7 +44,7 @@ const Button: React.FC<Props> = ({
       )}
       {...props}
     >
-      {icon && <Icon className="h-5 w-5" aria-hidden="true" />}
+      {icon && <Icon className="h-5 w-5 mr-2.5" aria-hidden="true" />}
       {transition && transition.state === 'submitting' ? textLoading : text}
     </ButtonRoot>
   )
