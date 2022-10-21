@@ -1,12 +1,16 @@
 # To Do list
 
+## Where you left off
+
+- In the middle of adding interviews. Entity is done but none of the controller or services exist. DTOs missing too. Nothing on the front end yet.
+
 ## Overall
 
 - [x] Sharing of backend permissions rules with front end via session
 - [x] Refresh tokens
 - [x] Toast prompts for notifications
 - [x] Monorepo codebase
-- [ ] Add Google Auth with calendar access
+- [x] Add Google Auth with calendar access
 - [ ] Pipelines must either be made public or finessed to a point where the stages are usable by anyone
 - [ ] Pipelines need to be automatically attributed to a project
 - [ ] Pipelines need to be automatically inheritted by a position from the project
@@ -46,6 +50,7 @@
   - [ ] Projects
   - [ ] Stages
   - [ ] Users
+- [ ] Blocking known users failed auth (nb: preventing brute force of any user already limited by rate limiting)
 - [ ] Edit users by getting them from DB based on their org relationship, not straight from users, which is basically too open
 - [ ] Share back end types with front end
 - [ ] Ensure prisma exception filter doesn't throw verbose errors in production
