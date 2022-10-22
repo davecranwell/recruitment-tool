@@ -1,0 +1,58 @@
+{
+  "name": "client",
+  "private": true,
+  "description": "",
+  "license": "",
+  "sideEffects": false,
+  "scripts": {
+    "deploy": "fly deploy --remote-only",
+    "build": "run-s build:*",
+    "build:css": "npm run generate:css -- --minify",
+    "build:remix": "remix build",
+    "dev": "run-p dev:*",
+    "dev:app": "remix watch",
+    "dev:css": "npm run generate:css -- --watch",
+    "dev:remix": "NODE_ENV=development nodemon server.js",
+    "generate:css": "npx tailwindcss -i ./styles/tailwind.css -o ./app/tailwind.css",
+    "postinstall": "remix setup node",
+    "format": "prettier --write \"app/**/*.{ts,tsx}\"",
+    "start": "NODE_ENV=production node server.js",
+    "lint": "eslint \"app/**/*.ts\" --fix"
+  },
+  "dependencies": {
+    "@casl/ability": "^5.4.4",
+    "@casl/react": "^3.0.0",
+    "@headlessui/react": "^1.6.1",
+    "@heroicons/react": "^1.0.6",
+    "@react-oauth/google": "^0.2.6",
+    "@remix-run/express": "^1.5.1",
+    "@remix-run/node": "^1.5.1",
+    "@remix-run/react": "^1.5.1",
+    "@remix-run/serve": "^1.5.1",
+    "@tailwindcss/forms": "^0.5.1",
+    "classnames": "^2.3.1",
+    "compression": "^1.7.4",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.16",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "remix": "^1.7.2",
+    "tiny-invariant": "^1.2.0"
+  },
+  "devDependencies": {
+    "@remix-run/dev": "^1.5.1",
+    "@remix-run/eslint-config": "^1.5.1",
+    "@types/jsonwebtoken": "^8.5.8",
+    "@types/react": "^17.0.24",
+    "@types/react-dom": "^17.0.9",
+    "npm-run-all": "^4.1.5",
+    "prettier-plugin-tailwindcss": "^0.1.11",
+    "tailwindcss": "^3.0.24"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}

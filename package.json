@@ -1,0 +1,18 @@
+{
+  "name": "recruiting-tool",
+  "private": true,
+  "scripts": {
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "db:generate": "turbo run db:generate",
+    "docker:build": "turbo run docker:build"
+  },
+  "devDependencies": {
+    "turbo": "^1.5.4",
+    "prettier": "2.6.2",
+    "eslint": "^8.15.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "typescript": "^4.4.4"
+  }
+}

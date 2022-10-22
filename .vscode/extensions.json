@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "bierner.markdown-mermaid",
+    "prisma.prisma",
+    "mikestead.dotenv",
+    "esbenp.prettier-vscode",
+    "Gruntfuggly.todo-tree"
+  ]
+}

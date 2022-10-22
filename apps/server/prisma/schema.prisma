@@ -1,0 +1,261 @@
+generator client {
+  provider    = "prisma-client-js"
+  defaultTake = "10"
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+  output   = "ER.md"
+  theme    = "neutral"
+}
+
+generator nestjsDto {
+  provider                        = "prisma-generator-nestjs-dto"
+  output                          = "../../tmp"
+  outputToNestJsResourceStructure = "true"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                     Int                   @id @default(autoincrement())
+  name                   String?
+  email                  String                @unique(map: "Auth_email_unique_constraint")
+  password               String?
+  refreshTokenHash       String?
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @default(now())
+  isRegisteredWithGoogle Boolean               @default(false)
+  avatarUrl              String?
+  OAuth2Tokens           Json?
+  applicantProfiles      ApplicantProfile[]
+  interviewsAttending    InterviewAttendee[]
+  projectRoles           ProjectUserRole[]
+  userRoles              UserRolesOfUser[]
+  organisations          UsersInOrganisation[]
+}
+
+model ApplicantProfile {
+  id            Int                               @id @default(autoincrement())
+  profileName   String
+  askingSalary  String?
+  createdAt     DateTime                          @default(now())
+  updatedAt     DateTime                          @default(now())
+  userId        Int
+  user          User                              @relation(fields: [userId], references: [id])
+  organisations ApplicantProfileForOrganisation[]
+  positions     ApplicantProfileForPosition[]
+  interviews    Interview[]
+
+  @@index([userId])
+}
+
+model Organisation {
+  id                Int                               @id @default(autoincrement())
+  name              String
+  machineName       String                            @unique
+  createdAt         DateTime                          @default(now())
+  updatedAt         DateTime                          @default(now())
+  applicantProfiles ApplicantProfileForOrganisation[]
+  invitations       Invitation[]
+  Position          Position[]
+  projects          Project[]
+  roles             UserRole[]
+  users             UsersInOrganisation[]
+}
+
+model ApplicantProfileForOrganisation {
+  applicantProfileId Int
+  organisationId     Int
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @default(now())
+  applicantProfile   ApplicantProfile @relation(fields: [applicantProfileId], references: [id])
+  organisation       Organisation     @relation(fields: [organisationId], references: [id])
+
+  @@id([applicantProfileId, organisationId])
+}
+
+model Project {
+  id             Int               @id @default(autoincrement())
+  name           String
+  description    String?
+  organisationId Int
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @default(now())
+  organisation   Organisation      @relation(fields: [organisationId], references: [id])
+  positions      Position[]
+  userRoles      ProjectUserRole[]
+
+  @@index([organisationId])
+}
+
+model Position {
+  id                Int                           @id @default(autoincrement())
+  name              String
+  description       String?
+  openingDate       DateTime?                     @default(now())
+  closingDate       DateTime?
+  createdAt         DateTime                      @default(now())
+  updatedAt         DateTime                      @default(now())
+  employment        PositionEmploymentType?
+  location          String?
+  salaryRange       String?
+  pipelineId        Int?
+  projectId         Int
+  organisationId    Int
+  organisation      Organisation                  @relation(fields: [organisationId], references: [id])
+  pipeline          Pipeline?                     @relation(fields: [pipelineId], references: [id])
+  project           Project                       @relation(fields: [projectId], references: [id])
+  applicantProfiles ApplicantProfileForPosition[]
+  interviews        Interview[]
+
+  @@index([projectId])
+}
+
+model UsersInOrganisation {
+  userId         Int
+  organisationId Int
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now())
+  role           UserRoleType
+  organisation   Organisation @relation(fields: [organisationId], references: [id])
+  user           User         @relation(fields: [userId], references: [id])
+
+  @@id([userId, organisationId])
+}
+
+model UserRole {
+  id             Int               @id @default(autoincrement())
+  name           String            @unique
+  type           UserRoleType
+  organisationId Int
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @default(now())
+  organisation   Organisation      @relation(fields: [organisationId], references: [id])
+  users          UserRolesOfUser[]
+
+  @@index([organisationId])
+}
+
+model UserRolesOfUser {
+  userId    Int
+  roleId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  role      UserRole @relation(fields: [roleId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@id([userId, roleId])
+}
+
+model ApplicantProfileForPosition {
+  applicantProfileId Int
+  positionId         Int
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @default(now())
+  stageId            Int
+  applicantProfile   ApplicantProfile @relation(fields: [applicantProfileId], references: [id])
+  position           Position         @relation(fields: [positionId], references: [id])
+  stage              Stage            @relation(fields: [stageId], references: [id])
+
+  @@id([applicantProfileId, positionId])
+}
+
+model ProjectUserRole {
+  userId    Int
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @default(now())
+  projectId Int
+  role      ProjectRoleType
+  project   Project         @relation(fields: [projectId], references: [id])
+  user      User            @relation(fields: [userId], references: [id])
+
+  @@id([userId, projectId])
+}
+
+model Stage {
+  id          Int                           @id @default(autoincrement())
+  name        String
+  description String?
+  createdAt   DateTime                      @default(now())
+  updatedAt   DateTime                      @default(now())
+  applicants  ApplicantProfileForPosition[]
+  interviews  Interview[]
+  pipeline    StagesInPipeline[]
+}
+
+model Pipeline {
+  id          Int                @id @default(autoincrement())
+  name        String
+  description String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @default(now())
+  positions   Position[]
+  stages      StagesInPipeline[]
+}
+
+model StagesInPipeline {
+  stageId    Int
+  pipelineId Int
+  order      Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
+  pipeline   Pipeline @relation(fields: [pipelineId], references: [id])
+  stage      Stage    @relation(fields: [stageId], references: [id])
+
+  @@id([stageId, pipelineId])
+}
+
+model Invitation {
+  id             Int           @id @default(autoincrement())
+  email          String
+  role           UserRoleType?
+  organisationId Int
+  createdAt      DateTime      @default(now())
+  organisation   Organisation  @relation(fields: [organisationId], references: [id])
+}
+
+model Interview {
+  id                 Int                 @id @default(autoincrement())
+  applicantProfileId Int
+  stageId            Int
+  positionId         Int
+  startDateTime      DateTime
+  endDateTime        DateTime
+  createdAt          DateTime            @default(now())
+  applicantProfile   ApplicantProfile    @relation(fields: [applicantProfileId], references: [id])
+  position           Position            @relation(fields: [positionId], references: [id])
+  stage              Stage               @relation(fields: [stageId], references: [id])
+  attendees          InterviewAttendee[]
+}
+
+model InterviewAttendee {
+  interviewId Int
+  userId      Int
+  interview   Interview @relation(fields: [interviewId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@id([interviewId, userId])
+}
+
+enum PositionEmploymentType {
+  FULL
+  PART
+  CONTRACT
+}
+
+enum UserRoleType {
+  RECRUITER
+  APPLICANT
+  ORGANISATION_OWNER
+  ORGANISATION_MEMBER
+  STANDARD
+}
+
+enum ProjectRoleType {
+  HIRING_MANAGER
+  INTERVIEWER
+}

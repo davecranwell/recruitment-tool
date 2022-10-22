@@ -1,0 +1,375 @@
+.test {
+  position: absolute;
+  z-index: 50000;
+}
+* {
+  box-sizing: border-box;
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+:root {
+  --sidebar-width: 250px;
+  --grid-header-height: 5.2rem;
+  --group-height: 100px;
+  --grid-color: #eee;
+  --calendar-chrome-color: #fff;
+  --calendar-body: #f7f7f7;
+  --color-today: hsl(222, 100%, 96%);
+}
+
+/* zindexes */
+.dates-virtualised {
+  z-index: 50;
+}
+.add-button,
+.add-popup {
+  z-index: 40;
+}
+.date {
+  z-index: 30;
+}
+.eventgroup-list,
+.group {
+  z-index: 10;
+}
+.content-wrapper {
+  z-index: 10;
+}
+
+body {
+  height: 100vh;
+  overflow: hidden;
+}
+
+input {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.add-button {
+  cursor: pointer;
+  position: absolute;
+  height: 3rem;
+  width: 3rem;
+  right: 4vw;
+  bottom: 4vw;
+  display: block;
+  border: 0;
+  border-radius: 50% 50%;
+  font-size: 3rem;
+  font-weight: bold;
+  line-height: 3rem;
+  background-color: hsl(223, 74%, 29%);
+  color: white;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+}
+.add-button:hover {
+  background-color: hsl(223, 74%, 39%);
+}
+
+.add-popup {
+  position: absolute;
+  right: 4vw;
+  bottom: 8vw;
+  width: 300px;
+  height: 300px;
+  border: 1px solid hsl(223, 74%, 39%);
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+}
+
+.add-popup--openfalse {
+  display: none;
+}
+.add-popup--opentrue {
+  display: block;
+}
+
+.formlist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.virtualised-wrapper {
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: auto;
+  box-sizing: content-box;
+}
+
+.content-wrapper {
+  position: absolute;
+}
+
+.virtualised {
+  /* vertical grid */
+  /* so help me god this caused so much jank */
+  /* background-image: linear-gradient(
+    90deg,
+    var(--grid-color) 1px,
+    transparent 1px
+  );
+  background-size: 60px; */
+
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background-color: var(--calendar-body);
+  overflow: hidden;
+}
+
+.dates-virtualised {
+  position: sticky;
+  top: 0;
+}
+
+.grid-col {
+  position: absolute;
+  height: 100%;
+  border-right: 1px solid var(--grid-color);
+}
+
+.dates-virtualised .grid-col {
+  height: 100px;
+  top: 0;
+}
+
+.grid-col--weekend {
+  background-color: #f2f2f2;
+}
+
+.grid-col--today {
+  background-color: var(--color-today);
+}
+
+.grid-col--today .date {
+  background-color: var(--color-today);
+}
+
+.grid-col--firstofmonth {
+  border-left: 1px solid var(--grid-color);
+}
+
+.event-groups {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  min-height: var(--group-height);
+  align-items: center;
+  justify-content: space-around;
+}
+
+.event-group {
+  position: absolute;
+  text-overflow: ellipsis;
+}
+
+.event-group--comment .event-point {
+  background-color: rgb(255, 250, 198);
+  width: 15px;
+  height: 15px;
+  min-width: 15px;
+}
+
+.event-group--comment .event-detail__name {
+  font-size: 0.7rem;
+}
+
+.event-detail {
+  background-color: rgb(250, 248, 224);
+  text-shadow: 1px 1px white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 4px;
+  position: relative;
+  white-space: nowrap;
+  border-radius: 3px;
+}
+
+.event-detail:after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  bottom: -4px;
+  width: 10px;
+  height: 10px;
+  transform: rotate(45deg);
+  background-color: rgb(250, 248, 224);
+}
+
+.event-detail__inner {
+  padding: 0.5rem;
+  overflow: hidden;
+}
+
+.event-detail__name,
+.event-detail__time {
+}
+
+.event-detail__name {
+}
+
+.event-detail__time {
+  text-transform: lowercase;
+  font-size: 0.7rem;
+  color: #555;
+}
+
+.event-point {
+  text-overflow: ellipsis;
+  height: 20px;
+  width: 20px;
+  min-width: 20px;
+  background-color: hsl(223, 74%, 59%);
+  border-radius: 50% 50%;
+  box-shadow: 0 0 7px rgba(0, 0, 0, 0.3);
+}
+
+.eventgroup-list,
+.group-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.group-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.group {
+  position: relative;
+  background-color: var(--calendar-chrome-color);
+  width: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.eventgroup0 > .group {
+  min-height: 0;
+  padding: 0;
+  border-right: 1px solid var(--grid-color);
+}
+
+.eventgroup0 > .group > .group__name {
+  color: #666;
+  font-size: 0.75rem;
+  background-color: hsl(223, 74%, 94%);
+  padding: 0.75rem 1rem;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  font-weight: normal;
+  z-index: 2;
+}
+
+.eventgroup-list-wrapper {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.eventgroup-list__backdrop {
+  content: '';
+  position: absolute;
+  width: calc(var(--sidebar-width) + 1px);
+  height: 100%;
+  z-index: 0;
+  background-color: var(--calendar-chrome-color);
+  border-right: 1px solid var(--grid-color);
+}
+
+.eventgroup-list {
+  position: relative;
+  top: var(--grid-header-height);
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: auto;
+}
+
+.event-list {
+  position: absolute;
+  height: 100%; /*ensures event list is height of group*/
+  display: flex;
+  align-items: center;
+  text-align: left;
+  left: 0;
+  top: 0;
+}
+
+.event-list__backdrop {
+  box-sizing: content-box;
+  height: 80px;
+  background-color: hsl(236, 28%, 89%);
+  padding: 0 1em 0 0;
+  border-radius: 4px;
+  /* margin-left: -1rem; */
+  border: 1px solid hsl(236, 50%, 80%);
+}
+
+.group,
+.eventgroup0 {
+  min-height: var(--group-height);
+}
+
+.eventgroup {
+  width: 100%;
+  position: relative;
+  text-align: right;
+  border-bottom: 1px solid var(--grid-color);
+}
+
+.group__name {
+  font-size: 1rem;
+  text-align: right;
+  font-weight: normal;
+  width: 100%;
+}
+
+.date {
+  box-sizing: border-box;
+  position: sticky;
+  width: 100%;
+  top: 0;
+  padding: 0.5rem;
+  height: var(--grid-header-height);
+  background-color: var(--calendar-chrome-color);
+  border-bottom: 1px solid var(--grid-color);
+}
+
+.date--month {
+  height: 1rem;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.date--dayofweek {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: #666;
+  padding-right: 0.2rem;
+}
+
+.date--day {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.my-test {
+  position: absolute;
+}
