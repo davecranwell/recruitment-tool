@@ -21,6 +21,10 @@ export class InterviewAttendee implements InterviewAttendeeModel {
   @ValidateNested()
   @Type(() => User)
   user?: User
+
+  constructor(partial: Partial<InterviewAttendee>) {
+    Object.assign(this, partial)
+  }
 }
 
 export class Interview implements InterviewModel {
