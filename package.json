@@ -1,16 +1,18 @@
 {
-  "name": "nodejs",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "recruiting-tool",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "db:generate": "turbo run db:generate",
+    "docker:build": "turbo run docker:build"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@types/node": "^18.0.6",
-    "node-fetch": "^3.2.6"
+  "devDependencies": {
+    "turbo": "^1.5.4",
+    "prettier": "2.6.2",
+    "eslint": "^8.15.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "typescript": "^4.4.4"
   }
 }
