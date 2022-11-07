@@ -9,5 +9,6 @@ import { PositionService } from './position.service'
   imports: [OrganisationModule],
   controllers: [PositionController],
   providers: [PositionService],
+  exports: [PositionService],
 })
 export class PositionModule {}

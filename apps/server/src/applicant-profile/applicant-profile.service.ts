@@ -77,6 +77,16 @@ export class ApplicantProfileService {
     return results
   }
 
+  async findOneInOrganisation(applicantProfileId: number, organisationId: number) {
+    const results = await this.prisma.applicantProfileForOrganisation.findFirst({
+      where: { organisationId, applicantProfileId },
+    })
+
+    if (!results) throw new NotFoundException('Applicant profile with this ID does not exist')
+
+    return results
+  }
+
   async findOne(id: number) {
     const record = await this.prisma.applicantProfile.findUnique({
       where: { id },

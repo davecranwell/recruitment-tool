@@ -2,7 +2,7 @@
 
 ## Where you left off
 
-- In the middle of adding interviews. Entity is done but none of the controller or services exist. DTOs missing too. Nothing on the front end yet.
+- In the middle of adding interviews. You've allowed an interview to be created and validated that all the data with which to do so is allowed by the user. You now need to add a UI to the front end to create it
 
 ## Overall
 
@@ -74,12 +74,13 @@
 - [ ] Invitations to an org expire
 - [ ] Saving unsubmitted form content
 
-## Names
+## Potential Names
 
 - Candidate
 - Hiring
 - job hunting
 - skills
+- Skillful
 - Screening
 - Qualifing
 - Winner

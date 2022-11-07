@@ -23,6 +23,7 @@ import { PrismaModule } from './prisma/prisma.module'
 import { ProjectController } from './project/project.controller'
 import { ProjectService } from './project/project.service'
 import { InvitationModule } from './invitation/invitation.module'
+import { InterviewModule } from './interview/interview.module'
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { InvitationModule } from './invitation/invitation.module'
     //ProjectUserRoleModule,
     //UserRolesOfUserModule,
     InvitationModule,
+    InterviewModule,
   ],
   controllers: [AppController, ProjectController],
   providers: [

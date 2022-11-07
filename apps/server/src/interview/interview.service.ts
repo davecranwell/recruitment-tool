@@ -11,15 +11,11 @@ import { UserEntity } from 'src/user/entities/user.entity'
 import { Organisation } from 'src/organisation/entities/organisation.entity'
 import { CreateInterviewDto } from './dto/create-interview.dto'
 import { Interview } from './entities/interview.entity'
-import { text } from 'stream/consumers'
+import { Invitation } from 'src/invitation/entities/invitation.entity'
 
 @Injectable()
 export class InterviewService {
-  constructor(
-    private prisma: PrismaService,
-    private readonly jwtService: JwtService,
-    private readonly configService: ConfigService
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async getById(id: number) {
     const interview = await this.prisma.interview.findUnique({
@@ -31,57 +27,28 @@ export class InterviewService {
     }
   }
 
-  async getByIdWithOrg(id: number) {
-    const invitation = await this.prisma.invitation.findUnique({
-      where: { id },
-      include: { organisation: true },
-    })
+  async create(data: CreateInterviewDto) {
+    const { startDateTime, endDateTime, positionId, stageId, applicantProfileId } = data
 
-    if (invitation) {
-      return new Invitation(invitation)
-    }
-  }
-
-  async create(data: CreateInvitationDto, user: UserEntity) {
-    const { email, role, organisationId } = data
-
-    // get org
-    const organisation = await this.prisma.organisation.findUnique({ where: { id: organisationId } })
-    if (!organisation) throw new NotFoundException('Organisation with this ID does not exist')
-
-    const ability = new Ability(user.abilities)
-    if (!ability.can(Action.Manage, new Organisation({ id: organisationId }))) throw new ForbiddenException()
-
-    const invitation = await this.prisma.invitation.create({
+    const interview = await this.prisma.interview.create({
       data: {
-        email: email.toLowerCase(),
-        role: role,
-        organisationId: organisationId,
+        startDateTime,
+        endDateTime,
+        applicantProfile: {
+          connect: { id: applicantProfileId },
+        },
+        stage: {
+          connect: { id: stageId },
+        },
+        position: {
+          connect: { id: positionId },
+        },
       },
     })
 
-    if (!invitation) throw new BadRequestException('This invitation could not be completed')
+    if (!interview) throw new BadRequestException('This interview could not be created')
 
-    const payload = { id: invitation.id }
-    const token = this.jwtService.sign(payload, {
-      secret: this.configService.get('INVITATION_CODE_SECRET'),
-      expiresIn: `${this.configService.get('INVITATION_CODE_EXPIRATION_TIME')}s`,
-    })
-
-    const invitationMsg = {
-      to: email.toLowerCase(),
-      from: this.configService.get('EMAIL_FROM'),
-      templateId: this.configService.get('EMAIL_TEMPLATE_INVITATION'),
-      dynamicTemplateData: {
-        organisationName: organisation.name,
-        invitationUrl: `${this.configService.get('ROOT_URL')}/invitation-sign-in?token=${token}`,
-      },
-    }
-
-    sendgrid.setApiKey(this.configService.get('SENDGRID_API_KEY'))
-    await sendgrid.send(invitationMsg)
-
-    return new Invitation(invitation)
+    return new Interview(interview)
   }
 
   // async getByEmailAndOrg(email: string, organisationId: number): Promise<Invitation> {
@@ -114,7 +81,7 @@ export class InterviewService {
   // }
 
   async remove(id: number) {
-    return await this.prisma.invitation.delete({
+    return await this.prisma.interview.delete({
       where: { id },
     })
   }

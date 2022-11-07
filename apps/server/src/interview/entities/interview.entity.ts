@@ -16,7 +16,7 @@ export class InterviewAttendee implements InterviewAttendeeModel {
   userId: number
 
   @ApiProperty()
-  interview?: Interview
+  interview?: InterviewModel
 
   @ValidateNested()
   @Type(() => User)
