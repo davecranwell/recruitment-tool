@@ -21,6 +21,7 @@ const paginate = createPaginator({ perPage: 20 })
 @Injectable()
 export class OrganisationService {
   constructor(private prisma: PrismaService) {}
+
   create(data: CreateOrganisationDto) {
     return this.prisma.organisation.create({
       data: {
@@ -37,9 +38,11 @@ export class OrganisationService {
       },
     })
   }
+
   // findAll() {
   //   return `This action returns all organisation`
   // }
+
   async findUsers(organisationId: number, paginationArgs: PaginationArgsDto) {
     const userOrgs = await paginate<UsersInOrganisation, Prisma.UsersInOrganisationFindFirstArgs>(
       this.prisma.usersInOrganisation,
@@ -49,6 +52,7 @@ export class OrganisationService {
     //;(userOrgs as unknown as PaginatedDto<UserEntity>).data = userOrgs.data.map((userOrg) => ({ ...userOrg.user }))
     return userOrgs
   }
+
   async findUser(organisationId: number, userId: number) {
     const user: UsersInOrganisation = await this.prisma.usersInOrganisation.findFirst({
       where: { organisationId, userId },
@@ -57,6 +61,7 @@ export class OrganisationService {
     if (!user) throw new NotFoundException('User with this ID does not exist in this organisation')
     return new UsersInOrganisation(user)
   }
+
   async patchUser(organisationId: number, userId: number, patchData: PatchOrganisationUserDto) {
     try {
       const user: UsersInOrganisation = await this.prisma.usersInOrganisation.update({
@@ -75,6 +80,7 @@ export class OrganisationService {
       throw new NotFoundException('User with this ID does not exist in this organisation')
     }
   }
+
   async findProjects(organisationId: number, user: UserEntity, paginationArgs: PaginationArgsDto) {
     // if you're an org admin, get all projects
     // if you're a regular user, get all projects you're allocated to in some way
@@ -105,6 +111,7 @@ export class OrganisationService {
       { ...paginationArgs }
     )
   }
+
   async findPositions(organisationId: number, user: UserEntity, byProject: boolean, paginationArgs: PaginationArgsDto) {
     // if you're an org admin, get all positions
     // if you're a regular user, get all positions within theprojects you're allocated to
@@ -151,6 +158,7 @@ export class OrganisationService {
     // })
     return results
   }
+
   async findOne(id: number) {
     const record = await this.prisma.organisation.findUnique({ where: { id } })
     if (!record) throw new NotFoundException('Organisation with this ID does not exist')
