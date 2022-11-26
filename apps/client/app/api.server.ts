@@ -15,13 +15,15 @@ export async function api(
 
   const { accessToken } = (request && (await getSessionData(request))) || {}
 
+  const bodyPayload = body instanceof FormData ? JSON.stringify(formDataToJson(body)) : JSON.stringify(body)
+
   const apiRes = await fetch(`${process.env.BACKEND_ROOT_URL}${url}`, {
     method,
     headers: {
       'Content-Type': 'application/json',
       ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
     },
-    body: body instanceof FormData ? JSON.stringify(formDataToJson(body)) : JSON.stringify(body),
+    body: bodyPayload,
   })
 
   switch (apiRes.status) {

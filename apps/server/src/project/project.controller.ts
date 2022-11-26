@@ -29,11 +29,10 @@ import JwtAuthenticationGuard from 'src/authentication/guards/jwtAuthentication.
 import { PrismaClassSerializerInterceptorPaginated } from 'src/class-serializer-paginated.interceptor'
 import { ApiPaginatedResponse, PaginatedDto, PaginationArgsDto } from 'src/page/pagination-args.dto'
 import { Action } from 'src/casl/actions'
+import { createPaginator } from 'src/util/pagination'
 
 import { ProjectService } from './project.service'
 import { Project } from './entities/project.entity'
-
-import { createPaginator } from 'src/util/pagination'
 
 @ApiTags('Projects')
 @ApiBearerAuth('access-token')
@@ -42,17 +41,13 @@ import { createPaginator } from 'src/util/pagination'
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
-  // @Get(':id')
-  // @ApiOperation({ summary: 'Get information about one project' })
-  // @ApiOkResponse({ type: Project })
-  // async findOne(
-  //   @Req() request: RequestWithUser,
-  //   @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number
-  // ) {
-  //   const ability = new Ability(request.user.abilities)
-
-  //   if (!ability.can(Action.Read, new Project({ id }))) throw new ForbiddenException()
-
-  //   return this.projectService.findOne(+id)
-  // }
+  @Get(':id')
+  @ApiOperation({ summary: 'Get information about one project' })
+  @ApiOkResponse({ type: Project })
+  async findOne(
+    @Req() request: RequestWithUser,
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number
+  ) {
+    return this.projectService.findOne(+id, request.user)
+  }
 }

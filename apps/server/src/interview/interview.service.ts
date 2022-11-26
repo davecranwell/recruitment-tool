@@ -28,7 +28,7 @@ export class InterviewService {
   }
 
   async create(data: CreateInterviewDto) {
-    const { startDateTime, endDateTime, positionId, stageId, applicantProfileId } = data
+    const { startDateTime, endDateTime, positionId, stageId, applicantProfileId, attendees } = data
 
     const interview = await this.prisma.interview.create({
       data: {
@@ -43,6 +43,11 @@ export class InterviewService {
         position: {
           connect: { id: positionId },
         },
+        ...(attendees && {
+          attendees: {
+            create: attendees.map((attendee) => ({ userId: attendee })),
+          },
+        }),
       },
     })
 

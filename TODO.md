@@ -2,7 +2,8 @@
 
 ## Where you left off
 
-- In the middle of adding interviews. You've allowed an interview to be created and validated that all the data with which to do so is allowed by the user. You now need to add a UI to the front end to create it
+- In the middle of adding interviews. You've allowed an interview to be created and validated that all the data with which to do so is allowed by the user.
+- You're in the middle of creating a UI to create an interview and you're getting the list of interviewers from the project role relationships
 
 ## Overall
 

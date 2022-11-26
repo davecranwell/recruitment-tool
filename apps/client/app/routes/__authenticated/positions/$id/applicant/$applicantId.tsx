@@ -1,6 +1,14 @@
 import type { ActionFunction, LoaderFunction, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
-import { useActionData, useLoaderData, useOutletContext, useSubmit, useTransition } from '@remix-run/react'
+import {
+  Link,
+  useActionData,
+  useLoaderData,
+  useOutletContext,
+  useParams,
+  useSubmit,
+  useTransition,
+} from '@remix-run/react'
 import { LockClosedIcon, CheckIcon } from '@heroicons/react/solid'
 
 import { api } from '~/api.server'
@@ -42,6 +50,7 @@ export const meta: MetaFunction = ({ data }) => {
 
 const Profile = () => {
   const advanceStage = useSubmit()
+  const { id, applicantId } = useParams()
   const { stages } = useOutletContext() as any
   const profile = useLoaderData()
   const actionData = useActionData()
@@ -61,7 +70,12 @@ const Profile = () => {
     <main className="py-10">
       {/* Page header */}
       <PersonHeader user={user}>
-        <Button text="Invite to interview" icon={CheckIcon} />
+        <Button
+          component={Link}
+          to={`/positions/${id}/applicant/${applicantId}/interview/${stage.id}/new`}
+          text="Invite to interview"
+          icon={CheckIcon}
+        />
         <StageAdvance stages={stages} currentStageIndex={stageIndex} onChange={handleAdvanceStage} />
       </PersonHeader>
 

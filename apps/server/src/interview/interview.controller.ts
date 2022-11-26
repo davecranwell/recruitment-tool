@@ -37,21 +37,31 @@ export class InterviewController {
   @UseInterceptors(ClassSerializerInterceptor)
   @Post()
   async create(@Req() request: RequestWithUser, @Body() data: CreateInterviewDto) {
+    const { attendees, positionId, applicantProfileId, stageId } = data
+
     // get position by ID and check permissions on that project
-    const position = await this.positionService.findOne(data.positionId, request.user)
-    const pipeline = await this.positionService.findPipelineWithStages(data.positionId, request.user)
+    const position = await this.positionService.findOne(positionId, request.user, { includeUserRoles: true })
+    const pipeline = await this.positionService.findPipelineWithStages(positionId, request.user)
 
     const ability = new Ability(request.user.abilities)
 
     if (!ability.can(Action.Manage, new Position(position))) throw new ForbiddenException()
 
     // check if stage is one allowed for this position, given the stages assigned to this project
-    if (!pipeline.stages.map((stage) => stage.stageId).includes(data.stageId)) {
+    if (!pipeline.stages.map((stage) => stage.stageId).includes(stageId)) {
       throw new NotFoundException('This stage does not exist')
     }
 
     // check if applicantProfileId is part of this org
-    await this.applicantProfileService.findOneInOrganisation(data.applicantProfileId, position.organisationId)
+    await this.applicantProfileService.findOneInOrganisation(applicantProfileId, position.organisationId)
+
+    // check if attendees are part of this project
+    if (attendees) {
+      const userRoleIds = position.project.userRoles.map((userRole) => userRole.userId)
+      if (!attendees.every((attendee) => userRoleIds.includes(attendee))) {
+        throw new ForbiddenException('One or more attendees do not exist')
+      }
+    }
 
     return this.interviewService.create(data)
   }

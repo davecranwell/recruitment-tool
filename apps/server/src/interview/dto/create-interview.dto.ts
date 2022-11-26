@@ -1,5 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsEmail, IsString, IsNotEmpty, MinLength, MaxLength, IsNumber, IsDateString, IsDate } from 'class-validator'
+import { Type } from 'class-transformer'
+import {
+  IsEmail,
+  IsString,
+  IsNotEmpty,
+  MinLength,
+  MaxLength,
+  IsNumber,
+  IsDateString,
+  IsDate,
+  IsOptional,
+} from 'class-validator'
 
 export class CreateInterviewDto {
   @ApiProperty()
@@ -24,4 +35,10 @@ export class CreateInterviewDto {
   @IsNotEmpty()
   @IsNumber()
   applicantProfileId: number
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber({}, { each: true })
+  @Type(() => Number)
+  attendees?: number[]
 }

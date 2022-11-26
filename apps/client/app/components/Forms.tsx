@@ -1,5 +1,5 @@
 import React from 'react'
-import type { Transition } from '@remix-run/react/transition'
+import { Transition } from '@remix-run/react/dist/transition'
 import { ExclamationCircleIcon } from '@heroicons/react/solid'
 import { Form } from '@remix-run/react'
 import classNames from 'classnames'
@@ -7,11 +7,13 @@ import classNames from 'classnames'
 import { camelToSentence } from 'app/utils'
 import Button from './Button'
 import Alert from './Alert'
+import Avatar from './Avatar'
 
 export type Option = {
   key: string
   value: any
   description?: string
+  [x: string]: any
 }
 
 export type FieldDef = {
@@ -32,6 +34,7 @@ export type FieldDef = {
   valueTransform?: (value: any) => any
   disabled?: boolean
   props?: any
+  text?: string
 }
 
 export type NestValidationError = {
@@ -146,16 +149,18 @@ const Field: React.FC<FieldProps> = ({ field }) => {
             field.content.map((field) => <Field key={field.name} field={field} />)}
           {field.type !== 'row' && (
             <>
-              <label
-                htmlFor={field.type !== 'radio' ? field.name : undefined}
-                className={classNames('block font-medium text-gray-700', {
-                  'text-base': field.type === 'radio',
-                  'text-sm': field.type !== 'radio',
-                })}
-              >
-                {field.label}
-                {field.required && <span className="text-sm text-red-600">&nbsp; *</span>}
-              </label>
+              {field.type !== 'title' && (
+                <label
+                  htmlFor={field.type !== 'radio' ? field.name : undefined}
+                  className={classNames('block font-medium text-gray-700', {
+                    'text-base': field.type === 'radio',
+                    'text-sm': field.type !== 'radio',
+                  })}
+                >
+                  {field.label}
+                  {field.required && <span className="text-sm text-red-600">&nbsp; *</span>}
+                </label>
+              )}
               {field.type === 'radio' && field.hint && (
                 <p className="text-sm leading-5 text-gray-500">How do you prefer to receive notifications?</p>
               )}
@@ -212,6 +217,73 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                         })}
                   </select>
                 )}
+                {field.type === 'usercheckbox' && (
+                  <fieldset className="mt-4">
+                    <div className="space-y-5">
+                      {field?.options?.map((option) => {
+                        return (
+                          <div key={option.key} className="relative flex items-center">
+                            <div className="flex h-5 items-center">
+                              <input
+                                id={option.key}
+                                aria-describedby="small-description"
+                                name={field.name}
+                                type="checkbox"
+                                value={option.value}
+                                defaultChecked={field.defaultValue === option.value}
+                                className="text-primary-600 focus:ring-primary-500 h-4 w-4 border-gray-300"
+                              />
+                            </div>
+                            <div className="ml-3 text-sm">
+                              <label htmlFor={option.key} className="font-medium text-gray-700">
+                                <Avatar name={option.key} size="s" imageUrl={option.avatarUrl} />
+                                <span className="ml-2">{option.key}</span>
+                              </label>
+                              {option.descripion && (
+                                <p id="small-description" className="mt-2 text-gray-500">
+                                  {option.description}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </fieldset>
+                )}
+                {field.type === 'checkbox' && (
+                  <fieldset className="mt-4">
+                    <div className="space-y-5">
+                      {field?.options?.map((option) => {
+                        return (
+                          <div key={option.key} className="relative flex items-start">
+                            <div className="flex h-5 items-center">
+                              <input
+                                id={option.key}
+                                aria-describedby="small-description"
+                                name={field.name}
+                                type="checkbox"
+                                value={option.value}
+                                defaultChecked={field.defaultValue === option.value}
+                                className="text-primary-600 focus:ring-primary-500 h-4 w-4 border-gray-300"
+                              />
+                            </div>
+                            <div className="ml-3 text-sm">
+                              <label htmlFor={option.key} className="font-medium text-gray-700">
+                                {option.key}
+                              </label>
+                              {option.descripion && (
+                                <p id="small-description" className="mt-2 text-gray-500">
+                                  {option.description}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </fieldset>
+                )}
                 {field.type === 'radio' && (
                   <fieldset className="mt-4">
                     <div className="space-y-5">
@@ -233,15 +305,20 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                               <label htmlFor={option.key} className="font-medium text-gray-700">
                                 {option.key}
                               </label>
-                              <p id="small-description" className="mt-2 text-gray-500">
-                                {option.description}
-                              </p>
+                              {option.descripion && (
+                                <p id="small-description" className="mt-2 text-gray-500">
+                                  {option.description}
+                                </p>
+                              )}
                             </div>
                           </div>
                         )
                       })}
                     </div>
                   </fieldset>
+                )}
+                {field.type === 'title' && (
+                  <h2 className="text-lg font-medium leading-6 text-gray-900">{field.text}</h2>
                 )}
                 {field.errors && field.errors.length > 0 && (
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">

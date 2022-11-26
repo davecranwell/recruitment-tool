@@ -18,8 +18,27 @@ import { Action } from 'src/casl/actions'
 import { UserEntity } from 'src/user/entities/user.entity'
 import { UpdateApplicantStageDto } from './dto/update-applicant-stage.dto'
 import { Position } from './entities/position.entity'
+import { ApiProperty } from '@nestjs/swagger'
+import { IsBoolean, IsOptional } from 'class-validator'
+import { Stage } from 'src/stage/entities/stage.entity'
+import { Transform } from 'class-transformer'
+
+export class PositionQueryFeatures {
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ obj, key }) => obj[key] === 'true')
+  includePipeline?: boolean
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ obj, key }) => obj[key] === 'true')
+  includeUserRoles?: boolean
+}
 
 const paginate = createPaginator({ perPage: 20 })
+
 @Injectable()
 export class PositionService {
   constructor(private prisma: PrismaService) {}
@@ -55,8 +74,36 @@ export class PositionService {
   //   return this.prisma.position.findMany()
   // }
 
-  async findOne(id: number, user: UserEntity) {
-    const position = await this.prisma.position.findUnique({ where: { id } })
+  async findOne(
+    id: number,
+    user: UserEntity,
+    positionFeatures: PositionQueryFeatures = { includeUserRoles: false, includePipeline: false }
+  ) {
+    const position = await this.prisma.position.findUnique({
+      where: { id },
+      include: {
+        pipeline: {
+          ...(positionFeatures.includePipeline === true && {
+            include: {
+              stages: {
+                orderBy: { order: 'asc' },
+                include: { stage: { include: { _count: { select: { applicants: true } } } } },
+              },
+            },
+          }),
+        },
+        project: {
+          ...(positionFeatures.includeUserRoles === true && {
+            include: {
+              userRoles: {
+                include: { user: { select: { name: true, avatarUrl: true } } },
+              },
+            },
+          }),
+        },
+      },
+    })
+
     if (!position) throw new NotFoundException('Position with this ID does not exist')
 
     const ability = new Ability(user.abilities)

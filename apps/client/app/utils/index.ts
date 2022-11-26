@@ -22,7 +22,7 @@ export function dateTimeFormat(dateTimeString: string | Date) {
   }).format(new Date(dateTimeString))
 }
 
-export function formDataToJson(formData: any) {
+export function formDataToJson(formData: FormData) {
   var object = {}
   formData.forEach((value: any, key: string) => {
     // Reflect.has in favor of: object.hasOwnProperty(key)

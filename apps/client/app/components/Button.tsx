@@ -1,4 +1,4 @@
-import type { Transition } from '@remix-run/react/transition'
+import type { Transition } from '@remix-run/react/dist/transition'
 import classNames from 'classnames'
 
 type Props = {
