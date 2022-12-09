@@ -219,27 +219,61 @@ model Invitation {
 }
 
 model Interview {
-  id                 Int                 @id @default(autoincrement())
+  id                 Int                  @id @default(autoincrement())
   applicantProfileId Int
   stageId            Int
   positionId         Int
+  questionSetId      Int
   startDateTime      DateTime
   endDateTime        DateTime
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @default(now())
-  applicantProfile   ApplicantProfile    @relation(fields: [applicantProfileId], references: [id])
-  position           Position            @relation(fields: [positionId], references: [id])
-  stage              Stage               @relation(fields: [stageId], references: [id])
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @default(now())
+  score              Int
+  scoringSystemId    Int
+  applicantProfile   ApplicantProfile     @relation(fields: [applicantProfileId], references: [id])
+  position           Position             @relation(fields: [positionId], references: [id])
+  stage              Stage                @relation(fields: [stageId], references: [id])
+  questions          InterviewQuestionSet @relation(fields: [questionSetId], references: [id])
   attendees          InterviewAttendee[]
+  scoringSystem      ScoringSystem        @relation(fields: [scoringSystemId], references: [id])
 }
 
 model InterviewAttendee {
   interviewId Int
   userId      Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now())
   interview   Interview @relation(fields: [interviewId], references: [id])
   user        User      @relation(fields: [userId], references: [id])
 
   @@id([interviewId, userId])
+}
+
+model InterviewQuestionSet {
+  id                Int                 @id @default(autoincrement())
+  name              String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @default(now())
+  interviews        Interview[]
+  InterviewQuestion InterviewQuestion[]
+}
+
+model InterviewQuestion {
+  id            Int                  @id @default(autoincrement())
+  text          String
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @default(now())
+  questionSetId Int
+  questionSet   InterviewQuestionSet @relation(fields: [questionSetId], references: [id])
+}
+
+model ScoringSystem {
+  id        Int         @id @default(autoincrement())
+  name      String
+  schema    Json
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @default(now())
+  Interview Interview[]
 }
 
 enum PositionEmploymentType {
