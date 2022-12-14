@@ -1,3 +1,13 @@
+# Running
+
+`pnpm run docker:run`
+`pnpm run dev`
+
+## Regenerating prisma client
+
+`pnpm run db:generate`
+`pnpm run db:migrate`
+
 # Links
 
 - [Client readme](client/README.md)
