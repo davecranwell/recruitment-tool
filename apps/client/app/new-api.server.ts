@@ -22,7 +22,6 @@ export class Api {
   }
 
   getHeaders() {
-    console.log(this.session?.data)
     return commitSession(this.session!).then((cookie) => {
       return new Headers({ 'Set-Cookie': cookie })
     })
