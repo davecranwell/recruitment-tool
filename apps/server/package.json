@@ -19,9 +19,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register ../../node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./jest-e2e.json",
     "db:generate": "pnpx prisma generate",
-    "db:migraten": "pnpx prisma migrate dev",
-    "db:seed": "pnpx prisma db seed",
-    "docker:build": ""
+    "db:migrate": "pnpx prisma migrate dev",
+    "db:seed": "pnpm run db:migrate && pnpx prisma migrate reset --force",
+    "docker:run": "docker-compose up"
   },
   "dependencies": {
     "@casl/ability": "^5.4.4",
