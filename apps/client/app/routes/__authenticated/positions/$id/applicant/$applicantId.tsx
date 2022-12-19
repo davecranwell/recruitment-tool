@@ -1,35 +1,27 @@
+import { LockClosedIcon } from '@heroicons/react/solid'
 import type { ActionFunction, LoaderFunction, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
-import {
-  Link,
-  useActionData,
-  useLoaderData,
-  useOutletContext,
-  useParams,
-  useSubmit,
-  useTransition,
-} from '@remix-run/react'
-import { LockClosedIcon, CheckIcon } from '@heroicons/react/solid'
+import { Link, useActionData, useLoaderData, useOutletContext, useParams, useSubmit } from '@remix-run/react'
 
 import { api } from '~/api.server'
-import { notify, requireAuth } from '~/sessions.server'
+import { requireAuth } from '~/sessions.server'
 
 import type { StageInPipeline } from 'app/models/positions/Stage'
 
-import StageAdvance from '~/components/StageAdvance'
-import PersonHeader from '~/components/PersonHeader'
 import Button from '~/components/Button'
+import PersonHeader from '~/components/PersonHeader'
+import StageAdvance from '~/components/StageAdvance'
 
 export const action: ActionFunction = async (data) => {
   const { request, params } = data
   const { id, applicantId } = params
   const { session } = await requireAuth(request)
 
-  const update = await api(data, `/position/${id}/applicant/${applicantId}`, 'PATCH', await request.formData())
+  //const update = await api(data, `/position/${id}/applicant/${applicantId}`, 'PATCH', await request.formData())
 
-  const headers = update.ok
-    ? await notify(session).success('Applicant stage changed')
-    : await notify(session).error('An error occured')
+  // const headers = update.ok
+  //   ? await notify(session).success('Applicant stage changed')
+  //   : await notify(session).error('An error occured')
 
   return json({}, { headers })
 }
@@ -59,6 +51,7 @@ const Profile = () => {
   const { user } = applicantProfile
 
   const stageIndex = stages.findIndex((stageItem: StageInPipeline) => stageItem.stageId === stage.id)
+  const stageInterview = applicantProfile.interviews.filter((interview: any) => interview.stageId === stage.id).pop()
 
   const handleAdvanceStage = (data: any) => {
     const formData = new FormData()
@@ -70,12 +63,22 @@ const Profile = () => {
     <main className="py-10">
       {/* Page header */}
       <PersonHeader user={user}>
-        <Button
-          component={Link}
-          to={`/positions/${id}/applicant/${applicantId}/interview/${stage.id}/new`}
-          text="Invite to interview"
-          icon={CheckIcon}
-        />
+        {!stageInterview && (
+          <Button
+            component={Link}
+            to={`/positions/${id}/applicant/${applicantId}/interview/${stage.id}/new`}
+            text="Create interview"
+          />
+        )}
+
+        {stageInterview && (
+          <Button
+            color="secondary"
+            component={Link}
+            to={`/positions/${id}/applicant/${applicantId}/interview/${stageInterview.id}`}
+            text={`Go to ${stages[stageIndex].stage.name} interview`}
+          />
+        )}
         <StageAdvance stages={stages} currentStageIndex={stageIndex} onChange={handleAdvanceStage} />
       </PersonHeader>
 

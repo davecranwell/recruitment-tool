@@ -20,7 +20,7 @@
     "test:e2e": "jest --config ./jest-e2e.json",
     "db:generate": "pnpx prisma generate",
     "db:migrate": "pnpx prisma migrate dev",
-    "db:seed": "pnpm run db:migrate && pnpx prisma migrate reset --force",
+    "db:seed": "pnpx prisma migrate reset --force",
     "docker:run": "docker-compose up"
   },
   "dependencies": {

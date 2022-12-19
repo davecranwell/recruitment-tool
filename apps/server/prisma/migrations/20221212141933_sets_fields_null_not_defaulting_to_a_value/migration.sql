@@ -1,0 +1,9 @@
+-- AlterTable
+ALTER TABLE "Interview" ALTER COLUMN "averageScore" DROP NOT NULL,
+ALTER COLUMN "averageScore" DROP DEFAULT;
+
+-- AlterTable
+ALTER TABLE "InterviewAttendee" ALTER COLUMN "score" DROP NOT NULL,
+ALTER COLUMN "score" DROP DEFAULT,
+ALTER COLUMN "notes" DROP NOT NULL,
+ALTER COLUMN "notes" DROP DEFAULT;

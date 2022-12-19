@@ -2,7 +2,18 @@
 
 ## Where you left off
 
-- In the middle of adding interviews. You've made a front end to create an assessment but now you're creating an assessment module to allow submission of a new assessment
+- In the middle of adding interviews. You've allowed an interview to be created and validated that all the data with which to do so is allowed by the user.
+- You're now creating scoring systems and questions to add to the interview. At the moment the scoring systems will likely be hardcoded
+- The scoring system is going to be a json represetntation like:
+
+```js
+schema: [
+  { val: 25, key: "strong no hire"}
+  { val: 50, key: "no hire"}
+  { val: 75, key: "hire"}
+  { val: 100, key: "strong hire"}
+]
+```
 
 ## Overall
 
@@ -15,7 +26,6 @@
 - [ ] Pipelines need to be automatically attributed to a project
 - [ ] Pipelines need to be automatically inheritted by a position from the project
 - [ ] We're getting dangerously near to cookie limits (4096b) at 3135 already. Consider moving to a high-level provider served by an API call?
-- [ ] Allow refresh tokens to be used multiple times for a brief period (10s) to account for multiple refresh calls in a short space of time (this will solve the need for sharing of cookies between parallel fetches in remix router)
 
 ## Remix
 
@@ -65,17 +75,15 @@
 - [x] Allow user to swap between the organisations of which they're a member
 - [x] Inviting/adding new users
 - [x] Advancing candidates to each stage through select UI
-- [ ] 2FA https://wanago.io/2021/03/08/api-nestjs-two-factor-authentication/
 - [ ] Allocating users to a project
 - [ ] Allowing an email to be written and sent when stages change (or soon after)
 - [ ] Changing user role
+- [ ] 2FA
 - [ ] RTBF
 - [ ] Sending an email to candidates as they are invited to interview
 - [ ] internal email templating system using mjml
 - [ ] Invitations to an org expire
 - [ ] Saving unsubmitted form content
-- [ ] Score a candidate in multiple ways using assessments
-- [ ] Multiple scoring system schemas
 
 ## Potential Names
 

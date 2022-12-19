@@ -1,6 +1,13 @@
 ```mermaid
 erDiagram
 
+        ScoringSystemType {
+            LINEAR LINEAR
+LIKERT LIKERT
+        }
+    
+
+
         PositionEmploymentType {
             FULL FULL
 PART PART
@@ -158,11 +165,44 @@ INTERVIEWER INTERVIEWER
     DateTime startDateTime  
     DateTime endDateTime  
     DateTime createdAt  
+    DateTime updatedAt  
+    Int averageScore  "nullable"
+    }
+  
+
+  Assessment {
+    Int id PK 
+    String name  "nullable"
+    Int userId  
+    Int score  "nullable"
+    DateTime createdAt  
+    DateTime updatedAt  
+    String notes  "nullable"
     }
   
 
   InterviewAttendee {
+    DateTime createdAt  
+    DateTime updatedAt  
+    }
+  
 
+  Questions {
+    Int id PK 
+    Json questions  
+    Boolean isCurrent  
+    DateTime createdAt  
+    String name  
+    }
+  
+
+  ScoringSystem {
+    Int id PK 
+    String name  
+    ScoringSystemType type  "nullable"
+    Json schema  
+    DateTime createdAt  
+    DateTime updatedAt  
     }
   
     ApplicantProfile o{--|| User : "user"
@@ -193,6 +233,14 @@ INTERVIEWER INTERVIEWER
     Interview o{--|| ApplicantProfile : "applicantProfile"
     Interview o{--|| Position : "position"
     Interview o{--|| Stage : "stage"
+    Interview o{--|| Questions : "questions"
+    Interview o{--|| ScoringSystem : "scoringSystem"
+    Assessment o{--|| Interview : "interview"
+    Assessment o{--|| ApplicantProfile : "applicantProfile"
+    Assessment o{--|| Position : "position"
+    Assessment o{--|| ScoringSystem : "scoringSystem"
     InterviewAttendee o{--|| Interview : "interview"
     InterviewAttendee o{--|| User : "user"
+    Questions o|--|| Questions : "previous"
+    ScoringSystem o|--|| ScoringSystemType : "enum:type"
 ```

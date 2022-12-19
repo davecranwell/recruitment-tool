@@ -32,10 +32,6 @@ export class ApplicantProfileService {
     })
   }
 
-  // async findAll() {
-  //   return this.prisma.applicantProfile.findMany()
-  // }
-
   async findByUser(userId: number, paginationArgs: PaginationArgsDto) {
     // find if userId exsits first
     await this.userService.getById(userId)
@@ -96,12 +92,4 @@ export class ApplicantProfileService {
 
     return record
   }
-
-  // update(id: number, updateApplicantProfileDto: UpdateApplicantProfileDto) {
-  //   return `This action updates a #${id} applicantProfile`
-  // }
-
-  // remove(id: number) {
-  //   return true
-  // }
 }
