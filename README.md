@@ -31,7 +31,9 @@ Assessments have optional names, so that when connected to an interview this nam
 
 Assessments without a connected interview are assumed to be a generalised asssessment of the candidate as a whole.
 
-We might need a global, limited way of choosing which scoring system assessments use outside of interviews. In an interview the scoring system can be configured on the interview itself. But outside an interview, how do we prevent users choosing any old inconsistent scoring system? This idea might be called an `Assessment group` perhaps?
+We might need a global, limited way of choosing which scoring system assessments use outside of interviews. In an interview the scoring system can be configured on the interview itself. But outside an interview, how do we prevent users choosing a scoring system inconsistent with other assessments made? This idea might be called an `Assessment group` perhaps?
+
+Assessments can be created both in direct response to an interview and partially/incompletely without an interview associated.
 
 ### Scoring
 

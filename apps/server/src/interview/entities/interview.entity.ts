@@ -12,6 +12,7 @@ import { ApplicantProfile, ApplicantProfileWithUser } from 'src/applicant-profil
 import { Position } from 'src/position/entities/position.entity'
 import { Stage } from 'src/stage/entities/stage.entity'
 import { UserEntity as User } from 'src/user/entities/user.entity'
+import { Assessment } from 'src/assessment/entities/assessment.entity'
 
 export class ScoringSystem implements ScoringSystemModel {
   @ApiProperty()
@@ -121,6 +122,11 @@ export class InterviewWithStageScoringApplicant extends OmitType(Interview, ['ap
   @ValidateNested()
   @Type(() => ApplicantProfileWithUser)
   applicantProfile: Partial<ApplicantProfileWithUser>
+
+  @ApiProperty({ type: () => Assessment })
+  @ValidateNested()
+  @Type(() => Assessment)
+  assessments: Assessment[]
 
   constructor(partial: Partial<InterviewWithStageScoringApplicant>) {
     super(partial)

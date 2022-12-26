@@ -4,7 +4,7 @@ import { json } from '@remix-run/node'
 import { Link, useActionData, useLoaderData, useOutletContext, useParams, useSubmit } from '@remix-run/react'
 
 import { api } from '~/api.server'
-import { requireAuth } from '~/sessions.server'
+import { notify, requireAuth } from '~/sessions.server'
 
 import type { StageInPipeline } from 'app/models/positions/Stage'
 
@@ -17,11 +17,11 @@ export const action: ActionFunction = async (data) => {
   const { id, applicantId } = params
   const { session } = await requireAuth(request)
 
-  //const update = await api(data, `/position/${id}/applicant/${applicantId}`, 'PATCH', await request.formData())
+  const update = await api(data, `/position/${id}/applicant/${applicantId}`, 'PATCH', await request.formData())
 
-  // const headers = update.ok
-  //   ? await notify(session).success('Applicant stage changed')
-  //   : await notify(session).error('An error occured')
+  const headers = update.ok
+    ? await notify(session).success('Applicant stage changed')
+    : await notify(session).error('An error occured')
 
   return json({}, { headers })
 }

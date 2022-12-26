@@ -211,6 +211,12 @@ export class PositionService {
         questions: {
           select: { id: true, questions: true },
         },
+        assessments: {
+          where: {
+            interviewId,
+            userId: user.id,
+          },
+        },
       },
     })
 

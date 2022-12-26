@@ -196,6 +196,16 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                     defaultValue={field.defaultValue}
                   />
                 )}
+                {field.type === 'textarealocalstorage' && (
+                  <textarea
+                    id={field.name}
+                    name={field.name}
+                    rows={field.size}
+                    required={field.required}
+                    className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-md border border-gray-300 shadow-sm disabled:border-gray-200 disabled:text-slate-400 disabled:shadow-none sm:text-sm"
+                    defaultValue={field.defaultValue}
+                  />
+                )}
                 {field.type === 'select' && (
                   <select
                     id={field.name}
@@ -348,6 +358,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
 }
 
 type FormLayoutProps = {
+  title?: string
   intro?: React.ReactNode | string
   fields: FieldDef[]
   submitText?: string
@@ -360,6 +371,7 @@ type FormLayoutProps = {
 
 const FormLayout: React.FC<FormLayoutProps> = ({
   fields,
+  title,
   submitText = 'Submit',
   submitWidth,
   intro,
@@ -376,25 +388,33 @@ const FormLayout: React.FC<FormLayoutProps> = ({
     <Form method="post" {...props}>
       <div
         className={classNames({
-          'shadow sm:overflow-hidden sm:rounded-md': wrapper === 'auto',
+          'bg-white shadow sm:overflow-hidden sm:rounded-lg': wrapper === 'auto',
         })}
       >
-        <div
-          className={classNames('space-y-6', {
-            'bg-white py-6 px-4 sm:p-6': wrapper === 'auto',
-          })}
-        >
-          {intro && (
-            <div>
-              <p className="mt-1 text-sm text-gray-500">{intro}</p>
+        <div className="divide-y divide-gray-200">
+          {title && (
+            <div className="px-4 py-5 sm:px-6">
+              <h2 className="text-lg font-medium text-gray-900">{title}</h2>
             </div>
           )}
 
-          {orphanedErrors.length > 0 && <Alert type="error" message={orphanedErrors} />}
+          <div
+            className={classNames('space-y-6', {
+              'bg-white py-6 px-4 sm:p-6': wrapper === 'auto',
+            })}
+          >
+            {intro && (
+              <div>
+                <p className="mt-1 text-sm text-gray-500">{intro}</p>
+              </div>
+            )}
 
-          {fieldsWithValidation.map((field) => (
-            <Field key={field.name} field={field} />
-          ))}
+            {orphanedErrors.length > 0 && <Alert type="error" message={orphanedErrors} />}
+
+            {fieldsWithValidation.map((field) => (
+              <Field key={field.name} field={field} />
+            ))}
+          </div>
         </div>
         <div
           className={classNames({

@@ -1,6 +1,13 @@
 ```mermaid
 erDiagram
 
+        AssessmentType {
+            INTERVIEW INTERVIEW
+OTHER OTHER
+        }
+    
+
+
         ScoringSystemType {
             LINEAR LINEAR
 LIKERT LIKERT
@@ -173,11 +180,11 @@ INTERVIEWER INTERVIEWER
   Assessment {
     Int id PK 
     String name  "nullable"
-    Int userId  
     Int score  "nullable"
     DateTime createdAt  
     DateTime updatedAt  
     String notes  "nullable"
+    AssessmentType type  
     }
   
 
@@ -209,9 +216,9 @@ INTERVIEWER INTERVIEWER
     ApplicantProfileForOrganisation o{--|| ApplicantProfile : "applicantProfile"
     ApplicantProfileForOrganisation o{--|| Organisation : "organisation"
     Project o{--|| Organisation : "organisation"
-    Position o|--|| PositionEmploymentType : "enum:employment"
+    Position o|--|o PositionEmploymentType : "enum:employment"
     Position o{--|| Organisation : "organisation"
-    Position o{--|| Pipeline : "pipeline"
+    Position o{--|o Pipeline : "pipeline"
     Position o{--|| Project : "project"
     UsersInOrganisation o|--|| UserRoleType : "enum:role"
     UsersInOrganisation o{--|| Organisation : "organisation"
@@ -228,19 +235,21 @@ INTERVIEWER INTERVIEWER
     ProjectUserRole o{--|| User : "user"
     StagesInPipeline o{--|| Pipeline : "pipeline"
     StagesInPipeline o{--|| Stage : "stage"
-    Invitation o|--|| UserRoleType : "enum:role"
+    Invitation o|--|o UserRoleType : "enum:role"
     Invitation o{--|| Organisation : "organisation"
     Interview o{--|| ApplicantProfile : "applicantProfile"
     Interview o{--|| Position : "position"
     Interview o{--|| Stage : "stage"
-    Interview o{--|| Questions : "questions"
-    Interview o{--|| ScoringSystem : "scoringSystem"
-    Assessment o{--|| Interview : "interview"
+    Interview o{--|o Questions : "questions"
+    Interview o{--|o ScoringSystem : "scoringSystem"
+    Assessment o|--|| AssessmentType : "enum:type"
     Assessment o{--|| ApplicantProfile : "applicantProfile"
     Assessment o{--|| Position : "position"
     Assessment o{--|| ScoringSystem : "scoringSystem"
+    Assessment o{--|| User : "user"
+    Assessment o{--|o Interview : "interview"
     InterviewAttendee o{--|| Interview : "interview"
     InterviewAttendee o{--|| User : "user"
-    Questions o|--|| Questions : "previous"
-    ScoringSystem o|--|| ScoringSystemType : "enum:type"
+    Questions o|--|o Questions : "previous"
+    ScoringSystem o|--|o ScoringSystemType : "enum:type"
 ```

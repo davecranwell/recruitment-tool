@@ -21,7 +21,7 @@
     "db:generate": "pnpx prisma generate",
     "db:migrate": "pnpx prisma migrate dev",
     "db:seed": "pnpx prisma migrate reset --force",
-    "docker:run": "docker-compose up"
+    "docker": "docker-compose up"
   },
   "dependencies": {
     "@casl/ability": "^5.4.4",
@@ -35,7 +35,7 @@
     "@nestjs/platform-express": "^8.4.4",
     "@nestjs/swagger": "^5.2.1",
     "@nestjs/throttler": "^2.0.1",
-    "@prisma/client": "^4.3.1",
+    "@prisma/client": "4.6.0",
     "@sendgrid/mail": "^7.7.0",
     "@types/bcrypt": "^5.0.0",
     "@types/cookie-parser": "^1.4.2",
@@ -59,7 +59,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@mermaid-js/mermaid-cli": "^9.0.3",
+    "@mermaid-js/mermaid-cli": "^9.1.7",
     "@nestjs/cli": "^8.2.5",
     "@nestjs/schematics": "^8.0.10",
     "@nestjs/testing": "^8.1.1",
@@ -74,8 +74,8 @@
     "esbuild-jest": "^0.5.0",
     "jest": "^28.0.3",
     "jest-mock-extended": "^3.0.1",
-    "prisma": "^4.3.1",
-    "prisma-erd-generator": "^0.11.0",
+    "prisma": "4.6.0",
+    "prisma-erd-generator": "^1.2.4",
     "source-map-support": "^0.5.20",
     "supertest": "^6.1.6",
     "ts-jest": "^28.0.8",

@@ -1,0 +1,36 @@
+model Assessment {
+  id          String @id @default(cuid())
+  name        String @unique
+  description String
+  linkId      Int
+  link        Link   @relation(fields: [ASSESSMENT, linkId], references: [type, id])
+}
+
+model Link {
+  id         Int
+  type       LinkType
+  assessment Assessment
+  Interview  Interview[]
+  Event      Event[]
+
+  @@unique([type, id])
+}
+
+enum LinkType {
+  INTERVIEW
+  EVENT
+}
+
+model Interview {
+  id          String @id @default(cuid())
+  name        String @unique
+  description String
+  link        Link   @relation(fields: [id], references: [type, id])
+}
+
+model Event {
+  id          String @id @default(cuid())
+  name        String @unique
+  description String
+  link        Link   @relation(fields: [id], references: [type, id])
+}

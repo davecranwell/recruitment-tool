@@ -8,7 +8,7 @@
     "db:generate": "turbo run db:generate",
     "db:migrate": "turbo run db:migrate",
     "db:seed": "turbo run db:seed",
-    "docker:run": "turbo run docker:run",
+    "docker": "turbo run docker",
     "docker:build": "turbo run docker:build"
   },
   "devDependencies": {

@@ -37,6 +37,7 @@ model User {
   projectRoles        ProjectUserRole[]
   userRoles           UserRolesOfUser[]
   organisations       UsersInOrganisation[]
+  assessments         Assessment[]
 }
 
 model ApplicantProfile {
@@ -262,25 +263,28 @@ model Interview {
 }
 
 model Assessment {
-  id                 Int      @id @default(autoincrement())
+  id                 Int            @id @default(autoincrement())
   name               String?
   userId             Int
   score              Int?
   applicantProfileId Int
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @default(now())
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @default(now())
   positionId         Int
-  interviewId        Int?
   notes              String?
   scoringSystemId    Int
+  type               AssessmentType @default(INTERVIEW)
+  interviewId        Int?
 
-  interview        Interview?       @relation(fields: [interviewId], references: [id])
   applicantProfile ApplicantProfile @relation(fields: [applicantProfileId], references: [id])
   position         Position         @relation(fields: [positionId], references: [id])
   scoringSystem    ScoringSystem    @relation(fields: [scoringSystemId], references: [id])
+  user             User             @relation(fields: [userId], references: [id])
+  interview        Interview?       @relation(fields: [interviewId], references: [id])
 
-  @@index([applicantProfileId, interviewId])
-  @@index([applicantProfileId, positionId])
+  @@unique([applicantProfileId, userId, positionId, interviewId, type])
+  @@index([applicantProfileId, interviewId, type])
+  @@index([applicantProfileId, positionId, type])
 }
 
 model InterviewAttendee {
@@ -318,6 +322,11 @@ model ScoringSystem {
 
   assessments Assessment[]
   interviews  Interview[]
+}
+
+enum AssessmentType {
+  INTERVIEW
+  OTHER
 }
 
 enum ScoringSystemType {

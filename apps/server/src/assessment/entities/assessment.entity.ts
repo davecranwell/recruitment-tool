@@ -1,5 +1,5 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger'
-import { Assessment as AssessmentModel, ScoringSystemType } from '@prisma/client'
+import { Assessment as AssessmentModel, AssessmentType, ScoringSystemType } from '@prisma/client'
 import { ValidateNested } from 'class-validator'
 import { Exclude, Type } from 'class-transformer'
 
@@ -51,6 +51,8 @@ export class Assessment implements AssessmentModel {
   @ValidateNested()
   @Type(() => Position)
   position?: Position
+
+  type: AssessmentType
 
   scoringSystem?: ScoringSystemType
 

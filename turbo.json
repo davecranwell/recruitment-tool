@@ -25,9 +25,9 @@
       "cache": false,
       "outputs": []
     },
-    "docker:run": {
+    "docker": {
       "cache": false,
-      "dependsOn": ["^docker:run"],
+      "dependsOn": ["^docker"],
       "outputs": []
     },
     "docker:build": {

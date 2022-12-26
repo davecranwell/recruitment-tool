@@ -2,7 +2,7 @@
 
 ## Where you left off
 
-- In the middle of adding interviews. You've made a front end to create an assessment but now you're creating an assessment module to allow submission of a new assessment
+- We're in the middle of creating a localStorage-based hook to save information from the interview question notes.
 
 ## Overall
 
