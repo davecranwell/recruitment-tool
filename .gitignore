@@ -395,7 +395,8 @@ Temporary Items
 =======
 # Local
 **/*.env
-dist
+**/dist
+**/build
 data
 !data/.gitkeep
 tmp
