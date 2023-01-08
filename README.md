@@ -1,3 +1,12 @@
+# Fly Setup
+
+```bash
+curl -L https://fly.io/install.sh | sh
+# and add the following to ~/.bashrc
+export FLYCTL_INSTALL="/home/dave/.fly"
+export PATH="$FLYCTL_INSTALL/bin:$PATH"
+```
+
 # Running
 
 `pnpm run docker:run`
