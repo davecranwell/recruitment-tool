@@ -23,7 +23,7 @@ const cache = {}
 app.all(
   '*',
   createRequestHandler({
-    build: require('./build'),
+    build: require('./dist'),
     getLoadContext() {
       // Whatever you return here will be passed as `context` to your loaders
       // and actions.
