@@ -17,6 +17,11 @@ export PATH="$FLYCTL_INSTALL/bin:$PATH"
 `pnpm run db:generate`
 `pnpm run db:migrate`
 
+# Generating docker images
+
+`pnpm run docker:build:server`
+`pnpm run docker:build:client`
+
 # Links
 
 - [Client readme](client/README.md)

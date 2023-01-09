@@ -10,3 +10,7 @@
 **/Dockerfile
 **/jest*
 **/*.env
+**/.eslint*
+**/.prettier*
+**/fly.toml
+**/docker-compose.yml

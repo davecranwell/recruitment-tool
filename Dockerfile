@@ -1,33 +1,34 @@
-FROM node:16.19.0-alpine AS builder
+# Make a base image with turbo and pnpm essentials.
+FROM node:16.19.0-alpine AS base
 ARG SCOPE
  
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat rsync
 RUN apk update
 
 WORKDIR /app
 RUN npm i -g pnpm turbo
-COPY pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm fetch --prod
+# Assuming a turbo prune has already occured outside docker, take just the json
+# so we can pnpmi it in the next intermediate container
+COPY ./turbobuild/out/json .
 
-COPY . .
-
-FROM builder as pruned
+FROM base as builder
 ARG SCOPE
 
-RUN turbo prune --scope="${SCOPE}"
-WORKDIR /app/out
-#RUN pnpm i -g prisma
+WORKDIR /app
+COPY --from=base /app .
 RUN pnpm i --prod --filter="${SCOPE}"
+
+COPY ./turbobuild/out/full .
 RUN turbo run build
 
 FROM node:16.19.0-alpine AS runner
 ARG SCOPE
 
-WORKDIR /app
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
 
-COPY --from=pruned /app/out .
+WORKDIR /app
+COPY --from=builder /app .
 
 WORKDIR /app/apps/"${SCOPE}"/
 

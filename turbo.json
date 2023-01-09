@@ -35,7 +35,7 @@
       "outputs": []
     },
     "docker:build": {
-      "dependsOn": ["test"],
+      "cache": false,
       "outputs": []
     }
   }
