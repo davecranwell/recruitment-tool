@@ -27,6 +27,9 @@ export async function api(
   })
 
   switch (apiRes.status) {
+    case 401:
+      throw redirect('/sign-out')
+
     // NB: can't catch 400 here as 400 is a bad request i.e a request that had errors to be returned to user
     case 404:
       throw NotFoundResponse()

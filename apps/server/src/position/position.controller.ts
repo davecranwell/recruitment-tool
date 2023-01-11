@@ -39,6 +39,7 @@ import { PositionService, PositionQueryFeatures } from './position.service'
 import { CreatePositionDto } from './dto/create-position.dto'
 import { UpdateApplicantStageDto } from './dto/update-applicant-stage.dto'
 import { UpdatePositionDto } from './dto/update-position.dto'
+import { InterviewWithStageScoringApplicant } from 'src/interview/entities/interview.entity'
 
 @ApiTags('Positions')
 @ApiBearerAuth('access-token')
@@ -115,6 +116,18 @@ export class PositionController {
     return this.positionService.changeApplicantStage(id, applicantId, data, request.user)
   }
 
+  @Get(':id/interview/:interviewId')
+  @ApiExtraModels(Stage, InterviewWithStageScoringApplicant)
+  @ApiResponse({ type: () => InterviewWithStageScoringApplicant })
+  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(InterviewWithStageScoringApplicant))
+  findApplicantInterview(
+    @Req() request: RequestWithUser,
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
+    @Param('interviewId', ParseIntPipe) interviewId: number
+  ) {
+    return this.positionService.findInterviewById(id, interviewId, request.user)
+  }
+
   @Get(':id/pipeline')
   @ApiOkResponse({ type: () => Pipeline })
   findPipelineWithStages(
@@ -132,9 +145,4 @@ export class PositionController {
   ) {
     return this.positionService.update(+id, data, request.user)
   }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.positionService.remove(+id)
-  // }
 }

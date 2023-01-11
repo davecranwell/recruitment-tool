@@ -62,7 +62,7 @@ const SignIn = () => {
     onSuccess: (codeResponse) => {
       fetcher.submit({ googleResponse: JSON.stringify(codeResponse) }, { method: 'post' })
     },
-    // this causes the page to redirect in a way that I can't really use right now, but I prefer
+    // The following causes the page to redirect in a way that I can't really use right now, but I prefer
     // the experience of redirection
     // ux_mode: 'redirect',
     flow: 'auth-code',

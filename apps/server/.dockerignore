@@ -1,3 +1,12 @@
-.data
-prisma
-test
+.git
+.turbo
+.vscode
+.nvmrc
+.env
+.env.example
+node_modules
+data
+dist
+docker.env
+fly.toml
+docker-compose.yml

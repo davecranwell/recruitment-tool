@@ -41,7 +41,7 @@ const Stage = () => {
   tabs.push(
     ...stages.stages.map(({ stage }: { stage: any }) => ({
       name: stage.name,
-      href: `/positions/${id}/${stage.id}`,
+      href: `/positions/${id}/stage/${stage.id}`,
       count: stage._count.applicants,
     }))
   )

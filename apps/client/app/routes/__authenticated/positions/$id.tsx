@@ -1,8 +1,7 @@
 import { CalendarIcon, CurrencyDollarIcon, LocationMarkerIcon, LockClosedIcon } from '@heroicons/react/solid'
-import type { LoaderFunction } from '@remix-run/node'
+import type { LoaderFunction, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { Outlet, useLoaderData } from '@remix-run/react'
-import type { MetaFunction } from '@remix-run/react/routeModules'
 
 import { api } from 'app/api.server'
 import { requireAuth } from '~/sessions.server'

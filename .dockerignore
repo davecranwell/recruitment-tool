@@ -1,4 +1,16 @@
+**/.git
+**/.vscode
+**/.turbo
 **/node_modules
 **/build
 **/dist
 **/data
+**/tmp
+**/*.md
+**/Dockerfile
+**/jest*
+**/*.env
+**/.eslint*
+**/.prettier*
+**/fly.toml
+**/docker-compose.yml

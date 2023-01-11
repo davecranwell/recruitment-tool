@@ -2,10 +2,16 @@
   "name": "recruiting-tool",
   "private": true,
   "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "db:generate": "turbo run db:generate",
-    "docker:build": "turbo run docker:build"
+    "db:migrate": "turbo run db:migrate",
+    "db:seed": "turbo run db:seed",
+    "docker": "turbo run docker",
+    "docker:build:client": "./build client",
+    "docker:build:server": "./build server"
   },
   "devDependencies": {
     "turbo": "^1.5.4",

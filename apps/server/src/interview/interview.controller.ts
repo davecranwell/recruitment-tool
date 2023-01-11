@@ -10,16 +10,17 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 
+import { ApplicantProfileService } from 'src/applicant-profile/applicant-profile.service'
 import { RequestWithUser } from 'src/authentication/authentication.controller'
 import JwtAuthenticationGuard from 'src/authentication/guards/jwtAuthentication.guard'
 import { Action } from 'src/casl/actions'
 import { Position } from 'src/position/entities/position.entity'
 import { PositionService } from 'src/position/position.service'
-import { ApplicantProfileService } from 'src/applicant-profile/applicant-profile.service'
 
 import { CreateInterviewDto } from './dto/create-interview.dto'
+import { Interview } from './entities/interview.entity'
 import { InterviewService } from './interview.service'
 
 @ApiTags('Interview')
@@ -34,6 +35,7 @@ export class InterviewController {
   ) {}
 
   @ApiOperation({ summary: 'Create an interview' })
+  @ApiCreatedResponse({ type: () => Interview })
   @UseInterceptors(ClassSerializerInterceptor)
   @Post()
   async create(@Req() request: RequestWithUser, @Body() data: CreateInterviewDto) {
@@ -47,6 +49,12 @@ export class InterviewController {
 
     if (!ability.can(Action.Manage, new Position(position))) throw new ForbiddenException()
 
+    // check if an interview with this applicant at this stage already exists
+    const dupe = await this.interviewService.findByApplicantAndStage(applicantProfileId, stageId)
+    if (dupe) {
+      return dupe
+    }
+
     // check if stage is one allowed for this position, given the stages assigned to this project
     if (!pipeline.stages.map((stage) => stage.stageId).includes(stageId)) {
       throw new NotFoundException('This stage does not exist')
@@ -58,7 +66,9 @@ export class InterviewController {
     // check if attendees are part of this project
     if (attendees) {
       const userRoleIds = position.project.userRoles.map((userRole) => userRole.userId)
-      if (!attendees.every((attendee) => userRoleIds.includes(attendee))) {
+      const attendeesArr = Array.isArray(attendees) ? attendees : [attendees]
+
+      if (!attendeesArr.every((attendee) => userRoleIds.includes(attendee))) {
         throw new ForbiddenException('One or more attendees do not exist')
       }
     }

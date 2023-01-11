@@ -1,6 +1,20 @@
 ```mermaid
 erDiagram
 
+        AssessmentType {
+            INTERVIEW INTERVIEW
+OTHER OTHER
+        }
+    
+
+
+        ScoringSystemType {
+            LINEAR LINEAR
+LIKERT LIKERT
+        }
+    
+
+
         PositionEmploymentType {
             FULL FULL
 PART PART
@@ -158,20 +172,53 @@ INTERVIEWER INTERVIEWER
     DateTime startDateTime  
     DateTime endDateTime  
     DateTime createdAt  
+    DateTime updatedAt  
+    Int averageScore  "nullable"
+    }
+  
+
+  Assessment {
+    Int id PK 
+    String name  "nullable"
+    Int score  "nullable"
+    DateTime createdAt  
+    DateTime updatedAt  
+    String notes  "nullable"
+    AssessmentType type  
     }
   
 
   InterviewAttendee {
+    DateTime createdAt  
+    DateTime updatedAt  
+    }
+  
 
+  Questions {
+    Int id PK 
+    Json questions  
+    Boolean isCurrent  
+    DateTime createdAt  
+    String name  
+    }
+  
+
+  ScoringSystem {
+    Int id PK 
+    String name  
+    ScoringSystemType type  "nullable"
+    Json schema  
+    DateTime createdAt  
+    DateTime updatedAt  
     }
   
     ApplicantProfile o{--|| User : "user"
     ApplicantProfileForOrganisation o{--|| ApplicantProfile : "applicantProfile"
     ApplicantProfileForOrganisation o{--|| Organisation : "organisation"
     Project o{--|| Organisation : "organisation"
-    Position o|--|| PositionEmploymentType : "enum:employment"
+    Position o|--|o PositionEmploymentType : "enum:employment"
     Position o{--|| Organisation : "organisation"
-    Position o{--|| Pipeline : "pipeline"
+    Position o{--|o Pipeline : "pipeline"
     Position o{--|| Project : "project"
     UsersInOrganisation o|--|| UserRoleType : "enum:role"
     UsersInOrganisation o{--|| Organisation : "organisation"
@@ -188,11 +235,21 @@ INTERVIEWER INTERVIEWER
     ProjectUserRole o{--|| User : "user"
     StagesInPipeline o{--|| Pipeline : "pipeline"
     StagesInPipeline o{--|| Stage : "stage"
-    Invitation o|--|| UserRoleType : "enum:role"
+    Invitation o|--|o UserRoleType : "enum:role"
     Invitation o{--|| Organisation : "organisation"
     Interview o{--|| ApplicantProfile : "applicantProfile"
     Interview o{--|| Position : "position"
     Interview o{--|| Stage : "stage"
+    Interview o{--|o Questions : "questions"
+    Interview o{--|o ScoringSystem : "scoringSystem"
+    Assessment o|--|| AssessmentType : "enum:type"
+    Assessment o{--|| ApplicantProfile : "applicantProfile"
+    Assessment o{--|| Position : "position"
+    Assessment o{--|| ScoringSystem : "scoringSystem"
+    Assessment o{--|| User : "user"
+    Assessment o{--|o Interview : "interview"
     InterviewAttendee o{--|| Interview : "interview"
     InterviewAttendee o{--|| User : "user"
+    Questions o|--|o Questions : "previous"
+    ScoringSystem o|--|o ScoringSystemType : "enum:type"
 ```

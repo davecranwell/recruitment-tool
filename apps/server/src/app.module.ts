@@ -24,6 +24,7 @@ import { ProjectController } from './project/project.controller'
 import { ProjectService } from './project/project.service'
 import { InvitationModule } from './invitation/invitation.module'
 import { InterviewModule } from './interview/interview.module'
+import { AssessmentModule } from './assessment/assessment.module'
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { InterviewModule } from './interview/interview.module'
     //UserRolesOfUserModule,
     InvitationModule,
     InterviewModule,
+    AssessmentModule,
   ],
   controllers: [AppController, ProjectController],
   providers: [

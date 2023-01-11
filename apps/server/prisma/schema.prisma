@@ -3,17 +3,17 @@ generator client {
   defaultTake = "10"
 }
 
-generator erd {
-  provider = "prisma-erd-generator"
-  output   = "ER.md"
-  theme    = "neutral"
-}
+// generator erd {
+//   provider = "prisma-erd-generator"
+//   output   = "ER.md"
+//   theme    = "neutral"
+// }
 
-generator nestjsDto {
-  provider                        = "prisma-generator-nestjs-dto"
-  output                          = "../../tmp"
-  outputToNestJsResourceStructure = "true"
-}
+// generator nestjsDto {
+//   provider                        = "prisma-generator-nestjs-dto"
+//   output                          = "../../tmp"
+//   outputToNestJsResourceStructure = "true"
+// }
 
 datasource db {
   provider = "postgresql"
@@ -21,44 +21,49 @@ datasource db {
 }
 
 model User {
-  id                     Int                   @id @default(autoincrement())
+  id                     Int      @id @default(autoincrement())
   name                   String?
-  email                  String                @unique(map: "Auth_email_unique_constraint")
+  email                  String   @unique(map: "Auth_email_unique_constraint")
   password               String?
   refreshTokenHash       String?
-  createdAt              DateTime              @default(now())
-  updatedAt              DateTime              @default(now())
-  isRegisteredWithGoogle Boolean               @default(false)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @default(now())
+  isRegisteredWithGoogle Boolean  @default(false)
   avatarUrl              String?
   OAuth2Tokens           Json?
-  applicantProfiles      ApplicantProfile[]
-  interviewsAttending    InterviewAttendee[]
-  projectRoles           ProjectUserRole[]
-  userRoles              UserRolesOfUser[]
-  organisations          UsersInOrganisation[]
+
+  applicantProfiles   ApplicantProfile[]
+  interviewsAttending InterviewAttendee[]
+  projectRoles        ProjectUserRole[]
+  userRoles           UserRolesOfUser[]
+  organisations       UsersInOrganisation[]
+  assessments         Assessment[]
 }
 
 model ApplicantProfile {
-  id            Int                               @id @default(autoincrement())
-  profileName   String
-  askingSalary  String?
-  createdAt     DateTime                          @default(now())
-  updatedAt     DateTime                          @default(now())
-  userId        Int
+  id           Int      @id @default(autoincrement())
+  profileName  String
+  askingSalary String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+  userId       Int
+
   user          User                              @relation(fields: [userId], references: [id])
   organisations ApplicantProfileForOrganisation[]
   positions     ApplicantProfileForPosition[]
   interviews    Interview[]
+  assessments   Assessment[]
 
   @@index([userId])
 }
 
 model Organisation {
-  id                Int                               @id @default(autoincrement())
-  name              String
-  machineName       String                            @unique
-  createdAt         DateTime                          @default(now())
-  updatedAt         DateTime                          @default(now())
+  id          Int      @id @default(autoincrement())
+  name        String
+  machineName String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+
   applicantProfiles ApplicantProfileForOrganisation[]
   invitations       Invitation[]
   Position          Position[]
@@ -70,47 +75,51 @@ model Organisation {
 model ApplicantProfileForOrganisation {
   applicantProfileId Int
   organisationId     Int
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @default(now())
-  applicantProfile   ApplicantProfile @relation(fields: [applicantProfileId], references: [id])
-  organisation       Organisation     @relation(fields: [organisationId], references: [id])
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @default(now())
+
+  applicantProfile ApplicantProfile @relation(fields: [applicantProfileId], references: [id])
+  organisation     Organisation     @relation(fields: [organisationId], references: [id])
 
   @@id([applicantProfileId, organisationId])
 }
 
 model Project {
-  id             Int               @id @default(autoincrement())
+  id             Int      @id @default(autoincrement())
   name           String
   description    String?
   organisationId Int
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @default(now())
-  organisation   Organisation      @relation(fields: [organisationId], references: [id])
-  positions      Position[]
-  userRoles      ProjectUserRole[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now())
+
+  organisation Organisation      @relation(fields: [organisationId], references: [id])
+  positions    Position[]
+  userRoles    ProjectUserRole[]
 
   @@index([organisationId])
 }
 
 model Position {
-  id                Int                           @id @default(autoincrement())
-  name              String
-  description       String?
-  openingDate       DateTime?                     @default(now())
-  closingDate       DateTime?
-  createdAt         DateTime                      @default(now())
-  updatedAt         DateTime                      @default(now())
-  employment        PositionEmploymentType?
-  location          String?
-  salaryRange       String?
-  pipelineId        Int?
-  projectId         Int
-  organisationId    Int
+  id             Int                     @id @default(autoincrement())
+  name           String
+  description    String?
+  openingDate    DateTime?               @default(now())
+  closingDate    DateTime?
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @default(now())
+  employment     PositionEmploymentType?
+  location       String?
+  salaryRange    String?
+  pipelineId     Int?
+  projectId      Int
+  organisationId Int
+
   organisation      Organisation                  @relation(fields: [organisationId], references: [id])
   pipeline          Pipeline?                     @relation(fields: [pipelineId], references: [id])
   project           Project                       @relation(fields: [projectId], references: [id])
   applicantProfiles ApplicantProfileForPosition[]
   interviews        Interview[]
+  assessments       Assessment[]
 
   @@index([projectId])
 }
@@ -121,21 +130,23 @@ model UsersInOrganisation {
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @default(now())
   role           UserRoleType
-  organisation   Organisation @relation(fields: [organisationId], references: [id])
-  user           User         @relation(fields: [userId], references: [id])
+
+  organisation Organisation @relation(fields: [organisationId], references: [id])
+  user         User         @relation(fields: [userId], references: [id])
 
   @@id([userId, organisationId])
 }
 
 model UserRole {
-  id             Int               @id @default(autoincrement())
-  name           String            @unique
+  id             Int          @id @default(autoincrement())
+  name           String       @unique
   type           UserRoleType
   organisationId Int
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @default(now())
-  organisation   Organisation      @relation(fields: [organisationId], references: [id])
-  users          UserRolesOfUser[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now())
+
+  organisation Organisation      @relation(fields: [organisationId], references: [id])
+  users        UserRolesOfUser[]
 
   @@index([organisationId])
 }
@@ -145,8 +156,9 @@ model UserRolesOfUser {
   roleId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
-  role      UserRole @relation(fields: [roleId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+
+  role UserRole @relation(fields: [roleId], references: [id])
+  user User     @relation(fields: [userId], references: [id])
 
   @@id([userId, roleId])
 }
@@ -154,47 +166,51 @@ model UserRolesOfUser {
 model ApplicantProfileForPosition {
   applicantProfileId Int
   positionId         Int
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @default(now())
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @default(now())
   stageId            Int
-  applicantProfile   ApplicantProfile @relation(fields: [applicantProfileId], references: [id])
-  position           Position         @relation(fields: [positionId], references: [id])
-  stage              Stage            @relation(fields: [stageId], references: [id])
+
+  applicantProfile ApplicantProfile @relation(fields: [applicantProfileId], references: [id])
+  position         Position         @relation(fields: [positionId], references: [id])
+  stage            Stage            @relation(fields: [stageId], references: [id])
 
   @@id([applicantProfileId, positionId])
 }
 
 model ProjectUserRole {
   userId    Int
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
   projectId Int
-  role      ProjectRoleType
-  project   Project         @relation(fields: [projectId], references: [id])
-  user      User            @relation(fields: [userId], references: [id])
+
+  role    ProjectRoleType
+  project Project         @relation(fields: [projectId], references: [id])
+  user    User            @relation(fields: [userId], references: [id])
 
   @@id([userId, projectId])
 }
 
 model Stage {
-  id          Int                           @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
   description String?
-  createdAt   DateTime                      @default(now())
-  updatedAt   DateTime                      @default(now())
-  applicants  ApplicantProfileForPosition[]
-  interviews  Interview[]
-  pipeline    StagesInPipeline[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+
+  applicants ApplicantProfileForPosition[]
+  interviews Interview[]
+  pipeline   StagesInPipeline[]
 }
 
 model Pipeline {
-  id          Int                @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
   description String?
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @default(now())
-  positions   Position[]
-  stages      StagesInPipeline[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+
+  positions Position[]
+  stages    StagesInPipeline[]
 }
 
 model StagesInPipeline {
@@ -203,8 +219,9 @@ model StagesInPipeline {
   order      Int
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now())
-  pipeline   Pipeline @relation(fields: [pipelineId], references: [id])
-  stage      Stage    @relation(fields: [stageId], references: [id])
+
+  pipeline Pipeline @relation(fields: [pipelineId], references: [id])
+  stage    Stage    @relation(fields: [stageId], references: [id])
 
   @@id([stageId, pipelineId])
 }
@@ -215,31 +232,106 @@ model Invitation {
   role           UserRoleType?
   organisationId Int
   createdAt      DateTime      @default(now())
-  organisation   Organisation  @relation(fields: [organisationId], references: [id])
+
+  organisation Organisation @relation(fields: [organisationId], references: [id])
+
+  @@index([organisationId])
 }
 
 model Interview {
-  id                 Int                 @id @default(autoincrement())
+  id                 Int      @id @default(autoincrement())
   applicantProfileId Int
   stageId            Int
   positionId         Int
   startDateTime      DateTime
   endDateTime        DateTime
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @default(now())
-  applicantProfile   ApplicantProfile    @relation(fields: [applicantProfileId], references: [id])
-  position           Position            @relation(fields: [positionId], references: [id])
-  stage              Stage               @relation(fields: [stageId], references: [id])
-  attendees          InterviewAttendee[]
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @default(now())
+  averageScore       Int?
+  scoringSystemId    Int?
+  questionsId        Int?
+
+  applicantProfile ApplicantProfile    @relation(fields: [applicantProfileId], references: [id])
+  position         Position            @relation(fields: [positionId], references: [id])
+  stage            Stage               @relation(fields: [stageId], references: [id])
+  questions        Questions?          @relation(fields: [questionsId], references: [id])
+  scoringSystem    ScoringSystem?      @relation(fields: [scoringSystemId], references: [id])
+  attendees        InterviewAttendee[]
+  assessments      Assessment[]
+
+  @@unique([applicantProfileId, stageId, positionId])
+}
+
+model Assessment {
+  id                 Int            @id @default(autoincrement())
+  name               String?
+  userId             Int
+  score              Int?
+  applicantProfileId Int
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @default(now())
+  positionId         Int
+  notes              String?
+  scoringSystemId    Int
+  type               AssessmentType @default(INTERVIEW)
+  interviewId        Int?
+
+  applicantProfile ApplicantProfile @relation(fields: [applicantProfileId], references: [id])
+  position         Position         @relation(fields: [positionId], references: [id])
+  scoringSystem    ScoringSystem    @relation(fields: [scoringSystemId], references: [id])
+  user             User             @relation(fields: [userId], references: [id])
+  interview        Interview?       @relation(fields: [interviewId], references: [id])
+
+  @@unique([applicantProfileId, userId, positionId, interviewId, type])
+  @@index([applicantProfileId, interviewId, type])
+  @@index([applicantProfileId, positionId, type])
 }
 
 model InterviewAttendee {
   interviewId Int
   userId      Int
-  interview   Interview @relation(fields: [interviewId], references: [id])
-  user        User      @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+
+  interview Interview @relation(fields: [interviewId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
 
   @@id([interviewId, userId])
+}
+
+model Questions {
+  id         Int      @id @default(autoincrement())
+  questions  Json
+  isCurrent  Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  previousId Int?
+  name       String
+
+  interviews Interview[]
+  previous   Questions?  @relation("History", fields: [previousId], references: [id])
+  history    Questions[] @relation("History")
+}
+
+model ScoringSystem {
+  id        Int                @id @default(autoincrement())
+  name      String
+  type      ScoringSystemType?
+  schema    Json
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @default(now())
+
+  assessments Assessment[]
+  interviews  Interview[]
+}
+
+enum AssessmentType {
+  INTERVIEW
+  OTHER
+}
+
+enum ScoringSystemType {
+  LINEAR
+  LIKERT
 }
 
 enum PositionEmploymentType {

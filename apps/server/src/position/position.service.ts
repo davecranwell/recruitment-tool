@@ -16,6 +16,7 @@ import {
 } from 'src/applicant-profile-for-position/entities/applicant-profile-for-position.entity'
 import { Action } from 'src/casl/actions'
 import { UserEntity } from 'src/user/entities/user.entity'
+import { Interview, InterviewWithStageScoringApplicant } from 'src/interview/entities/interview.entity'
 import { UpdateApplicantStageDto } from './dto/update-applicant-stage.dto'
 import { Position } from './entities/position.entity'
 import { ApiProperty } from '@nestjs/swagger'
@@ -175,7 +176,12 @@ export class PositionService {
     const applicant = await this.prisma.applicantProfileForPosition.findFirst({
       where: { positionId, applicantProfileId },
       include: {
-        applicantProfile: { include: { user: { select: { name: true, email: true } } } },
+        applicantProfile: {
+          include: {
+            user: { select: { name: true, email: true } },
+            interviews: { select: { id: true, stageId: true } },
+          },
+        },
         stage: true,
         position: { select: { organisationId: true } },
       },
@@ -184,6 +190,53 @@ export class PositionService {
     if (!applicant) throw new NotFoundException('Applicant is not associated with this position')
 
     return new ApplicantProfileForPositionWithStage(applicant)
+  }
+
+  // TODO: Should this be moved to the interview service, or is it worth staying here as
+  // a relation of the position?
+  async findInterviewById(positionId: number, interviewId: number, user: UserEntity) {
+    // used to test access to the position
+    await this.findOne(positionId, user)
+
+    const interview = await this.prisma.interview.findFirst({
+      where: { id: interviewId },
+      include: {
+        applicantProfile: {
+          include: {
+            user: { select: { name: true, avatarUrl: true } },
+          },
+        },
+        stage: true,
+        scoringSystem: true,
+        questions: {
+          select: { id: true, questions: true },
+        },
+        assessments: {
+          where: {
+            interviewId,
+            userId: user.id,
+          },
+        },
+      },
+    })
+
+    // const applicant = await this.prisma.applicantProfileForPosition.findFirst({
+    //   where: { positionId, applicantProfileId },
+    //   include: {
+    //     applicantProfile: {
+    //       include: {
+    //         user: { select: { name: true, email: true } },
+    //         interviews: { select: { id: true, stageId: true } },
+    //       },
+    //     },
+    //     stage: true,
+    //     position: { select: { organisationId: true } },
+    //   },
+    // })
+
+    if (!interview) throw new NotFoundException('Interview not found')
+
+    return new InterviewWithStageScoringApplicant(interview)
   }
 
   async findPipelineWithStages(positionId: number, user: UserEntity) {
@@ -252,8 +305,4 @@ export class PositionService {
       },
     })
   }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} position`
-  // }
 }

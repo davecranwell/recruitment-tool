@@ -332,6 +332,62 @@ async function main() {
       // },
     },
   })
+
+  // SCORING SYSTEMS
+
+  const scoringSystem1 = await prisma.scoringSystem.create({
+    data: {
+      name: 'Strong hire to strong no hire',
+      type: 'LIKERT',
+      schema: [
+        { key: 'Strong no hire', val: 25, icon: '😢' },
+        { key: 'No hire', val: 50, icon: '🙁' },
+        { key: 'Hire', val: 75, icon: '🙂' },
+        { key: 'Strong hire', val: 100, icon: '🤩' },
+      ],
+    },
+  })
+
+  const scoringSystem2 = await prisma.scoringSystem.create({
+    data: {
+      name: '5 star',
+      type: 'LINEAR',
+      schema: [
+        { val: 20, key: '1' },
+        { val: 40, key: '2' },
+        { val: 60, key: '3' },
+        { val: 80, key: '4' },
+        { val: 100, key: '5' },
+      ],
+    },
+  })
+
+  // QUESTION SET
+
+  const questions = await prisma.questions.create({
+    data: {
+      name: 'My standard questions',
+      questions: {
+        create: [
+          { text: 'Where does the rain in spain fall?' },
+          { text: 'What is the flightspeed of an unlayden sparrow?' },
+        ],
+      },
+    },
+  })
+
+  // INTERVIEW
+
+  const interview1 = await prisma.interview.create({
+    data: {
+      applicantProfileId: applicant1Profile.id,
+      stageId: standardPipelineStages.stages[0].stageId,
+      positionId: position1.id,
+      scoringSystemId: scoringSystem1.id,
+      startDateTime: new Date(),
+      endDateTime: new Date(new Date().getTime() + 1000 * 60),
+    },
+  })
 }
 
 main()

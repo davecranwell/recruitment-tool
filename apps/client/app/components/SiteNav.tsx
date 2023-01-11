@@ -16,7 +16,7 @@ const SiteNav: React.FC<Props> = ({ navItems }) => {
             <Fragment key={item.name}>
               {item.type === 'heading' && (
                 <h3
-                  className="text-primary-200 px-3 pb-2 text-xs font-semibold uppercase tracking-widest tracking-wider"
+                  className="text-primary-200 px-3 pb-2 text-xs font-semibold uppercase tracking-widest"
                   id="projects-headline"
                 >
                   {item.name}

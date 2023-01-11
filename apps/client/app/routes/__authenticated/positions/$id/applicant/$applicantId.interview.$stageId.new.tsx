@@ -2,15 +2,13 @@ import { ActionFunction, json, LoaderFunction, MetaFunction, redirect } from '@r
 import { useActionData, useLoaderData, useParams, useTransition } from '@remix-run/react'
 
 import { api } from 'app/api.server'
-import type { SessionData } from '~/sessions.server'
-import { getSessionData, requireAuth } from '~/sessions.server'
+import { requireAuth } from '~/sessions.server'
 
 import type { StageInPipeline } from 'app/models/positions/Stage'
-import PersonHeader from '~/components/PersonHeader'
 import Form from '~/components/Forms'
+import PersonHeader from '~/components/PersonHeader'
 
 import formFields from 'app/models/interview/form'
-import { formDataToJson } from '~/utils'
 
 export const action: ActionFunction = async (data) => {
   const { request, params } = data
@@ -42,8 +40,6 @@ export const loader: LoaderFunction = async (data) => {
 
   // get list of interviews here
   const interviewers = position.project.userRoles
-
-  console.log({ interviewers })
 
   return json({
     fields: formFields(

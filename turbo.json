@@ -1,7 +1,12 @@
 {
   "$schema": "https://turborepo.org/schema.json",
   "pipeline": {
+    "build": {
+      "cache": false,
+      "outputs": []
+    },
     "dev": {
+      "cache": false,
       "outputs": []
     },
     "lint": {
@@ -17,13 +22,20 @@
       "outputs": []
     },
     "db:migrate": {
+      "cache": false,
       "outputs": []
     },
     "db:seed": {
+      "cache": false,
+      "outputs": []
+    },
+    "docker": {
+      "cache": false,
+      "dependsOn": ["^docker"],
       "outputs": []
     },
     "docker:build": {
-      "dependsOn": ["test"],
+      "cache": false,
       "outputs": []
     }
   }
