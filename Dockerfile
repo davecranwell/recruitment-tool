@@ -16,6 +16,7 @@ ARG SCOPE
 
 WORKDIR /app
 COPY --from=base /app .
+COPY .npmrc . 
 RUN pnpm i --prod --filter="${SCOPE}"
 
 COPY ./turbobuild/out/full .
