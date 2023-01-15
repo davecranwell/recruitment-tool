@@ -28,7 +28,10 @@ export async function api(
 
   switch (apiRes.status) {
     case 401:
-      throw redirect('/sign-out')
+      // Logged in users (those with an access token) should get logged out if they experience a 401
+      // anyone without an accesstoken should see the error message
+      if (accessToken) throw redirect('/sign-out')
+      return json(await apiRes.json(), { status: apiRes.status })
 
     // NB: can't catch 400 here as 400 is a bad request i.e a request that had errors to be returned to user
     case 404:
