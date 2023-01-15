@@ -19,8 +19,21 @@ export PATH="$FLYCTL_INSTALL/bin:$PATH"
 
 # Generating docker images
 
+Run from root of repository
+
 `pnpm run docker:build:server`
 `pnpm run docker:build:client`
+
+# Deploying to fly
+
+Run from corresponding apps/\* folder
+
+`fly secrets import < production.env`
+`fly deploy --local-only`
+
+# Debugging local docker container
+
+`docker run --interactive --tty --entrypoint /bin/sh [imagename]`
 
 # Links
 

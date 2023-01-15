@@ -26,6 +26,6 @@ cd turbobuild
 pnpx turbo prune --scope="$1" --docker
 
 cd -
-docker build . -t recruitment-$1:latest --build-arg SCOPE=$1
+docker build . -t xcession2k/recruitment-$1:dev --build-arg SCOPE=$1
 
 rm -rf turbobuild

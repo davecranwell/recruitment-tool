@@ -5,6 +5,8 @@ import invariant from 'tiny-invariant'
 // import { notify } from '~/components/Notifications'
 import type { Organisation } from '~/models/organisation/Organisation'
 
+invariant(process.env.BACKEND_ROOT_URL, 'BACKEND_ROOT_URL must be set')
+invariant(process.env.GOOGLE_AUTH_CLIENT_ID, 'GOOGLE_AUTH_CLIENT_ID must be set')
 invariant(process.env.SESSION_SECRET, 'SESSION_SECRET must be set')
 invariant(process.env.SESSION_EXPIRATION_TIME, 'SESSION_EXPIRATION_TIME must be set')
 

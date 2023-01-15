@@ -1,6 +1,7 @@
 **/.git
 **/.vscode
 **/.turbo
+**/.cache
 **/node_modules
 **/build
 **/dist

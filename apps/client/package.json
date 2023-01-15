@@ -15,7 +15,7 @@
     "dev:remix": "NODE_ENV=development nodemon server.js",
     "generate:css": "npx tailwindcss -i ./styles/tailwind.css -o ./app/tailwind.css",
     "format": "prettier --write \"app/**/*.{ts,tsx}\"",
-    "start:prod": "NODE_ENV=production node dist/index.js",
+    "start:prod": "NODE_ENV=production node server.js",
     "lint": "eslint \"app/**/*.ts\" --fix"
   },
   "dependencies": {
