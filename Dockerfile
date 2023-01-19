@@ -1,5 +1,5 @@
 # Make a base image with turbo and pnpm essentials.
-FROM node:16.19.0-alpine AS base
+FROM node:16.19.0-alpine@sha256:1298fd170c45954fec3d4d063437750f89802d72743816663664cfe9aa152b4b AS base
 ARG SCOPE
  
 RUN apk add --no-cache libc6-compat rsync
@@ -13,6 +13,7 @@ COPY ./turbobuild/out/json .
 
 FROM base as builder
 ARG SCOPE
+ENV NODE_ENV production
 
 WORKDIR /app
 COPY --from=base /app .
@@ -22,17 +23,19 @@ RUN pnpm i --prod --filter="${SCOPE}"
 COPY ./turbobuild/out/full .
 RUN turbo run build
 
-FROM node:16.19.0-alpine AS runner
+FROM node:16.19.0-alpine@sha256:1298fd170c45954fec3d4d063437750f89802d72743816663664cfe9aa152b4b AS runner
+RUN apk add dumb-init
+
 ARG SCOPE
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
 
 WORKDIR /app
-COPY --from=builder /app .
+COPY --chown=appuser:appgroup --from=builder /app .
 
 WORKDIR /app/apps/"${SCOPE}"/
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start:prod"]
+CMD ["dumb-init", "npm", "run", "start:prod"]

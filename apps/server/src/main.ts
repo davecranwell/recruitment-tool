@@ -21,8 +21,18 @@ process.on('unhandledRejection', (err: PromiseRejectedResult) => {
   exit(1)
 })
 
+process.on('uncaughtException', (err) => {
+  logger.error(`Uncaught exception: ${err}`)
+  exit(1) // exit the process to avoid unknown state
+})
+
 process.on('SIGTERM', async () => {
   logger.log('SIGTERM sent to process.')
+  exit(0)
+})
+
+process.on('SIGHUP', async () => {
+  logger.log('SIGHUP sent to process.')
   exit(0)
 })
 

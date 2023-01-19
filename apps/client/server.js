@@ -1,8 +1,29 @@
 require('dotenv').config()
+const { exit } = require('process')
 const express = require('express')
 const compression = require('compression')
 const morgan = require('morgan')
 const { createRequestHandler } = require('@remix-run/express')
+
+process.on('unhandledRejection', (err) => {
+  console.error(`Unhandled promise rejection reason: ${err}`)
+  exit(1)
+})
+
+process.on('uncaughtException', (err) => {
+  console.error(`Uncaught exception: ${err}`)
+  exit(1) // exit the process to avoid unknown state
+})
+
+process.on('SIGTERM', async () => {
+  console.log('SIGTERM sent to process.')
+  exit(0)
+})
+
+process.on('SIGHUP', async () => {
+  console.log('SIGHUP sent to process.')
+  exit(0)
+})
 
 let app = express()
 
