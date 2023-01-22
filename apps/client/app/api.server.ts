@@ -1,5 +1,6 @@
 import type { DataFunctionArgs } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
+import { getClientIPAddress } from 'remix-utils'
 
 import { getSessionData } from 'app/sessions.server'
 import { formDataToJson } from 'app/utils'
@@ -17,10 +18,13 @@ export async function api(
 
   const bodyPayload = body instanceof FormData ? JSON.stringify(formDataToJson(body)) : JSON.stringify(body)
 
+  const clientIP = request && getClientIPAddress(request)
+
   const apiRes = await fetch(`${process.env.BACKEND_ROOT_URL}${url}`, {
     method,
     headers: {
       'Content-Type': 'application/json',
+      ...(clientIP && { 'X-Forwarded-For': clientIP }),
       ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
     },
     body: bodyPayload,
