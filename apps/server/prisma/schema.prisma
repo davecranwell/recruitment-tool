@@ -232,6 +232,7 @@ model Invitation {
   role           UserRoleType?
   organisationId Int
   createdAt      DateTime      @default(now())
+  sent           Boolean       @default(false)
 
   organisation Organisation @relation(fields: [organisationId], references: [id])
 
