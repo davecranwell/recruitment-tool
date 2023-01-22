@@ -22,6 +22,9 @@ export class Invitation implements InvitationModel {
   @ApiProperty()
   role: UserRoleType
 
+  @ApiProperty()
+  sent: boolean
+
   // TODO: add a concept of expiry for invitations
 
   @ApiProperty()
