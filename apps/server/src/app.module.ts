@@ -2,6 +2,7 @@ import { APP_GUARD } from '@nestjs/core'
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler'
+import { ScheduleModule } from '@nestjs/schedule'
 
 import config from './config/configuration'
 import { AppController } from './app.controller'
@@ -35,6 +36,7 @@ import { AssessmentModule } from './assessment/assessment.module'
       ttl: 5,
       limit: 10,
     }),
+    ScheduleModule.forRoot(),
     AuthenticationModule,
     UpdatesModule,
     OrganisationModule,

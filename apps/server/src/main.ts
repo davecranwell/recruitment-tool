@@ -16,6 +16,8 @@ import { NotFoundExceptionFilter } from './not-found-exception.filter'
 
 const logger = new Logger()
 
+const isProduction = process.env.NODE_ENV === 'production'
+
 process.on('unhandledRejection', (err: PromiseRejectedResult) => {
   logger.error(`Unhandled promise rejection reason: ${err}`)
   exit(1)
@@ -38,8 +40,13 @@ process.on('SIGHUP', async () => {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger: getLogLevels(process.env.NODE_ENV === 'production'),
+    logger: getLogLevels(isProduction),
   })
+
+  if (isProduction) {
+    // The frontend calls this server with X-Forwarded-For
+    app.getHttpAdapter().getInstance().set('trust proxy', true)
+  }
 
   app.use(compression())
   app.enableCors()
@@ -70,7 +77,7 @@ async function bootstrap() {
   prismaService.enableShutdownHooks(app)
 
   // Swagger Api
-  if (swaggerConfig.enabled) {
+  if (!isProduction && swaggerConfig.enabled) {
     const config = new DocumentBuilder()
       .setTitle(swaggerConfig.title)
       .setDescription(swaggerConfig.description)
@@ -94,9 +101,10 @@ async function bootstrap() {
   }
 
   await app.listen(configService.get('port'))
-  if (swaggerConfig.enabled) {
+  logger.log(`Ready on port ${configService.get('port')}`)
+
+  if (!isProduction && swaggerConfig.enabled) {
     logger.log(`Open API documentation available on path: /${swaggerConfig.path}`)
   }
-  logger.log(`Ready on port ${configService.get('port')}`)
 }
 bootstrap()
