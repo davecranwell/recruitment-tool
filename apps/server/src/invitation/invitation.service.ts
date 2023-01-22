@@ -3,6 +3,7 @@ import { ForbiddenException, Injectable, NotFoundException, BadRequestException 
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import * as sendgrid from '@sendgrid/mail'
+import { Cron } from '@nestjs/schedule'
 
 import { Action } from 'src/casl/actions'
 import { PrismaService } from 'src/prisma/prisma.service'
@@ -42,6 +43,42 @@ export class InvitationService {
     }
   }
 
+  @Cron('*/30 * * * * *')
+  async sendUnsentInvitations() {
+    const unsent = await this.prisma.invitation.findMany({
+      where: { sent: false },
+      include: { organisation: true },
+    })
+
+    for (const invitation of unsent) {
+      const { email, id, organisation } = invitation
+
+      const payload = { id }
+      const token = this.jwtService.sign(payload, {
+        secret: this.configService.get('INVITATION_CODE_SECRET'),
+        expiresIn: `${this.configService.get('INVITATION_CODE_EXPIRATION_TIME')}s`,
+      })
+
+      const invitationMsg = {
+        to: email.toLowerCase(),
+        from: this.configService.get('EMAIL_FROM'),
+        templateId: this.configService.get('EMAIL_TEMPLATE_INVITATION'),
+        dynamicTemplateData: {
+          organisationName: organisation.name,
+          invitationUrl: `${this.configService.get('ROOT_URL')}/invitation-sign-in?token=${token}`,
+        },
+      }
+
+      sendgrid.setApiKey(this.configService.get('SENDGRID_API_KEY'))
+      await sendgrid.send(invitationMsg)
+    }
+
+    await this.prisma.invitation.updateMany({
+      where: { id: { in: unsent.map((un) => un.id) } },
+      data: { sent: true },
+    })
+  }
+
   async create(data: CreateInvitationDto, user: UserEntity) {
     const { email, role, organisationId } = data
 
@@ -61,25 +98,6 @@ export class InvitationService {
     })
 
     if (!invitation) throw new BadRequestException('This invitation could not be completed')
-
-    const payload = { id: invitation.id }
-    const token = this.jwtService.sign(payload, {
-      secret: this.configService.get('INVITATION_CODE_SECRET'),
-      expiresIn: `${this.configService.get('INVITATION_CODE_EXPIRATION_TIME')}s`,
-    })
-
-    const invitationMsg = {
-      to: email.toLowerCase(),
-      from: this.configService.get('EMAIL_FROM'),
-      templateId: this.configService.get('EMAIL_TEMPLATE_INVITATION'),
-      dynamicTemplateData: {
-        organisationName: organisation.name,
-        invitationUrl: `${this.configService.get('ROOT_URL')}/invitation-sign-in?token=${token}`,
-      },
-    }
-
-    sendgrid.setApiKey(this.configService.get('SENDGRID_API_KEY'))
-    await sendgrid.send(invitationMsg)
 
     return new Invitation(invitation)
   }
