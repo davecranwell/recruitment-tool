@@ -83,7 +83,7 @@ const AcceptInvitation = () => {
                     wrapper="none"
                     submitText="Sign in"
                     submitWidth="full"
-                    intro={<p className="text-base">Sign in to accept your invitation</p>}
+                    intro={<span className="text-base">Sign in to accept your invitation</span>}
                     fields={withValues(loginFields(), { email: invitation.email, token: searchParams.get('token') })}
                     errors={errors}
                     transition={transition}

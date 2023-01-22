@@ -43,5 +43,8 @@ export function camelToSentence(string: string) {
 }
 
 export function toSentence(string: string) {
-  return string.toLowerCase().replace(/^./, (str) => str.toUpperCase())
+  return string
+    .toLowerCase()
+    .replace('_', ' ')
+    .replace(/^./, (str) => str.toUpperCase())
 }

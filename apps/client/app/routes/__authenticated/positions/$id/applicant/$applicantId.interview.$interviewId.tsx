@@ -52,10 +52,12 @@ const ViewInterview = () => {
     const formData = new FormData()
 
     if (!applicantId || !id || !interviewId) return
+
     formData.set('score', data)
     formData.set('applicantProfileId', applicantId)
     formData.set('positionId', id)
     formData.set('interviewId', interviewId)
+
     submitScore(formData, { method: 'post', replace: true })
   }
 
@@ -88,7 +90,7 @@ const ViewInterview = () => {
 
         <Section
           title="Score this interview"
-          footer={<ScoreAssessment value={assessments[0].score} onChoose={handleScore} {...scoringSystem} />}
+          footer={<ScoreAssessment value={assessments[0]?.score} onChoose={handleScore} {...scoringSystem} />}
         >
           Using the scale Strong No Hire to Hire, indicate whether you'd choose to hire this candidate.
         </Section>
