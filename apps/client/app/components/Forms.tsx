@@ -18,6 +18,7 @@ export type Option = {
 
 export type FieldDef = {
   name: string
+  key?: string
   enabled?: boolean
   type: string
   options?: Option[]
@@ -118,7 +119,9 @@ export const withValues = (formFields: FieldDef[], values: any) => {
         field.content = enumerateFields(field.content)
       }
       if (field.name && values[field.name] !== undefined) {
-        field.defaultValue = field.valueTransform ? field.valueTransform(values[field.name]) : values[field.name]
+        const val = Array.isArray(values[field.name]) ? values[field.name].shift() : values[field.name]
+
+        field.defaultValue = field.valueTransform ? field.valueTransform(val) : val
       }
       return field
     })
@@ -135,7 +138,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
   if (field.enabled === false) return null
 
   return (
-    <React.Fragment key={field.name}>
+    <React.Fragment key={field.key || field.name}>
       {field.type !== 'hidden' && (
         <div
           className={classNames({
@@ -146,7 +149,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
         >
           {field.type === 'row' &&
             field.content &&
-            field.content.map((field) => <Field key={field.name} field={field} />)}
+            field.content.map((field) => <Field key={field.key || field.name} field={field} />)}
           {field.type !== 'row' && (
             <>
               {field.type !== 'title' && (
@@ -412,7 +415,7 @@ const FormLayout: React.FC<FormLayoutProps> = ({
             {orphanedErrors.length > 0 && <Alert type="error" message={orphanedErrors} />}
 
             {fieldsWithValidation.map((field) => (
-              <Field key={field.name} field={field} />
+              <Field key={field.key || field.name} field={field} />
             ))}
           </div>
         </div>

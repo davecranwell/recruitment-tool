@@ -29,6 +29,7 @@ export class AssessmentService {
       create: {
         type: 'INTERVIEW',
         score,
+        notes,
         scoringSystem: {
           connect: { id: scoringSystemId },
         },

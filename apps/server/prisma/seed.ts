@@ -367,12 +367,10 @@ async function main() {
   const questions = await prisma.questions.create({
     data: {
       name: 'My standard questions',
-      questions: {
-        create: [
-          { text: 'Where does the rain in spain fall?' },
-          { text: 'What is the flightspeed of an unlayden sparrow?' },
-        ],
-      },
+      questions: [
+        { text: 'Where does the rain in spain fall?' },
+        { text: 'What is the flightspeed of an unlayden sparrow?' },
+      ],
     },
   })
 

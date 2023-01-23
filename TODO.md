@@ -2,9 +2,7 @@
 
 ## Where you left off
 
-- We're in the middle of creating a localStorage-based hook to save information from the interview question notes.
-- You've also started to add fly.io but realised you need to have working built containers before that's possible so you're looking into how to use pnpm wisely using this link: https://dev.to/jonlauridsen/exploring-the-monorepo-5-perfect-docker-52aj
-  - Also information from https://github.com/pnpm/pnpm/issues/3114
+- We've just finished the MVP for note saving. Now we're considering creating a localStorage-based hook to save information from the interview question notes locally while they're being written
 
 ## Overall
 
