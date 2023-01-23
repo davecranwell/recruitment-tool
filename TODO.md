@@ -59,6 +59,7 @@
 - [ ] Move permissions to Redis to reduce size of cookie
 - [ ] ClassSerializerInterceptor doesn't allow you to specify groups (move to PrismaClasSerializerInterceptorPaginated for now)
 - [ ] Sendgrid implementation in invitation service should be extracted to own service
+- [ ] make salting rounds for bcrypt a config var
 
 ## Features
 
