@@ -27,6 +27,7 @@ export class Organisation implements OrganisationModel {
   updatedAt: Date
 
   @ValidateNested()
+  @ApiProperty({ type: () => UsersInOrganisation })
   @Type(() => UsersInOrganisation)
   users?: UsersInOrganisation[]
 

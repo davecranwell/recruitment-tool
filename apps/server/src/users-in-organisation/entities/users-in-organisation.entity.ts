@@ -7,8 +7,8 @@ import { UserEntity as User } from 'src/user/entities/user.entity'
 import { Organisation } from 'src/organisation/entities/organisation.entity'
 
 export class UsersInOrganisation implements UsersInOrganisationModel {
-  @ApiProperty({ type: () => User })
   @ValidateNested()
+  @ApiProperty({ type: () => User })
   @Type(() => User)
   user?: User
 
@@ -18,6 +18,9 @@ export class UsersInOrganisation implements UsersInOrganisationModel {
   @ApiProperty()
   userId: number
 
+  @ValidateNested()
+  @ApiProperty({ type: () => Organisation })
+  @Type(() => Organisation)
   organisation?: Organisation
 
   @ApiProperty()

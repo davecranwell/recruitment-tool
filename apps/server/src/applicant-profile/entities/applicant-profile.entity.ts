@@ -48,7 +48,7 @@ export class ApplicantProfile implements ApplicantProfileModel {
 }
 
 export class ApplicantProfileWithUser extends ApplicantProfile {
-  @ApiProperty()
+  @ApiProperty({ type: () => User })
   @ValidateNested()
   @Type(() => User)
   user: User

@@ -45,8 +45,9 @@ export class UserEntity implements User {
   accessToken?: string
   refreshToken?: string
 
-  @Type(() => UsersInOrganisation)
+  @ApiProperty({ type: () => UsersInOrganisation, isArray: true })
   @ValidateNested()
+  @Type(() => UsersInOrganisation)
   organisations?: UsersInOrganisation[]
   userRoles?: UserRolesOfUser[]
   projectRoles?: ProjectUserRole[]
