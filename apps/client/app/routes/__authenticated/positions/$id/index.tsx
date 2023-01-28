@@ -1,5 +1,5 @@
 import type { LoaderFunction } from '@remix-run/node'
-import { useLoaderData, useOutletContext, useParams } from '@remix-run/react'
+import { Link, useLoaderData, useOutletContext, useParams } from '@remix-run/react'
 import invariant from 'tiny-invariant'
 
 import { api } from 'app/api.server'

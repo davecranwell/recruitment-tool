@@ -4,6 +4,7 @@ import React from 'react'
 type Props = {
   items?: any[]
   fallback?: React.ElementType
+  children: any
 }
 
 export const StackedList: React.FC<Props> = ({ items, fallback, children }) => {
@@ -20,6 +21,7 @@ export const StackedList: React.FC<Props> = ({ items, fallback, children }) => {
 
 type StackedListItemProps = {
   link: string
+  children: any
 }
 
 export const StackedListItem: React.FC<StackedListItemProps> = ({ children, link }) => {

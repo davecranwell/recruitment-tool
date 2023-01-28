@@ -5,6 +5,7 @@ import Avatar from './Avatar'
 
 export type Props = {
   user: User
+  children?: any
 }
 
 const PersonHeader: React.FC<Props> = ({ children, user }) => {

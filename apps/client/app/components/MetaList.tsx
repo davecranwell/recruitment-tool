@@ -1,10 +1,11 @@
 type MetaListProps = {
   className?: string
+  children: any
 }
 
 type ItemProps = {
   icon: React.ElementType
-  children: any
+  children?: any
   [x: string]: any
 }
 
