@@ -12,6 +12,10 @@ import Form, { withValues } from 'app/components/Forms'
 
 import formFields from 'app/models/positions/form'
 
+export const handle = {
+  hideBannerAction: true,
+}
+
 export const action: ActionFunction = async (data) => {
   const { request, params } = data
 

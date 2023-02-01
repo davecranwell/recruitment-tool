@@ -1,7 +1,7 @@
 import { CalendarIcon, CurrencyDollarIcon, LocationMarkerIcon, LockClosedIcon } from '@heroicons/react/solid'
 import type { LoaderFunction, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
-import { Outlet, useLoaderData } from '@remix-run/react'
+import { Link, Outlet, RouteMatch, useLoaderData, useMatches } from '@remix-run/react'
 
 import { api } from 'app/api.server'
 import { requireAuth } from '~/sessions.server'
@@ -12,6 +12,11 @@ import { MetaList, MetaListItem } from '~/components/MetaList'
 
 import type { Position } from '~/models/positions/Position'
 import { dateTimeFormat } from '~/utils'
+import Breadcrumb from 'app/components/Breadcrumb'
+
+export const handle = {
+  breadcrumb: (match: RouteMatch) => <Link to={match.pathname}>{match.data.position.name}</Link>,
+}
 
 export const meta: MetaFunction = ({ data }) => {
   const { position } = data
@@ -28,12 +33,14 @@ export const loader: LoaderFunction = async (data) => {
 }
 
 const PositionDetail = () => {
+  const matches = useMatches()
   const { position, stages } = useLoaderData()
   const { id, name, closingDate, description, location, salaryRange, employment } = position as Position
 
   return (
     <Content
       title={name}
+      titleSize="larger"
       // primaryAction={{ label: 'Create', link: '/positions/new' }}
       secondaryAction={{ label: 'Edit', link: `/positions/${id}/edit` }}
     >

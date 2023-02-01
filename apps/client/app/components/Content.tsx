@@ -7,6 +7,7 @@ import Button from './Button'
 type Props = {
   children: React.ReactNode
   title?: string
+  titleLink?: string
   titleSize?: 'largest' | 'larger' | 'large'
   primaryAction?: {
     label: string
@@ -18,9 +19,16 @@ type Props = {
   }
 }
 
-const Content: React.FC<Props> = ({ children, title, primaryAction, secondaryAction, titleSize = 'largest' }) => {
+const Content: React.FC<Props> = ({
+  children,
+  title,
+  titleLink,
+  primaryAction,
+  secondaryAction,
+  titleSize = 'largest',
+}) => {
   return (
-    <main className="flex-1">
+    <main className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 flex-1 py-4">
       <div className="md:flex md:items-center md:justify-between">
         <div className="min-w-0 flex-1">
           <h2
@@ -30,7 +38,7 @@ const Content: React.FC<Props> = ({ children, title, primaryAction, secondaryAct
             })}
             id="content-title"
           >
-            {title}
+            {titleLink ? <Link to={titleLink}>{title}</Link> : title}
           </h2>
         </div>
 

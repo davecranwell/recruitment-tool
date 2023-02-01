@@ -1,5 +1,5 @@
 import type { LoaderFunction } from '@remix-run/node'
-import { useLoaderData, useOutletContext, useParams } from '@remix-run/react'
+import { Link, RouteMatch, useLoaderData, useOutletContext, useParams } from '@remix-run/react'
 import invariant from 'tiny-invariant'
 
 import { api } from '~/api.server'
@@ -10,6 +10,10 @@ import type { LinkedApplicantProfile } from 'app/models/applicant-profiles/Appli
 import Tabs from 'app/components/Tabs'
 import ApplicantList from '~/components/ApplicantList'
 import Content from '~/components/Content'
+
+export const handle = {
+  breadcrumb: (match: RouteMatch) => <Link to={match.pathname}>{match.data.title}</Link>,
+}
 
 export const loader: LoaderFunction = async (data) => {
   const { request, params } = data
