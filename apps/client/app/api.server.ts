@@ -4,7 +4,7 @@ import { getClientIPAddress } from 'remix-utils'
 
 import { getSessionData } from 'app/sessions.server'
 import { formDataToJson } from 'app/utils'
-import { ErrorResponse, ForbiddenResponse, NotFoundResponse } from 'app/utils/errors'
+import { ErrorResponse, ForbiddenResponse, NotFoundResponse, RateLimitedResponse } from 'app/utils/errors'
 
 export async function api(
   data: DataFunctionArgs | null,
@@ -43,6 +43,9 @@ export async function api(
 
     case 403:
       throw ForbiddenResponse()
+
+    case 429:
+      throw RateLimitedResponse()
 
     case 500:
       throw ErrorResponse({ statusText: apiRes.statusText })

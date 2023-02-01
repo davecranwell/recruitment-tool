@@ -24,6 +24,13 @@ export const NotFoundResponse = ({ headers }: { headers?: Headers } = {}) =>
 export const ErrorResponse = ({ headers, statusText }: { headers?: Headers; statusText: string }) =>
   new Response(`An error occured: "${statusText}"`, {
     status: 500,
-    statusText: `An error occured: "${statusText}"`,
+    statusText: `An unexpected error occured: "${statusText}"`,
+    headers,
+  })
+
+export const RateLimitedResponse = ({ headers }: { headers?: Headers } = {}) =>
+  new Response('Too many requests', {
+    status: 429,
+    statusText: 'Too many requests',
     headers,
   })
