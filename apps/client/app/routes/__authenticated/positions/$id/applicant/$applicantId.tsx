@@ -1,7 +1,16 @@
 import { LockClosedIcon } from '@heroicons/react/solid'
 import type { ActionFunction, LoaderFunction, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
-import { Link, useActionData, useLoaderData, useOutletContext, useParams, useSubmit } from '@remix-run/react'
+import type { RouteMatch } from '@remix-run/react'
+import {
+  Link,
+  useActionData,
+  useLoaderData,
+  useMatches,
+  useOutletContext,
+  useParams,
+  useSubmit,
+} from '@remix-run/react'
 
 import { api } from '~/api.server'
 import { notify, requireAuth } from '~/sessions.server'
@@ -31,20 +40,22 @@ export const loader: LoaderFunction = async (data) => {
   const { id, applicantId } = params
   await requireAuth(request)
 
-  return await api(data, `/position/${id}/applicant/${applicantId}`)
+  const profileRes = await api(data, `/position/${id}/applicant/${applicantId}`)
+  const profile = await profileRes.json()
+
+  return json({ title: profile.applicantProfile.user?.name, profile })
 }
 
 export const meta: MetaFunction = ({ data }) => {
-  const { applicantProfile } = data
-  const { user } = applicantProfile
-  return { title: `Applicant - ${user?.name}` }
+  const { title } = data
+  return { title }
 }
 
 const Profile = () => {
   const advanceStage = useSubmit()
   const { id, applicantId } = useParams()
   const { stages } = useOutletContext() as any
-  const profile = useLoaderData()
+  const { profile } = useLoaderData()
   const actionData = useActionData()
 
   const { applicantProfile, stage } = profile

@@ -1,6 +1,6 @@
 import type { MetaFunction, LinksFunction, LoaderFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from '@remix-run/react'
+import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData, useCatch } from '@remix-run/react'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 
 import styles from './tailwind.css'

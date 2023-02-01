@@ -22,7 +22,7 @@ const paginate = createPaginator({ perPage: 20 })
 export class OrganisationService {
   constructor(private prisma: PrismaService) {}
 
-  create(data: CreateOrganisationDto) {
+  async create(data: CreateOrganisationDto) {
     return this.prisma.organisation.create({
       data: {
         name: data.name,
@@ -119,7 +119,7 @@ export class OrganisationService {
     if (ability.can(Action.Manage, new Organisation({ id: organisationId }))) {
       return await paginate<Position, Prisma.PositionFindManyArgs>(
         this.prisma.position,
-        { where: { project: { organisationId } }, include: { project: true } },
+        { where: { project: { organisationId } }, include: { project: true }, orderBy: { project: { name: 'asc' } } },
         { ...paginationArgs }
       )
     }

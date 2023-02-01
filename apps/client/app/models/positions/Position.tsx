@@ -1,3 +1,5 @@
+import { Project } from '../projects/Project'
+
 export enum PositionEmploymentType {
   FULL,
   PART,
@@ -12,6 +14,8 @@ export type Position = {
   openingDate?: Date
   closingDate?: Date
   employment?: PositionEmploymentType
+  organisationId: number
   location?: string
   salaryRange?: string
+  project?: Partial<Project>
 }

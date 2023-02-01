@@ -5,15 +5,16 @@ type Props = {
   items?: any[]
   fallback?: React.ElementType
   children: any
+  className?: string
 }
 
-export const StackedList: React.FC<Props> = ({ items, fallback, children }) => {
+export const StackedList: React.FC<Props> = ({ items, fallback, children, className = '' }) => {
   const FallbackElement = fallback
 
   if (!items?.length && FallbackElement) return <FallbackElement />
 
   return (
-    <div className="overflow-hidden bg-white shadow sm:rounded-md">
+    <div className={`overflow-hidden bg-white shadow sm:rounded-md ${className}`}>
       <ul className="divide-y divide-gray-200">{children}</ul>
     </div>
   )

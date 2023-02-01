@@ -29,7 +29,7 @@ const { getSession, commitSession, destroySession } = createCookieSessionStorage
   cookie: {
     name: '__session',
     maxAge: +process.env.SESSION_EXPIRATION_TIME,
-    httpOnly: true,
+    httpOnly: process.env.NODE_ENV === 'production',
     path: '/',
     sameSite: 'lax',
     secrets: [process.env.SESSION_SECRET],
@@ -103,7 +103,7 @@ export async function requireAuth(request: Request, redirectTo: string = new URL
 
 export async function logout(request: Request) {
   const session = await getSessionFromCookie(request)
-  return redirect('/start', {
+  throw redirect('/start', {
     headers: {
       'Set-Cookie': await destroySession(session),
     },

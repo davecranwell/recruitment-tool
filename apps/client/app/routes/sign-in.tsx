@@ -17,7 +17,7 @@ import googlelogo from '../../images/GoogleLogo.svg'
 
 export const loader: LoaderFunction = async ({ request }) => {
   if (await hasSession(request)) {
-    return redirect('/')
+    throw redirect('/')
   }
 
   return null

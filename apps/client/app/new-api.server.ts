@@ -8,6 +8,10 @@ import { commitSession, getSessionData, getSessionFromCookie, sessionAccessToken
 import { formDataToJson } from 'app/utils'
 import { ErrorResponse, ForbiddenResponse, NotFoundResponse } from 'app/utils/errors'
 
+// One of the purposes of this new file is to encapsulate all the sessions setting stuff we need to be able to do in a loader or action
+// In particular we need to be able to return the session and set the cookie all in the action/header easily.
+// Something like https://github.com/remix-run/examples/blob/main/toast-message/app/routes/index.tsx
+
 export class Api {
   session?: Session
 

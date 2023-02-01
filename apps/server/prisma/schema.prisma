@@ -3,11 +3,11 @@ generator client {
   defaultTake = "10"
 }
 
-// generator erd {
-//   provider = "prisma-erd-generator"
-//   output   = "ER.md"
-//   theme    = "neutral"
-// }
+generator erd {
+  provider = "prisma-erd-generator"
+  output   = "ER.md"
+  theme    = "neutral"
+}
 
 // generator nestjsDto {
 //   provider                        = "prisma-generator-nestjs-dto"

@@ -122,9 +122,7 @@ const Layout: React.FC<Props> = ({ children, sessionData, globalMessage }) => {
 
       <div className="md:pl-72">
         <MobileTopNav userNavigation={userNavigation} user={sessionData?.user} onSidebarOpen={handleSidebarOpen} />
-        <div className="pt-8">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">{children}</div>
-        </div>
+        <div>{children}</div>
       </div>
 
       {globalMessage && <Notifications messages={globalMessage} />}

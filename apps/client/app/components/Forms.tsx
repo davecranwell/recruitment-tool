@@ -221,9 +221,9 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                       field.options
                         // if options are provided as an array of strings, use the string as the option value
                         .map((option) => (typeof option !== 'object' ? { key: option, value: option } : option))
-                        .map((option) => {
+                        .map((option, index) => {
                           return (
-                            <option key={option.key} value={option.value}>
+                            <option key={option.value} value={option.value}>
                               {option.key}
                             </option>
                           )
