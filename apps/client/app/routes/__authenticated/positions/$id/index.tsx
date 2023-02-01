@@ -51,7 +51,7 @@ const PositionApplicants = () => {
   )
 
   return (
-    <Content title="Candidates" titleSize="larger">
+    <Content as="div" title="Candidates" titleSize="larger" padX={false}>
       <Tabs tabs={tabs} />
       <ApplicantList applicants={applicants.data} emptyText={'There are no applicants for this position'} />
     </Content>

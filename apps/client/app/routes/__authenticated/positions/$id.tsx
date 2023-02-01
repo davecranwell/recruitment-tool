@@ -59,15 +59,13 @@ const PositionDetail = () => {
         {closingDate && <MetaListItem icon={CalendarIcon}>{`Closing on ${dateTimeFormat(closingDate!)}`}</MetaListItem>}
       </MetaList>
 
-      {description && (
+      {/* {description && (
         <div className="mt-8">
           <p>{description}</p>
         </div>
-      )}
+      )} */}
 
-      <main className="pt-8 pb-16">
-        <Outlet context={stages} />
-      </main>
+      <Outlet context={stages} />
     </Content>
   )
 }

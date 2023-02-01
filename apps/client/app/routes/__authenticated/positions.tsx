@@ -26,16 +26,7 @@ const Positions = () => {
 
   return (
     <div className="space-y-4">
-      <ContentBanner
-        title={'Positions'}
-        titleLink={'/positions'}
-        primaryAction={
-          canCreateProject && {
-            label: 'Create',
-            link: '/positions/new',
-          }
-        }
-      >
+      <ContentBanner title={'Positions'} titleLink={'/positions'}>
         <Breadcrumb matches={matches} />
       </ContentBanner>
       <Outlet />

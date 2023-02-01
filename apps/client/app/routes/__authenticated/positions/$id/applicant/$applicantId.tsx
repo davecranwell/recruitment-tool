@@ -71,7 +71,7 @@ const Profile = () => {
   }
 
   return (
-    <main className="py-10">
+    <div className="py-10">
       {/* Page header */}
       <PersonHeader user={user}>
         {!stageInterview && (
@@ -175,7 +175,7 @@ const Profile = () => {
           </section>
         </div>
       </div>
-    </main>
+    </div>
   )
 }
 

@@ -11,10 +11,6 @@ import Tabs from 'app/components/Tabs'
 import ApplicantList from '~/components/ApplicantList'
 import Content from '~/components/Content'
 
-export const handle = {
-  breadcrumb: (match: RouteMatch) => <Link to={match.pathname}>{match.data.title}</Link>,
-}
-
 export const loader: LoaderFunction = async (data) => {
   const { request, params } = data
   invariant(params.id, 'Expected position ID')
@@ -55,7 +51,7 @@ const Stage = () => {
   )
 
   return (
-    <Content title="Candidates" titleSize="larger">
+    <Content title="Candidates" titleSize="larger" padX={false}>
       <Tabs tabs={tabs} />
       <ApplicantList applicants={applicants.data} />
     </Content>
