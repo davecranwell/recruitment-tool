@@ -52,8 +52,9 @@ export class PositionService {
     const ability = new Ability(user.abilities)
     if (
       !ability.can(Action.Create, new Position({ projectId: data.projectId, organisationId: project.organisationId }))
-    )
+    ) {
       throw new ForbiddenException()
+    }
 
     return this.prisma.position.create({
       data: {

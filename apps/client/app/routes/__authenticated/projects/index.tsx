@@ -1,6 +1,6 @@
 import { FolderIcon } from '@heroicons/react/outline'
 import { json, LoaderFunction, MetaFunction } from '@remix-run/node'
-import { Outlet, useLoaderData, useOutletContext } from '@remix-run/react'
+import { Link, Outlet, RouteMatch, useLoaderData, useOutletContext } from '@remix-run/react'
 
 import { api } from 'app/api.server'
 import type { SessionData } from '~/sessions.server'
@@ -36,16 +36,7 @@ const Projects = () => {
   const canCreateProject = can('manage', subject('Organisation', sessionData?.activeOrganisation))
 
   return (
-    <Content
-      title={'Projects'}
-      primaryAction={
-        projects.data.length &&
-        canCreateProject && {
-          label: 'Create',
-          link: '/projects/new',
-        }
-      }
-    >
+    <Content>
       <StackedList
         items={projects.data}
         fallback={() => (
@@ -56,15 +47,10 @@ const Projects = () => {
           />
         )}
       >
-        {projects.data.map((position: Project) => (
-          <StackedListItem key={position.id} link={`/projects/${position.id}`}>
-            <div className="flex items-center justify-between">
-              <p className="text-primary-600 truncate text-sm font-medium">{position.name}</p>
-              <div className="ml-2 flex flex-shrink-0">
-                {/* <p className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
-                        {position.type}
-                      </p> */}
-              </div>
+        {projects.data.map((project: Project) => (
+          <StackedListItem key={project.id} link={`/projects/${project.id}/edit`}>
+            <div className="flex items-center justify-between text-sm font-medium">
+              <p className="text-primary-600 truncate ">{project.name}</p>
             </div>
           </StackedListItem>
         ))}

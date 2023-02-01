@@ -2,7 +2,7 @@ import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { redirect } from '@remix-run/node'
 
-import { useActionData, useLoaderData, useTransition } from '@remix-run/react'
+import { useActionData, useLoaderData, useMatches, useTransition } from '@remix-run/react'
 
 import { api } from 'app/api.server'
 
@@ -12,15 +12,21 @@ import Form from 'app/components/Forms'
 import { requireAuth } from 'app/sessions.server'
 
 import formFields from 'app/models/projects/form'
+import Breadcrumb from '~/components/Breadcrumb'
+
+export const handle = {
+  hideBannerAction: true,
+}
 
 export const action: ActionFunction = async (data) => {
   const { request, params } = data
   const body = await request.formData()
 
   const result = await api(data, `/project/${params.id}`, 'PATCH', body)
-  if (result.ok) return redirect(`/project/${params.id}`)
 
-  return result
+  if (result.ok) return redirect(`/projects`)
+
+  throw result
 }
 
 export const loader: LoaderFunction = async (data) => {
@@ -38,6 +44,7 @@ const EditProject = () => {
   const { project, fields } = useLoaderData()
   const errors = useActionData()
   const transition = useTransition()
+  const matches = useMatches()
 
   return (
     <Content title={project.name}>

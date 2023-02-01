@@ -1,38 +1,30 @@
+import { Ability } from '@casl/ability'
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   ForbiddenException,
   Get,
   HttpStatus,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
-  Query,
   Req,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
 
-import {
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiExtraModels,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger'
-
-import { Ability } from '@casl/ability'
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
+import { Action } from 'src/casl/actions'
 
 import { RequestWithUser } from 'src/authentication/authentication.controller'
 import JwtAuthenticationGuard from 'src/authentication/guards/jwtAuthentication.guard'
-import { PrismaClassSerializerInterceptorPaginated } from 'src/class-serializer-paginated.interceptor'
-import { ApiPaginatedResponse, PaginatedDto, PaginationArgsDto } from 'src/page/pagination-args.dto'
-import { Action } from 'src/casl/actions'
-import { createPaginator } from 'src/util/pagination'
 
-import { ProjectService } from './project.service'
+import { CreateProjectDto } from './dto/create-project.dto'
+import { UpdateProjectDto } from './dto/update-project.dto'
 import { Project } from './entities/project.entity'
+import { ProjectService } from './project.service'
 
 @ApiTags('Projects')
 @ApiBearerAuth('access-token')
@@ -49,5 +41,28 @@ export class ProjectController {
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number
   ) {
     return this.projectService.findOne(+id, request.user)
+  }
+
+  @Post()
+  @ApiOperation({ summary: 'Create a new project' })
+  @ApiCreatedResponse({ type: () => Project, description: 'Project created' })
+  async create(@Req() request: RequestWithUser, @Body() createProjectDto: CreateProjectDto) {
+    const ability = new Ability(request.user.abilities)
+
+    if (!ability.can(Action.Create, new Project(createProjectDto))) throw new ForbiddenException()
+
+    return this.projectService.create(createProjectDto)
+  }
+
+  @Patch(':id')
+  @ApiOkResponse({ type: () => Project, description: 'Project modified' })
+  @ApiOperation({ summary: 'Update a project' })
+  @UseInterceptors(ClassSerializerInterceptor)
+  async patch(
+    @Req() request: RequestWithUser,
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
+    @Body() data: UpdateProjectDto
+  ) {
+    return this.projectService.update(+id, data, request.user)
   }
 }

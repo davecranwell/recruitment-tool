@@ -2,6 +2,7 @@ import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { redirect } from '@remix-run/node'
 import { Ability, subject } from '@casl/ability'
+import { unpackRules } from '@casl/ability/extra'
 
 import { useActionData, useLoaderData, useTransition } from '@remix-run/react'
 
@@ -13,6 +14,10 @@ import { requireAuth } from 'app/sessions.server'
 
 import formFields from 'app/models/projects/form'
 import { ForbiddenResponse } from '~/utils/errors'
+
+export const handle = {
+  hideBannerAction: true,
+}
 
 export const action: ActionFunction = async (data) => {
   const { request } = data
@@ -28,8 +33,9 @@ export const action: ActionFunction = async (data) => {
 export const loader: LoaderFunction = async ({ request }) => {
   const { sessionData } = await requireAuth(request)
 
-  const ability = new Ability(sessionData.user.abilities)
-  if (!ability.can('manage', subject('Organisation', sessionData.activeOrganisation))) {
+  const ability = new Ability()
+  ability.update(unpackRules(sessionData.user.abilities))
+  if (!ability.can('create', subject('Project', { organisationId: sessionData.activeOrganisation.id }))) {
     throw ForbiddenResponse()
   }
 
