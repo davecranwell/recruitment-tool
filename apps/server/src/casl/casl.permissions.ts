@@ -8,17 +8,14 @@ import { UserEntity } from 'src/user/entities/user.entity'
 
 import { Action } from './actions'
 
-// type Subjects = 'Organisation' | 'Position' | 'User' | 'all'
-
-// export type AppAbility = Ability<[Action, Subjects]>
-
 @Injectable()
 export class CaslPermissions {
   constructor(private prismaService: PrismaService) {}
 
+  // TODO we may want to alter this so that not only is a user param supplied, but the organisation we care about also given
+  // this would mean we don't have to concern ourselves with every entity, in every org all the time - only the one they're
+  // currently operating in, which would be more limited, one would assume.
   async asJsonForUser(user: UserEntity) {
-    //const organisations = await this.prismaService.
-
     const orgIdsOwned: number[] =
       user?.organisations?.filter((org) => org.role === 'ORGANISATION_OWNER').map((orgs) => orgs.organisationId) || []
 
@@ -54,7 +51,7 @@ export class CaslPermissions {
         conditions: { id: { $in: orgIdsMember } },
       },
       {
-        action: Action.Manage,
+        action: [Action.Manage, Action.Update],
         subject: 'Organisation',
         conditions: { id: { $in: orgIdsOwned } },
       },
@@ -63,24 +60,14 @@ export class CaslPermissions {
         subject: 'Organisation',
       },
       {
-        action: Action.Update,
-        subject: 'Organisation',
-        conditions: { id: { $in: orgIdsOwned } },
-      },
-      {
-        action: Action.Manage,
+        action: [Action.Manage, Action.Update, Action.Create],
         subject: 'Project',
         conditions: { organisationId: { $in: orgIdsOwned } },
       },
       {
-        action: Action.Manage,
+        action: [Action.Manage, Action.Update],
         subject: 'Project',
         conditions: { id: { $in: projectIdsManaged } },
-      },
-      {
-        action: Action.Create,
-        subject: 'Project',
-        conditions: { organisationId: { $in: orgIdsOwned } },
       },
       {
         action: Action.Read,
@@ -88,26 +75,14 @@ export class CaslPermissions {
         conditions: { id: { $in: projectIdsRead } },
       },
       {
-        action: Action.Manage,
+        action: [Action.Manage, Action.Create, Action.Update],
         subject: 'Position',
-        conditions: {
-          projectId: { $in: projectIdsManaged },
-        },
+        conditions: { projectId: { $in: projectIdsManaged } },
       },
       {
         action: Action.Manage,
         subject: 'Position',
         conditions: { organisationId: { $in: orgIdsOwned } } as any,
-      },
-      {
-        action: Action.Read,
-        subject: 'Position',
-        conditions: { projectId: { $in: projectIdsRead } } as any,
-      },
-      {
-        action: Action.Create,
-        subject: 'Position',
-        conditions: { projectId: { $in: projectIdsManaged } },
       },
       {
         action: Action.Create,
@@ -118,13 +93,6 @@ export class CaslPermissions {
         action: Action.Read,
         subject: 'Position',
         conditions: { projectId: { $in: projectIdsRead } },
-      },
-      {
-        action: Action.Update,
-        subject: 'Position',
-        conditions: {
-          projectId: { $in: projectIdsManaged },
-        },
       },
       {
         action: Action.Manage,
