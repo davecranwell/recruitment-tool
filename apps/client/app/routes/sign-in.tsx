@@ -1,7 +1,5 @@
-import type { ActionFunction, LoaderFunction } from '@remix-run/node'
-import { useActionData, useFetcher, useSearchParams, useTransition } from '@remix-run/react'
-import { useGoogleLogin } from '@react-oauth/google'
-import { redirect } from '@remix-run/node'
+import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/node'
+import { useActionData, useLoaderData, useSearchParams, useTransition } from '@remix-run/react'
 
 import { api } from 'app/api.server'
 import { createSession, hasSession } from 'app/sessions.server'
@@ -9,18 +7,17 @@ import { safeRedirect } from 'app/utils'
 
 import { loginFields } from '~/models/users/form'
 
+import { GoogleOAuthProvider } from '@react-oauth/google'
 import Form from 'app/components/Forms'
-import Button from '~/components/Button'
+import GoogleLogin from 'app/components/GoogleLogin'
 import Divider from '~/components/Divider'
-
-import googlelogo from '../../images/GoogleLogo.svg'
 
 export const loader: LoaderFunction = async ({ request }) => {
   if (await hasSession(request)) {
     throw redirect('/')
   }
 
-  return null
+  return json({ GOOGLE_AUTH_CLIENT_ID: process.env.GOOGLE_AUTH_CLIENT_ID })
 }
 
 export const action: ActionFunction = async (data) => {
@@ -51,23 +48,12 @@ export const action: ActionFunction = async (data) => {
 }
 
 const SignIn = () => {
-  const fetcher = useFetcher()
   const errors = useActionData()
   const transition = useTransition()
   const [searchParams] = useSearchParams()
+  const { GOOGLE_AUTH_CLIENT_ID } = useLoaderData()
 
   const redirectTo = searchParams.get('redirectTo') ?? undefined
-
-  const googleLogin = useGoogleLogin({
-    onSuccess: (codeResponse) => {
-      fetcher.submit({ googleResponse: JSON.stringify(codeResponse) }, { method: 'post' })
-    },
-    // The following causes the page to redirect in a way that I can't really use right now, but I prefer
-    // the experience of redirection
-    // ux_mode: 'redirect',
-    flow: 'auth-code',
-    scope: 'https://www.googleapis.com/auth/calendar.events',
-  })
 
   return (
     <>
@@ -90,14 +76,9 @@ const SignIn = () => {
                 transition={transition}
               />
               <Divider text="Or" />
-
-              <Button
-                color="secondary"
-                width="full"
-                text="Sign in with Google"
-                icon={() => <img src={googlelogo} alt="" className="mr-2 flex h-6 w-6" />}
-                onClick={() => googleLogin()}
-              />
+              <GoogleOAuthProvider clientId={GOOGLE_AUTH_CLIENT_ID}>
+                <GoogleLogin />
+              </GoogleOAuthProvider>
             </div>
           </div>
         </div>
