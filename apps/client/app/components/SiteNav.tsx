@@ -9,14 +9,14 @@ type Props = {
 
 const SiteNav: React.FC<Props> = ({ navItems }) => {
   return (
-    <nav className="divide-primary-400 flex-1 space-y-8 divide-y px-2 pb-4">
+    <nav className="divide-neutral-100 flex-1 space-y-8 divide-y px-2 pb-4">
       {navItems.map((group, index) => (
         <div key={`group${index}`} className="pt-8">
-          {group.map((item) => (
+          {group.map((item: any) => (
             <Fragment key={item.name}>
               {item.type === 'heading' && (
                 <h3
-                  className="text-primary-200 px-3 pb-2 text-xs font-semibold uppercase tracking-widest"
+                  className="text-neutral-400 px-3 pb-2 text-xs font-semibold uppercase tracking-widest"
                   id="projects-headline"
                 >
                   {item.name}
@@ -28,10 +28,10 @@ const SiteNav: React.FC<Props> = ({ navItems }) => {
                   to={item.href}
                   className={({ isActive }) =>
                     classNames(
-                      'text-primary-50 group flex items-center rounded-md py-2 px-2 text-sm font-medium ring-offset-0',
+                      'text-primary-600 group flex items-center rounded-md py-2 px-2 text-sm font-medium ring-offset-0',
                       {
-                        'bg-primary-700 text-primary-100': isActive,
-                        'hover:bg-primary-700': !isActive,
+                        'bg-primary-600 text-white': isActive,
+                        'hover:bg-primary-50': !isActive,
                       }
                     )
                   }
@@ -40,8 +40,8 @@ const SiteNav: React.FC<Props> = ({ navItems }) => {
                     <>
                       <item.icon
                         className={classNames('mr-3 h-6 w-6 flex-shrink-0', {
-                          'text-primary-100': isActive,
-                          'text-primary-200': !isActive,
+                          'text-white': isActive,
+                          'text-gray-300 group-hover:text-gray-400': !isActive,
                         })}
                         aria-hidden="true"
                       />

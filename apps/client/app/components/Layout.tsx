@@ -14,6 +14,8 @@ import Sidebar from './Sidebar'
 import SiteNav from './SiteNav'
 import UserNav from './UserNav'
 
+import logo from '../../images/logo.svg'
+
 type Props = {
   children: React.ReactNode
   sessionData?: SessionData
@@ -76,16 +78,9 @@ const Layout: React.FC<Props> = ({ children, sessionData, globalMessage }) => {
       </Sidebar>
 
       <div className="hidden md:fixed md:inset-y-0 md:flex md:w-72 md:flex-col">
-        <div className="bg-primary-600 flex flex-grow flex-col overflow-y-auto border-r border-gray-200 px-2 pt-5">
-          <div className="px-4">
-            <div className="align-center mb-2 py-2 text-center text-4xl font-normal tracking-wide text-white">
-              Appli<span className="font-medium">Can</span>
-            </div>
-            {/* <img
-              className="h-8 w-auto"
-              src="https://tailwindui.com/img/logos/workflow-logo-primary-600-mark-gray-800-text.svg"
-              alt="Workflow"
-            /> */}
+        <div className="bg-white flex flex-grow flex-col overflow-y-auto border-r border-secondary-100 px-2 pt-5">
+          <div className="px-4 text-center flex align-center justify-center py-6 ">
+            <img src={logo} className="h-7 w-auto flex" alt="AppliCan" />
           </div>
 
           {sessionData && (
@@ -93,19 +88,19 @@ const Layout: React.FC<Props> = ({ children, sessionData, globalMessage }) => {
               navItems={userNavigation}
               positionClasses="right-0 left-0"
               button={() => (
-                <Menu.Button className="hover:bg-primary-100 group w-full rounded-md px-3.5 py-2 text-left text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-gray-100">
+                <Menu.Button className="hover:bg-primary-50 group w-full rounded-md px-3.5 py-2 text-left text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-gray-100">
                   <span className="flex w-full items-center justify-between">
                     <span className="flex min-w-0 items-center justify-between space-x-3">
                       <Avatar name={sessionData?.user.name} imageUrl={sessionData?.user.avatarUrl} size="m" />
                       <span className="flex min-w-0 flex-1 flex-col">
-                        <span className="text-primary-50 truncate text-sm font-medium">{sessionData?.user?.name}</span>
-                        <span className="text-primary-100 truncate text-sm">
+                        <span className="text-primary-600 truncate text-sm font-medium">{sessionData?.user?.name}</span>
+                        <span className="text-neutral-400 truncate text-sm">
                           {sessionData?.activeOrganisation?.name}
                         </span>
                       </span>
                     </span>
                     <SelectorIcon
-                      className="h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+                      className="h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-secondary-500"
                       aria-hidden="true"
                     />
                   </span>

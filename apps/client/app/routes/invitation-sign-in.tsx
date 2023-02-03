@@ -1,19 +1,19 @@
-import { useActionData, useTransition, useSearchParams, useLoaderData, Link } from '@remix-run/react'
 import type { ActionFunction, LoaderFunction, MetaFunction } from '@remix-run/node'
-import { redirect, json } from '@remix-run/node'
+import { json } from '@remix-run/node'
+import { Link, useActionData, useLoaderData, useSearchParams, useTransition } from '@remix-run/react'
 
-import { createSession, hasSession } from 'app/sessions.server'
 import { api } from 'app/api.server'
-import { safeRedirect, toSentence } from 'app/utils'
-import Alert from 'app/components/Alert'
 import Button from 'app/components/Button'
 import Form, { withValues } from 'app/components/Forms'
-import SignInForm from '~/components/SignInForm'
+import { createSession, hasSession } from 'app/sessions.server'
+import { safeRedirect, toSentence } from 'app/utils'
 import Divider from '~/components/Divider'
 
-import { loginFields, newUserFormFields } from '~/models/users/form'
+import { loginFields } from '~/models/users/form'
 
 import { UnauthorisedResponse } from '~/utils/errors'
+
+import logo from '../../images/logo.svg'
 
 export const meta: MetaFunction = () => {
   return { title: `Accept invitation` }
@@ -64,7 +64,10 @@ const AcceptInvitation = () => {
     <>
       <div className="flex min-h-full flex-col justify-center py-12 px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <h2 className="text-3xl font-extrabold text-gray-900">You've received an invitation</h2>
+          <div className="text-center mb-6">
+            <img src={logo} className="mx-auto h-7 w-auto flex" alt="AppliCan" />
+          </div>
+          <h2 className="text-3xl font-bold text-gray-900">You've received an invitation</h2>
           <p className="mt-2 font-medium">
             <span>
               You're invited to join <strong>{invitation.organisation.name}</strong> with a{' '}

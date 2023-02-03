@@ -421,7 +421,7 @@ const FormLayout: React.FC<FormLayoutProps> = ({
         </div>
         <div
           className={classNames({
-            'bg-gray-50 px-4 py-3 text-right sm:px-6': wrapper === 'auto',
+            'bg-neutral-100 px-4 py-3 text-right sm:px-6': wrapper === 'auto',
             'mt-8': wrapper !== 'auto',
           })}
         >

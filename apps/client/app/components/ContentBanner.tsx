@@ -34,7 +34,7 @@ const ContentBanner: React.FC<Props> = ({
   const hideBannerAction = matches.some((match) => match?.handle?.hideBannerAction || false)
 
   return (
-    <div className="flex-1 bg-white">
+    <div className="flex-1 bg-neutral-100">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-4 ">
         {children && <div className="pb-4">{children}</div>}
         <div className="md:flex md:items-center md:justify-between">

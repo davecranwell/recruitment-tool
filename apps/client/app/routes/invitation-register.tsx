@@ -13,6 +13,8 @@ import Divider from '~/components/Divider'
 
 import { newUserFormFields } from '~/models/users/form'
 
+import logo from '../../images/logo.svg'
+
 export const meta: MetaFunction = () => {
   return { title: `Accept invitation` }
 }
@@ -63,7 +65,10 @@ const AcceptInvitation = () => {
     <>
       <div className="flex min-h-full flex-col justify-center py-12 px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <h2 className="text-3xl font-extrabold text-gray-900">You've received an invitation</h2>
+          <div className="text-center mb-6">
+            <img src={logo} className="mx-auto h-7 w-auto flex" alt="AppliCan" />
+          </div>
+          <h2 className="text-3xl font-bold text-gray-900">You've received an invitation</h2>
           <p className="mt-2 font-medium">
             <span>
               You're invited to join <strong>{invitation.organisation.name}</strong> with a{' '}

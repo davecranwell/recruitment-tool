@@ -36,7 +36,7 @@ const Sidebar: React.FC<Props> = ({ children, sidebarOpen, onSidebarOpen, onSide
             leaveFrom="translate-x-0"
             leaveTo="-translate-x-full"
           >
-            <Dialog.Panel className="bg-primary-700 relative flex w-full max-w-xs flex-1 flex-col bg-white pt-5 pb-4">
+            <Dialog.Panel className="bg-white relative flex w-full max-w-xs flex-1 flex-col bg-white pt-5 pb-4">
               <Transition.Child
                 as={Fragment}
                 enter="ease-in-out duration-300"

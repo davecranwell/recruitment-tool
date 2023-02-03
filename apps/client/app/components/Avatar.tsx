@@ -18,7 +18,12 @@ const Avatar: React.FC<Props> = ({ name = '', size, imageUrl }) => {
   })
 
   return (
-    <span className={classNames('inline-flex items-center justify-center rounded-full bg-gray-300', dimensionClasses)}>
+    <span
+      className={classNames(
+        'border-white border border-solid inline-flex items-center justify-center rounded-full bg-gray-300',
+        dimensionClasses
+      )}
+    >
       <span
         className={classNames('text-g font-medium leading-none text-gray-500', {
           'text-xs': size === 'xs',

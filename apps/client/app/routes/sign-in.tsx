@@ -12,6 +12,8 @@ import Form from 'app/components/Forms'
 import GoogleLogin from 'app/components/GoogleLogin'
 import Divider from '~/components/Divider'
 
+import logo from '../../images/logo.svg'
+
 export const loader: LoaderFunction = async ({ request }) => {
   if (await hasSession(request)) {
     throw redirect('/')
@@ -59,12 +61,11 @@ const SignIn = () => {
     <>
       <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          {/* <img
-            className="mx-auto h-12 w-auto"
-            src="https://tailwindui.com/img/logos/workflow-mark-primary-600.svg"
-            alt="Workflow"
-          /> */}
-          <h2 className="text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
+          <div className="text-center mb-6">
+            <img src={logo} className="mx-auto h-7 w-auto flex" alt="AppliCan" />
+          </div>
+
+          <h2 className="text-center text-3xl font-bold text-gray-900">Sign in to your account</h2>
           <div className="mt-8 shadow sm:mx-auto sm:w-full sm:max-w-md sm:overflow-hidden sm:rounded-lg">
             <div className="bg-white py-6 px-6 sm:p-6">
               <Form
