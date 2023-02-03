@@ -43,12 +43,30 @@ export function ErrorBoundary({ error }: { error: Error }) {
     <html lang="en" className="bg-secondary-100 h-full">
       <head>
         <title>Oh no!</title>
-        <Meta />
         <Links />
       </head>
       <body className="h-full text-slate-800">
         <h1 className="text-2xl font-bold text-gray-900">An error occured</h1>
         {process.env.NODE_ENV === 'development' && error.message}
+      </body>
+      <Scripts />
+    </html>
+  )
+}
+
+export function CatchBoundary() {
+  const caught = useCatch()
+  return (
+    <html lang="en" className="bg-secondary-100 h-full">
+      <head>
+        <title>Oops!</title>
+        <Links />
+      </head>
+      <body>
+        <h1>
+          {caught.status} {caught.statusText}
+        </h1>
+        <Scripts />
       </body>
     </html>
   )
