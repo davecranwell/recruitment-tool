@@ -92,27 +92,24 @@ export class OrganisationService {
     // if you're an org admin, get all projects
     // if you're a regular user, get all projects you're allocated to in some way
     const ability = new Ability(user.abilities)
-    if (ability.can(Action.Manage, new Organisation({ id: organisationId }))) {
-      return await paginate<Project, Prisma.ProjectFindManyArgs>(
-        this.prisma.project,
-        { where: { organisationId }, include: { _count: { select: { positions: true } } } },
-        { ...paginationArgs }
-      )
-    }
+    const isOrgOwner = ability.can(Action.Manage, new Organisation({ id: organisationId }))
+
     return await paginate<Project, Prisma.ProjectFindManyArgs>(
       this.prisma.project,
       {
         where: {
           organisationId,
-          userRoles: {
-            some: {
-              userId: user.id,
-              role: {
-                // TODO: we're specifying these so that other roles in the project (like an interviewee) can't see the wrong stuff
-                in: ['HIRING_MANAGER', 'INTERVIEWER'],
+          ...(!isOrgOwner && {
+            userRoles: {
+              some: {
+                userId: user.id,
+                role: {
+                  // TODO: we're specifying these so that other roles in the project (like an interviewee) can't see the wrong stuff
+                  in: ['HIRING_MANAGER', 'INTERVIEWER'],
+                },
               },
             },
-          },
+          }),
         },
         include: { _count: { select: { positions: true } } },
       },
@@ -126,6 +123,9 @@ export class OrganisationService {
     user: UserEntity,
     paginationArgs: PaginationArgsDto
   ) {
+    const ability = new Ability(user.abilities)
+    const isOrgOwner = ability.can(Action.Manage, new Organisation({ id: organisationId }))
+
     const results = await paginate<Position, Prisma.PositionFindManyArgs>(
       this.prisma.position,
       {
@@ -137,17 +137,19 @@ export class OrganisationService {
         where: {
           organisationId,
           projectId,
-          project: {
-            userRoles: {
-              some: {
-                userId: user.id,
-                role: {
-                  // TODO: we're specifying these so that other roles in the project (like an interviewee) can't see the wrong stuff
-                  in: ['HIRING_MANAGER', 'INTERVIEWER'],
+          ...(!isOrgOwner && {
+            project: {
+              userRoles: {
+                some: {
+                  userId: user.id,
+                  role: {
+                    // TODO: we're specifying these so that other roles in the project (like an interviewee) can't see the wrong stuff
+                    in: ['HIRING_MANAGER', 'INTERVIEWER'],
+                  },
                 },
               },
             },
-          },
+          }),
         },
         include: { project: true },
       },
