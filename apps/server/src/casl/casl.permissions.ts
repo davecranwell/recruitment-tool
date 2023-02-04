@@ -60,12 +60,12 @@ export class CaslPermissions {
         subject: 'Organisation',
       },
       {
-        action: [Action.Manage, Action.Update, Action.Create],
+        action: [Action.Manage, Action.Update, Action.Create, Action.Read],
         subject: 'Project',
         conditions: { organisationId: { $in: orgIdsOwned } },
       },
       {
-        action: [Action.Manage, Action.Update],
+        action: [Action.Manage, Action.Update, Action.Read],
         subject: 'Project',
         conditions: { id: { $in: projectIdsManaged } },
       },

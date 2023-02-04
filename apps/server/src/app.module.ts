@@ -3,12 +3,12 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler'
 import { ScheduleModule } from '@nestjs/schedule'
+// import { SlackModule } from 'nestjs-slack'
 
 import config from './config/configuration'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { AuthenticationModule } from './authentication/authentication.module'
-import { UpdatesModule } from './updates/updates.module'
 import { OrganisationModule } from './organisation/organisation.module'
 import { PositionModule } from './position/position.module'
 import { ApplicantProfileModule } from './applicant-profile/applicant-profile.module'
@@ -38,7 +38,6 @@ import { AssessmentModule } from './assessment/assessment.module'
     }),
     ScheduleModule.forRoot(),
     AuthenticationModule,
-    UpdatesModule,
     OrganisationModule,
     PositionModule,
     ApplicantProfileModule,
@@ -52,6 +51,10 @@ import { AssessmentModule } from './assessment/assessment.module'
     InvitationModule,
     InterviewModule,
     AssessmentModule,
+    // SlackModule.forRoot({
+    //   type: 'api',
+    //   token: 'xoxb-4735546228627-4721145321431-teUuZ8mHywFkDY8skX3jTM5E',
+    // }),
   ],
   controllers: [AppController, ProjectController],
   providers: [

@@ -5,6 +5,7 @@ import {
   ForbiddenException,
   Get,
   HttpStatus,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
@@ -39,13 +40,18 @@ import { PatchOrganisationUserDto } from './dto/patch-organisation-user.dto'
 
 import { Organisation } from './entities/organisation.entity'
 import { OrganisationService } from './organisation.service'
+import { Project } from 'src/project/entities/project.entity'
+import { ProjectService } from 'src/project/project.service'
 
 @ApiTags('Organisations')
 @ApiBearerAuth('access-token')
 @Controller('organisation')
 @UseGuards(JwtAuthenticationGuard)
 export class OrganisationController {
-  constructor(private readonly organisationService: OrganisationService) {}
+  constructor(
+    private readonly organisationService: OrganisationService,
+    private readonly projectService: ProjectService
+  ) {}
 
   @Get(':id')
   @ApiOperation({ summary: 'Get information about one organisation' })
@@ -131,8 +137,8 @@ export class OrganisationController {
   @Get(':id/projects')
   @ApiOperation({ summary: 'List all projects in an organisation' })
   @ApiExtraModels(PaginatedDto)
-  @ApiPaginatedResponse(UserEntity)
-  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(UserEntity))
+  @ApiPaginatedResponse(Project)
+  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Project))
   async findProjects(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
@@ -166,23 +172,30 @@ export class OrganisationController {
 
     if (!ability.can(Action.Read, new Organisation({ id }))) throw new ForbiddenException()
 
-    return this.organisationService.findPositions(id, request.user, false, paginationArgs)
+    return this.organisationService.findPositions(id, request.user, paginationArgs)
   }
 
-  @Get(':id/positions/group-by-project')
-  @ApiOperation({ summary: 'List all positions created for an organisation' })
+  @Get(':id/project/:projectId/positions')
+  @ApiOperation({ summary: 'List positions by project' })
   @ApiExtraModels(PaginatedDto)
   @ApiPaginatedResponse(Position)
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Position))
   async findPositionByProject(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
+    @Param('projectId', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) projectId: number,
     @Query() paginationArgs: PaginationArgsDto
   ) {
+    const project = await this.projectService.findOne(projectId, request.user)
+
+    if (project.organisationId !== id) throw new NotFoundException()
+
     const ability = new Ability(request.user.abilities)
 
-    if (!ability.can(Action.Read, new Organisation({ id }))) throw new ForbiddenException()
+    if (!ability.can(Action.Read, new Organisation({ id })) || !ability.can(Action.Read, new Project(project))) {
+      throw new ForbiddenException()
+    }
 
-    return this.organisationService.findPositions(id, request.user, true, paginationArgs)
+    return this.organisationService.findPositionsByProject(id, projectId, request.user, paginationArgs)
   }
 }

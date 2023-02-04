@@ -4,6 +4,7 @@ import { Project as ProjectModel } from '@prisma/client'
 import { Organisation } from 'src/organisation/entities/organisation.entity'
 import { ProjectUserRole } from 'src/project-user-role/entities/project-user-role.entity'
 import { Position } from 'src/position/entities/position.entity'
+import { Exclude } from 'class-transformer'
 
 export class Project implements ProjectModel {
   @ApiProperty()
@@ -18,7 +19,7 @@ export class Project implements ProjectModel {
   @ApiProperty()
   organisationId: number
 
-  @ApiProperty()
+  @Exclude()
   createdAt: Date
 
   @ApiProperty()

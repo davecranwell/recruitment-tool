@@ -35,6 +35,13 @@ export class OrganisationService {
             },
           ],
         },
+        projects: {
+          create: [
+            {
+              name: 'Default project',
+            },
+          ],
+        },
       },
     })
   }
@@ -88,7 +95,7 @@ export class OrganisationService {
     if (ability.can(Action.Manage, new Organisation({ id: organisationId }))) {
       return await paginate<Project, Prisma.ProjectFindManyArgs>(
         this.prisma.project,
-        { where: { organisationId } },
+        { where: { organisationId }, include: { _count: { select: { positions: true } } } },
         { ...paginationArgs }
       )
     }
@@ -107,14 +114,52 @@ export class OrganisationService {
             },
           },
         },
+        include: { _count: { select: { positions: true } } },
       },
       { ...paginationArgs }
     )
   }
 
-  async findPositions(organisationId: number, user: UserEntity, byProject: boolean, paginationArgs: PaginationArgsDto) {
+  async findPositionsByProject(
+    organisationId: number,
+    projectId: number,
+    user: UserEntity,
+    paginationArgs: PaginationArgsDto
+  ) {
+    const results = await paginate<Position, Prisma.PositionFindManyArgs>(
+      this.prisma.position,
+      {
+        orderBy: {
+          project: {
+            name: 'asc',
+          },
+        },
+        where: {
+          organisationId,
+          projectId,
+          project: {
+            userRoles: {
+              some: {
+                userId: user.id,
+                role: {
+                  // TODO: we're specifying these so that other roles in the project (like an interviewee) can't see the wrong stuff
+                  in: ['HIRING_MANAGER', 'INTERVIEWER'],
+                },
+              },
+            },
+          },
+        },
+        include: { project: true },
+      },
+      { ...paginationArgs }
+    )
+
+    return results
+  }
+
+  async findPositions(organisationId: number, user: UserEntity, paginationArgs: PaginationArgsDto) {
     // if you're an org admin, get all positions
-    // if you're a regular user, get all positions within theprojects you're allocated to
+    // if you're a regular user, get all positions within the projects you're allocated to
     const ability = new Ability(user.abilities)
     if (ability.can(Action.Manage, new Organisation({ id: organisationId }))) {
       return await paginate<Position, Prisma.PositionFindManyArgs>(
@@ -123,6 +168,7 @@ export class OrganisationService {
         { ...paginationArgs }
       )
     }
+
     const results = await paginate<Position, Prisma.PositionFindManyArgs>(
       this.prisma.position,
       {
@@ -149,13 +195,7 @@ export class OrganisationService {
       },
       { ...paginationArgs }
     )
-    // TODO: Remove me once we're happy ClassSerializer is handling this well enough
-    // strip salary range where role for this position is unsuitable
-    // results.data.forEach((position) => {
-    //   if (!position.userRoles.every((userRole) => userRole.role === 'HIRING_MANAGER')) {
-    //     delete position.salaryRange
-    //   }
-    // })
+
     return results
   }
 

@@ -1,11 +1,9 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common'
-import { Prisma } from '@prisma/client'
 import { Ability } from '@casl/ability'
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common'
 
-import { PaginatedDto, PaginationArgsDto } from 'src/page/pagination-args.dto'
+import { Action } from 'src/casl/actions'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { createPaginator } from 'src/util/pagination'
-import { Action } from 'src/casl/actions'
 
 import { Project } from 'src/project/entities/project.entity'
 import { UserEntity } from 'src/user/entities/user.entity'
@@ -50,6 +48,8 @@ export class ProjectService {
     const ability = new Ability(user.abilities)
 
     const project = await this.findOne(id, user)
+
+    //this.slack.postMessage({ text: 'hi', channel: 'recruitment-app' })
 
     if (!ability.can(Action.Update, new Project(project))) throw new ForbiddenException()
 
