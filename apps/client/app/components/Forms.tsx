@@ -164,9 +164,9 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                   {field.required && <span className="text-sm text-red-600">&nbsp; *</span>}
                 </label>
               )}
-              {field.type === 'radio' && field.hint && (
+              {/* {field.type === 'radio' && field.hint && (
                 <p className="text-sm leading-5 text-gray-500">How do you prefer to receive notifications?</p>
-              )}
+              )} */}
               <div className="relative mt-1">
                 {['text', 'email', 'number', 'password', 'url', 'date', 'datetime-local'].includes(field.type) && (
                   <input
