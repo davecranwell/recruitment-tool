@@ -15,6 +15,7 @@ import SiteNav from './SiteNav'
 import UserNav from './UserNav'
 
 import logo from '../../images/logo.svg'
+import { Link } from '@remix-run/react'
 
 type Props = {
   children: React.ReactNode
@@ -62,7 +63,7 @@ const Layout: React.FC<Props> = ({ children, sessionData, globalMessage }) => {
   ]
 
   if (sessionData?.activeOrganisation && sessionData?.user?.organisations?.length > 1) {
-    userNavigation.push({
+    userNavigation.unshift({
       name: 'Change organisation',
       href: '/choose-organisation',
     })
@@ -80,7 +81,9 @@ const Layout: React.FC<Props> = ({ children, sessionData, globalMessage }) => {
       <div className="hidden md:fixed md:inset-y-0 md:flex md:w-72 md:flex-col">
         <div className="bg-white flex flex-grow flex-col overflow-y-auto border-r border-secondary-100 px-2 pt-5">
           <div className="px-4 text-center flex align-center justify-center py-6 ">
-            <img src={logo} className="h-7 w-auto flex" alt="AppliCan" />
+            <Link to="/">
+              <img src={logo} className="h-7 w-auto flex" alt="AppliCan" />
+            </Link>
           </div>
 
           {sessionData && (

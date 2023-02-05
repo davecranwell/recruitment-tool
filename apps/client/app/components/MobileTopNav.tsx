@@ -16,7 +16,7 @@ type Props = {
 const MobileTopNav: React.FC<Props> = ({ userNavigation, onSidebarOpen, user }) => {
   return (
     <div className="bg-white shadow md:hidden">
-      <div className="px-4 sm:px-6 lg:mx-auto lg:max-w-6xl lg:px-8">
+      <div className="lg:mx-auto lg:max-w-6xl lg:px-8">
         <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 border-b border-gray-200 bg-white">
           <button
             type="button"

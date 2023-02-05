@@ -48,3 +48,7 @@ export function toSentence(string: string) {
     .replace('_', ' ')
     .replace(/^./, (str) => str.toUpperCase())
 }
+
+export function getVal(object: any, path: string) {
+  return path.split('.').reduce((res, prop) => res[prop], object)
+}

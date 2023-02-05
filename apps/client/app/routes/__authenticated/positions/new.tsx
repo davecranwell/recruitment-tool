@@ -1,12 +1,20 @@
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
-import { Link, RouteMatch, useActionData, useLoaderData, useTransition } from '@remix-run/react'
+import {
+  Link,
+  RouteMatch,
+  useActionData,
+  useLoaderData,
+  useParams,
+  useSearchParams,
+  useTransition,
+} from '@remix-run/react'
 
 import { api } from 'app/api.server'
 import { requireAuth } from 'app/sessions.server'
 
 import Content from 'app/components/Content'
-import Form from 'app/components/Forms'
+import Form, { withValues } from 'app/components/Forms'
 
 import formFields from 'app/models/positions/form'
 
@@ -39,10 +47,18 @@ const NewPosition = () => {
   const { fields } = useLoaderData()
   const errors = useActionData()
   const transition = useTransition()
+  const [searchParams] = useSearchParams()
+
+  const preselectedProject = searchParams.get('projectId')
 
   return (
     <Content title={'Create a position'}>
-      <Form submitText="Create this position" fields={fields} errors={errors} transition={transition} />
+      <Form
+        submitText="Create this position"
+        fields={withValues(fields, { projectId: preselectedProject })}
+        errors={errors}
+        transition={transition}
+      />
     </Content>
   )
 }

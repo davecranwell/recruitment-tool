@@ -18,10 +18,10 @@ const Empty: React.FC<Props> = ({ icon, title, createLink, createText, intro }) 
   const Icon = icon
 
   return (
-    <div className="text-center">
+    <div className="text-center mx-auto max-w-lg">
       <Icon className="mx-auto h-12 w-12 text-gray-400" />
 
-      <h3 className="mt-2 text-sm font-medium text-gray-900">{title}</h3>
+      <h3 className="py-4 text-base font-medium">{title}</h3>
       {intro && <p className="mt-1 text-sm text-gray-500">{intro}.</p>}
       {createLink && (
         <div className="mt-6">
