@@ -128,7 +128,6 @@ export class OrganisationController {
     @Body() patchData: PatchOrganisationUserDto
   ) {
     const ability = new Ability(request.user.abilities)
-
     if (!ability.can(Action.Manage, new Organisation({ id }))) throw new ForbiddenException()
 
     return this.organisationService.patchUser(id, userId, patchData)

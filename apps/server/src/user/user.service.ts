@@ -1,13 +1,12 @@
-import { NotFoundException, HttpStatus, Injectable, ForbiddenException } from '@nestjs/common'
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common'
 import * as bcrypt from 'bcrypt'
 
+import { Ability } from '@casl/ability'
+import { Invitation } from '@prisma/client'
+import { Action } from 'src/casl/actions'
+import { CaslPermissions } from 'src/casl/casl.permissions'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { UserEntity } from './entities/user.entity'
-import { FindOneDto } from 'src/util/shared.dto'
-import { CaslPermissions } from 'src/casl/casl.permissions'
-import { Invitation, User } from '@prisma/client'
-import { Ability } from '@casl/ability'
-import { Action } from 'src/casl/actions'
 
 @Injectable()
 export class UserService {
@@ -99,30 +98,33 @@ export class UserService {
     throw new NotFoundException('User with this email does not exist')
   }
 
-  async create(
-    accountData: {
-      name: string
-      email: string
-      avatarUrl?: string
-      password?: string
-      OAuth2Tokens?: object
-      isRegisteredWithGoogle?: boolean
-    },
-    invitation?: Invitation
-  ): Promise<UserEntity> {
+  async addToOrgFromInvitation(userId: number, invitation: Invitation) {
     const { role, organisationId } = invitation || {}
 
-    return new UserEntity(
-      await this.prisma.user.create({
-        data: {
-          ...accountData,
-          organisations: invitation && {
-            create: {
-              role,
-              organisationId,
-            },
+    return await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        organisations: {
+          create: {
+            role,
+            organisationId,
           },
         },
+      },
+    })
+  }
+
+  async create(accountData: {
+    name: string
+    email: string
+    avatarUrl?: string
+    password?: string
+    OAuth2Tokens?: object
+    isRegisteredWithGoogle?: boolean
+  }): Promise<UserEntity> {
+    return new UserEntity(
+      await this.prisma.user.create({
+        data: accountData,
       })
     )
   }

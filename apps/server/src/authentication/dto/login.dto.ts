@@ -60,4 +60,8 @@ export class GoogleAuthDto {
 
   @IsNotEmpty()
   scope: string
+
+  // this field is really only for browser-based login
+  // therefore not mentioned in API docs
+  token: string
 }

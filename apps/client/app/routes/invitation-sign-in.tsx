@@ -1,23 +1,22 @@
 import type { ActionFunction, LoaderFunction, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { Link, useActionData, useLoaderData, useSearchParams, useTransition } from '@remix-run/react'
+import { GoogleOAuthProvider } from '@react-oauth/google'
 
 import { api } from 'app/api.server'
+import { createSession, hasSession } from 'app/sessions.server'
+
 import Button from 'app/components/Button'
 import Form, { withValues } from 'app/components/Forms'
-import { createSession, hasSession } from 'app/sessions.server'
+import GoogleLogin from 'app/components/GoogleLogin'
+import Divider from 'app/components/Divider'
+
 import { safeRedirect, toSentence } from 'app/utils'
-import Divider from '~/components/Divider'
+import { UnauthorisedResponse } from 'app/utils/errors'
 
-import { loginFields } from '~/models/users/form'
-
-import { UnauthorisedResponse } from '~/utils/errors'
+import { loginFields, loginToAcceptInvitationFields } from 'app/models/users/form'
 
 import logo from '../../images/logo.svg'
-
-export const meta: MetaFunction = () => {
-  return { title: `Accept invitation` }
-}
 
 export const loader: LoaderFunction = async (data) => {
   const { request } = data
@@ -31,19 +30,30 @@ export const loader: LoaderFunction = async (data) => {
 
   const invitation = await invitationRes.json()
 
-  return json({ session, invitation })
+  return json({ session, invitation, GOOGLE_AUTH_CLIENT_ID: process.env.GOOGLE_AUTH_CLIENT_ID })
+}
+
+export const meta: MetaFunction = () => {
+  return { title: `Accept invitation` }
 }
 
 export const action: ActionFunction = async (data) => {
   const { request } = data
   const body = await request.formData()
 
+  const googleResponse = body.get('googleResponse') as string
   const redirectTo = safeRedirect(body.get('redirectTo'), '/')
 
-  const authentication = await api(data, '/authentication/log-in', 'POST', {
-    email: body.get('email'),
-    password: body.get('password'),
-  })
+  const authentication = googleResponse
+    ? await api(data, `/authentication/register/invitation/google`, 'POST', {
+        ...JSON.parse(googleResponse),
+        token: body.get('token'),
+      })
+    : await api(data, `/authentication/log-in`, 'POST', {
+        email: body.get('email'),
+        password: body.get('password'),
+        token: body.get('token'),
+      })
 
   if (authentication.ok) {
     return createSession(await authentication.json(), redirectTo)
@@ -53,7 +63,7 @@ export const action: ActionFunction = async (data) => {
 }
 
 const AcceptInvitation = () => {
-  const { session, invitation } = useLoaderData()
+  const { session, invitation, GOOGLE_AUTH_CLIENT_ID } = useLoaderData()
   const errors = useActionData()
   const transition = useTransition()
   const [searchParams] = useSearchParams()
@@ -70,34 +80,44 @@ const AcceptInvitation = () => {
           <h2 className="text-3xl font-bold text-gray-900">You've received an invitation</h2>
           <p className="mt-2 font-medium">
             <span>
-              You're invited to join <strong>{invitation.organisation.name}</strong> with a{' '}
-              <strong>{toSentence(invitation.role)}</strong> role.
+              You're invited to join the organisation <strong>{invitation.organisation.name}</strong> with the role of{' '}
+              <strong>{toSentence(invitation.role)}</strong>.
             </span>
           </p>
 
-          {session ? (
-            <Button type="button" text="Accept invitation" />
-          ) : (
-            <>
-              <div className="mt-8 shadow sm:mx-auto sm:w-full sm:max-w-md sm:overflow-hidden sm:rounded-lg">
-                <div className="bg-white py-6 px-6 sm:p-6">
-                  <Form
-                    name="foo"
-                    wrapper="none"
-                    submitText="Sign in"
-                    submitWidth="full"
-                    intro={<span className="text-base">Sign in to accept your invitation</span>}
-                    fields={withValues(loginFields(), { email: invitation.email, token: searchParams.get('token') })}
-                    errors={errors}
-                    transition={transition}
-                  />
-                  <Divider text="Or if you don't have an account yet" className="py-8" />
-                  <Link to={`/invitation-register?token=${token}`}>
-                    <Button text="Register now to accept invitation" color="secondary" width="full" />
-                  </Link>
-                </div>
+          <div className="mt-8">
+            {session ? (
+              <div className="flex justify-center">
+                <Button type="button" text="Accept invitation" />
               </div>
-              {/* <div className="border-l-4 border-gray-100">
+            ) : (
+              <>
+                <div className="shadow sm:mx-auto sm:w-full sm:max-w-md sm:overflow-hidden sm:rounded-lg">
+                  <div className="bg-white py-6 px-6 sm:p-6">
+                    <Form
+                      name="foo"
+                      wrapper="none"
+                      submitText="Sign in"
+                      submitWidth="full"
+                      intro={<span className="text-base">Sign in to accept your invitation</span>}
+                      fields={withValues(loginToAcceptInvitationFields(), {
+                        email: invitation.email,
+                        token: searchParams.get('token'),
+                      })}
+                      errors={errors}
+                      transition={transition}
+                    />
+                    <Divider text="Or" />
+                    <GoogleOAuthProvider clientId={GOOGLE_AUTH_CLIENT_ID}>
+                      <GoogleLogin text="Sign in with Google" extraData={{ token }} />
+                    </GoogleOAuthProvider>
+                    <Divider text="Or if you don't have an account yet" className="py-8" />
+                    <Link to={`/invitation-register?token=${token}`}>
+                      <Button text="Register now to accept invitation" color="secondary" width="full" />
+                    </Link>
+                  </div>
+                </div>
+                {/* <div className="border-l-4 border-gray-100">
                 <Form
                   submitText="Register your account"
                   intro="Create an account below to accept your invitation"
@@ -106,8 +126,9 @@ const AcceptInvitation = () => {
                   transition={transition}
                 />
               </div> */}
-            </>
-          )}
+              </>
+            )}
+          </div>
         </div>
       </div>
     </>

@@ -56,9 +56,9 @@ export class AuthenticationController {
   // }
 
   //@ApiOkResponse({ type: UsersInOrganisation })
-  @Post('register/invitation')
   @UseGuards(InvitationCodeGuardBody)
   @UseInterceptors(ClassSerializerInterceptor)
+  @Post('register/invitation')
   async acceptInvitation(@Req() request, @Body() registrationData: RegisterFromInvitationDto) {
     const { user: invitation } = request
 
@@ -68,9 +68,20 @@ export class AuthenticationController {
     return await this.authenticationService.signInById(registeredUser.id)
   }
 
+  @UseGuards(InvitationCodeGuardBody)
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post('register/invitation/google')
+  async acceptInvitationGoogle(@Req() request, @Body() registrationData: GoogleAuthDto) {
+    const { user: invitation } = request
+
+    const user = await this.googleAuthenticationService.findUserOrRegister(registrationData.code)
+    await this.authenticationService.registerFromInvitationWithGoogle(user.id, invitation)
+    return this.authenticationService.signInById(user.id)
+  }
+
   @ApiOkResponse({ type: () => LoginResponseDto })
   @UseGuards(LocalAuthenticationGuard)
-  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(LoginResponseDto))
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post('log-in')
   async logIn(@Req() request: RequestWithUser) {
     const { user } = request
@@ -83,7 +94,8 @@ export class AuthenticationController {
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('log-in/google')
   async logInGoogle(@Body() body: GoogleAuthDto) {
-    return await this.googleAuthenticationService.signinWithGoogle(body.code)
+    const user = await this.googleAuthenticationService.findUserOrRegister(body.code)
+    return this.authenticationService.signInById(user.id)
   }
 
   @ApiOkResponse()

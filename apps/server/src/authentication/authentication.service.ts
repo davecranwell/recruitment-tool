@@ -30,7 +30,8 @@ export class AuthenticationService {
 
   //   try {
   //     return await this.userService.create({
-  //       ...registrationData,
+  //      name: registrationData.name,
+  //      email: invitation.email,
   //       password: hashedPassword,
   //     })
   //   } catch (error) {
@@ -56,15 +57,13 @@ export class AuthenticationService {
     const hashedPassword = registrationData.password ? await bcrypt.hash(registrationData.password, 10) : null
 
     try {
-      const user = await this.userService.create(
-        {
-          name: registrationData.name,
-          email: invitation.email,
-          password: hashedPassword,
-        },
-        invitation
-      )
+      const user = await this.userService.create({
+        name: registrationData.name,
+        email: invitation.email,
+        password: hashedPassword,
+      })
 
+      await this.userService.addToOrgFromInvitation(user.id, invitation)
       await this.invitationService.remove(invitation.id)
 
       return user
@@ -74,6 +73,11 @@ export class AuthenticationService {
       }
       throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR)
     }
+  }
+
+  public async registerFromInvitationWithGoogle(userId: number, invitation: Invitation) {
+    await this.userService.addToOrgFromInvitation(userId, invitation)
+    return this.invitationService.remove(invitation.id)
   }
 
   public generateJwtToken(userId: number) {

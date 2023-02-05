@@ -1,5 +1,6 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+import { Invitation } from '@prisma/client'
 import { Auth, google } from 'googleapis'
 
 import { UserService } from '../user/user.service'
@@ -29,7 +30,7 @@ export class GoogleAuthenticationService {
     this.oauthClient = new google.auth.OAuth2(clientId, clientSecret, 'postmessage')
   }
 
-  async signinWithGoogle(code: string) {
+  async findUserOrRegister(code: string) {
     //exchange code for access_token and refresh token
     const { tokens } = await this.oauthClient.getToken(code)
 
@@ -44,15 +45,15 @@ export class GoogleAuthenticationService {
         throw new UnauthorizedException()
       }
 
-      return this.authenticationService.signInById(user.id)
+      return user
     } catch (error) {
       if (error.status !== 404) {
         throw new Error(error.message)
       }
 
-      const newUser = await this.register(tokens, email)
+      const user = await this.register(tokens, email)
 
-      return this.authenticationService.signInById(newUser.id)
+      return user
     }
   }
 
