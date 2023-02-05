@@ -79,7 +79,14 @@ export class OrganisationService {
           },
         },
         data: {
-          role: patchData.role,
+          ...(patchData.name && {
+            user: {
+              update: {
+                name: patchData.name,
+              },
+            },
+          }),
+          ...(patchData.role && { role: patchData.role }),
         },
       })
       return new UsersInOrganisation(user)

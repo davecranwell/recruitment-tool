@@ -1,10 +1,16 @@
+import { ApiProperty } from '@nestjs/swagger'
 import { UserRoleType } from '@prisma/client'
-import { ApiProperty, PartialType } from '@nestjs/swagger'
-import { IsEmail, IsString, IsNotEmpty, MinLength, MaxLength, IsNumber, IsEnum } from 'class-validator'
+import { IsEnum, IsNotEmpty, IsOptional } from 'class-validator'
 
 export class PatchOrganisationUserDto {
-  @ApiProperty({ required: true, enum: UserRoleType })
+  @ApiProperty({ enum: UserRoleType })
   @IsNotEmpty()
   @IsEnum(UserRoleType)
+  @IsOptional()
   role: UserRoleType
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsOptional()
+  name: string
 }
