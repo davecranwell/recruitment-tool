@@ -7,7 +7,10 @@ type Props = {
 }
 
 const Avatar: React.FC<Props> = ({ name = '', size, imageUrl }) => {
-  const initials = name.replace(/(\w).*\b(\w).*\b/, '$1$2').toUpperCase()
+  const initials = name
+    .replace(/(\w).*\b(\w).*\b/, '$1$2')
+    .toUpperCase()
+    .substring(0, 3)
 
   const dimensionClasses = classNames({
     'h-6 w-6': size === 'xs',
@@ -33,12 +36,7 @@ const Avatar: React.FC<Props> = ({ name = '', size, imageUrl }) => {
         })}
       >
         {imageUrl ? (
-          <img
-            referrerPolicy="no-referrer"
-            className={`inline-block rounded-full ${dimensionClasses}`}
-            src={imageUrl}
-            alt=""
-          />
+          <img referrerPolicy="no-referrer" className={`inline-block rounded-full`} src={imageUrl} alt="" />
         ) : (
           initials
         )}
