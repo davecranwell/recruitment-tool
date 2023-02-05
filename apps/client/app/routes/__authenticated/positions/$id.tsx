@@ -44,7 +44,7 @@ const PositionDetail = () => {
       // primaryAction={{ label: 'Create', link: '/positions/new' }}
       secondaryAction={{ label: 'Edit', link: `/positions/${id}/edit` }}
     >
-      <MetaList className="mt-2">
+      <MetaList className="mb-4">
         <MetaListItem
           icon={CurrencyDollarIcon}
           title="This is privileged information only available to certain roles in your organisation. Take care if taking screenshots of this page"

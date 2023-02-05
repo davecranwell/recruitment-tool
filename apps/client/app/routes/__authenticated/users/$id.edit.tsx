@@ -21,7 +21,7 @@ export const action: ActionFunction = async (data) => {
 
   const result = await api(data, `/organisation/${sessionData.activeOrganisation.id}/user/${params.id}`, 'PATCH', body)
   const headers = result.ok
-    ? await notify(session).success('Member role updated')
+    ? await notify(session).success('User updated')
     : await notify(session).error('An error occured')
 
   if (result.ok) return redirect(`/users`, { headers })
@@ -36,7 +36,8 @@ export const loader: LoaderFunction = async (data) => {
 
   const userRes = await api(data, `/organisation/${sessionData.activeOrganisation.id}/user/${params.id}`)
   const user = await userRes.json()
-  const fields = withValues(editUserFormFields(), user)
+
+  const fields = withValues(editUserFormFields(), { ...user, ...user.user })
 
   return json({ user, fields })
 }

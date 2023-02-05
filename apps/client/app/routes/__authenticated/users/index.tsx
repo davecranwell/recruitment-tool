@@ -1,9 +1,8 @@
 import { UserIcon } from '@heroicons/react/outline'
 import { json, LoaderFunction, MetaFunction } from '@remix-run/node'
-import { Outlet, useLoaderData, useOutletContext } from '@remix-run/react'
+import { Outlet, useLoaderData } from '@remix-run/react'
 
 import { api } from 'app/api.server'
-import type { SessionData } from '~/sessions.server'
 import { getSessionData, requireAuth } from '~/sessions.server'
 
 import Avatar from 'app/components/Avatar'
@@ -11,13 +10,11 @@ import Content from 'app/components/Content'
 import Empty from 'app/components/Empty'
 import { StackedList, StackedListItem } from 'app/components/StackedList'
 
-import { useAppAbility } from 'app/hooks/useAppAbility'
 import type { UserInOrganisation } from 'app/models/users/User'
 
 export const loader: LoaderFunction = async (data) => {
   const { request } = data
-  await requireAuth(request)
-  const sessionData = await getSessionData(request)
+  const { sessionData } = await requireAuth(request)
 
   const users = await api(data, `/organisation/${sessionData.activeOrganisation.id}/users`)
 
@@ -29,42 +26,21 @@ export const meta: MetaFunction = ({ data }) => {
 }
 
 const Users = () => {
-  const sessionData = useOutletContext<SessionData>()
-  const { users } = useLoaderData()
-
-  const { can, subject } = useAppAbility()
-
-  const canCreateProject = can('manage', subject('Organisation', sessionData?.activeOrganisation))
+  const { sessionData, users } = useLoaderData()
 
   return (
-    <Content
-      title={'Users'}
-      primaryAction={
-        users.data.length &&
-        canCreateProject && {
-          label: 'Invite',
-          link: '/users/invite',
-        }
-      }
-    >
-      <StackedList
-        items={users.data}
-        fallback={() => (
-          <Empty
-            icon={UserIcon}
-            title={'No users have been added'}
-            createText={'Invite some now '}
-            createLink={canCreateProject ? '/users/invite' : null}
-          />
-        )}
-      >
+    <Content>
+      <StackedList items={users.data} fallback={() => <Empty icon={UserIcon} title={'No users have been added'} />}>
         {users.data.map((user: UserInOrganisation) => (
           <StackedListItem key={user.user.id} link={`/users/${user.user.id}/edit`}>
             <div className="flex min-w-0 flex-1 items-center">
               <Avatar name={user.user.name} imageUrl={user.user.avatarUrl} size="m" />
               <div className="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
                 <div>
-                  <p className="text-primary-600 truncate text-sm font-medium">{user.user.name}</p>
+                  <p className="text-primary-600 truncate text-sm font-medium">
+                    {user.user.name}
+                    {user?.user?.id === sessionData?.user?.id && <span className="text-slate-800">&nbsp;(You)</span>}
+                  </p>
                   <p className="mt-2 flex items-center text-sm text-gray-500">
                     <span className="truncate">{user.user.email}</span>
                   </p>
