@@ -49,7 +49,7 @@ const Projects = () => {
       >
         {projects.data.map((project: Project) => (
           <StackedListItem key={project.id} link={`/projects/${project.id}/edit`}>
-            <div className="flex items-center justify-between text-sm font-medium">
+            <div className="flex items-center justify-between font-medium">
               <p className="text-primary-600 truncate ">{project.name}</p>
             </div>
           </StackedListItem>

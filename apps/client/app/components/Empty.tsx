@@ -21,7 +21,7 @@ const Empty: React.FC<Props> = ({ icon, title, createLink, createText, intro }) 
     <div className="text-center mx-auto max-w-lg">
       <Icon className="mx-auto h-12 w-12 text-gray-400" />
 
-      <h3 className="py-4 text-base font-medium">{title}</h3>
+      <h3 className="py-4 text-lg font-medium">{title}</h3>
       {intro && <p className="mt-1 text-sm text-gray-500">{intro}.</p>}
       {createLink && (
         <div className="mt-6">

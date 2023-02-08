@@ -24,7 +24,7 @@ const Tabs: React.FC<Props> = ({ tabs }) => {
         <select
           id="tabs"
           name="tabs"
-          className="focus:border-primary-500 focus:ring-primary-500 mt-4 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:outline-none sm:text-sm"
+          className="focus:border-primary-500 focus:ring-primary-500 mt-4 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:outline-none"
         >
           {tabs.map((tab) => (
             <option key={tab.name}>{tab.name}</option>
@@ -44,7 +44,7 @@ const Tabs: React.FC<Props> = ({ tabs }) => {
                     isActive
                       ? 'border-primary-600 text-primary-600'
                       : 'hover:border-primary-400 border-transparent text-gray-500 hover:text-gray-700',
-                    'whitespace-nowrap border-b-4 py-4 px-6 text-sm font-medium'
+                    'whitespace-nowrap border-b-4 py-4 px-6 font-medium'
                   )
                 }
               >

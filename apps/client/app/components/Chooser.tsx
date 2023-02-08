@@ -24,12 +24,12 @@ const Chooser: React.FC<Props> = ({ value, className, label, items, onChange = (
     >
       {({ open }) => (
         <div className={className}>
-          {/* {label && <Listbox.Label className="block text-sm font-bold text-gray-700">{label}</Listbox.Label>} */}
+          {/* {label && <Listbox.Label className="block font-bold text-gray-700">{label}</Listbox.Label>} */}
           <div className="relative mt-2">
-            <Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 text-sm">
+            <Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">
               <span className="flex items-center">
                 <span className="block truncate">
-                  {label && <span className="text-sm font-bold text-gray-700">{label}:</span>} {selected.key}
+                  {label && <span className="font-bold text-gray-700">{label}:</span>} {selected.key}
                 </span>
                 <span className={'ml-auto inline-block py-0.5 px-3 text-xs rounded-full bg-gray-50'}>
                   {selected.count}

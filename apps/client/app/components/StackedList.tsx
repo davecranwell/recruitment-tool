@@ -28,7 +28,7 @@ type StackedListItemProps = {
 export const StackedListItem: React.FC<StackedListItemProps> = ({ children, link }) => {
   return (
     <li>
-      <Link to={link} className="block hover:bg-gray-50">
+      <Link to={link} className="block hover:bg-slate-50">
         <div className="px-4 py-4 sm:px-6">{children}</div>
       </Link>
     </li>

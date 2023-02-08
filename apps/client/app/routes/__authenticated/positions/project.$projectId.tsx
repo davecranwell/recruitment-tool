@@ -17,6 +17,7 @@ import { dateTimeFormat } from 'app/utils'
 import Chooser from '~/components/Chooser'
 import type { Position } from '~/models/positions/Position'
 import type { Project } from '~/models/projects/Project'
+import Button from '~/components/Button'
 
 export const handle = {
   hideBannerAction: true,
@@ -79,13 +80,13 @@ const Positions = () => {
             />
             <div className="mt-3 flex sm:mt-0 sm:ml-4">
               {canCreatePosition && (
-                <Link
+                <Button
+                  component={Link}
+                  color="primary"
                   to={`/positions/new?projectId=${projectId}`}
-                  className="bg-primary-600 hover:bg-primary-700 focus:ring-primary-500 inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2"
-                >
-                  <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-                  Create new position
-                </Link>
+                  text="Create new position"
+                  icon={PlusIcon}
+                />
               )}
             </div>
           </>
@@ -100,14 +101,14 @@ const Positions = () => {
         {positions.data.map((position: Position) => (
           <StackedListItem key={position.id} link={`/positions/${position.id}`}>
             <div className="flex items-center justify-between">
-              <p className="text-primary-600 truncate text-sm font-medium">{position.name}</p>
+              <p className="text-primary-600 truncate font-medium">{position.name}</p>
               <div className="ml-2 flex flex-shrink-0">
                 {/* <p className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
                 {position.type}
               </p> */}
               </div>
             </div>
-            <MetaList className="mt-2">
+            <MetaList className="mt-2 text-sm">
               <MetaListItem
                 icon={CurrencyDollarIcon}
                 title="This is privileged information only available to certain roles in your organisation. Take care if taking screenshots of this page"

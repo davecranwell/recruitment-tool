@@ -61,7 +61,7 @@ const Notifications: React.FC<Props> = ({ messages }) => {
           >
             <div className="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
               <div className="p-4">
-                <div className="flex items-start">
+                <div className="flex items-center">
                   <div className="flex-shrink-0">
                     {type === 'error' && <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />}
                     {type === 'success' && <CheckCircleIcon className="h-5 w-5 text-green-400" aria-hidden="true" />}
@@ -70,7 +70,7 @@ const Notifications: React.FC<Props> = ({ messages }) => {
                   </div>
                   <div className="ml-3 w-0 flex-1 pt-0.5">
                     <h3
-                      className={classNames('text-sm font-medium', {
+                      className={classNames('font-medium', {
                         'text-green-800': type === 'success',
                         'text-blue-800': type === 'info',
                         'text-orange-800': type === 'warning',

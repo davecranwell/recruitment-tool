@@ -26,7 +26,7 @@ const PersonHeader: React.FC<Props> = ({ children, user }) => {
         </div>
         <div>
           <h1 className="text-2xl font-bold text-gray-900">{user.name}</h1>
-          {/* <p className="text-sm font-medium text-gray-500">
+          {/* <p className="font-medium text-gray-500">
                 Applied for{' '}
                 <a href="#" className="text-gray-900">
                   Front End Developer

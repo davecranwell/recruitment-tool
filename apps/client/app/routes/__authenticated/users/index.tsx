@@ -37,7 +37,7 @@ const Users = () => {
               <Avatar name={user.user.name} imageUrl={user.user.avatarUrl} size="m" />
               <div className="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
                 <div>
-                  <p className="text-primary-600 truncate text-sm font-medium">
+                  <p className="text-primary-600 truncate font-medium">
                     {user.user.name}
                     {user?.user?.id === sessionData?.user?.id && <span className="text-slate-800">&nbsp;(You)</span>}
                   </p>

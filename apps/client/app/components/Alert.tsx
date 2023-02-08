@@ -31,7 +31,7 @@ const Alert: React.FC<AlertProps> = ({ message, type }) => {
         </div>
         <div className="ml-3">
           <h3
-            className={classNames('text-sm font-medium', {
+            className={classNames('font-medium', {
               'text-green-800': type === 'success',
               'text-blue-800': type === 'info',
               'text-orange-800': type === 'warning',
@@ -46,7 +46,7 @@ const Alert: React.FC<AlertProps> = ({ message, type }) => {
           </h3>
           {!Array.isArray(message) && typeof message !== 'string' && message.description && (
             <div
-              className={classNames('mt-2 text-sm', {
+              className={classNames('mt-2', {
                 'text-green-700': type === 'success',
                 'text-blue-700': type === 'info',
                 'text-orange-700': type === 'warning',

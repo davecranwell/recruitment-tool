@@ -35,9 +35,9 @@ const StageAdvance: React.FC<Props> = ({ stages, currentStageIndex, onChange = (
                 <div className="bg-primary-600 relative inline-flex items-center rounded-l-md border border-transparent py-2 pl-3 pr-4 text-white shadow-sm">
                   <CheckIcon className="h-5 w-5" aria-hidden="true" />
 
-                  {currentStage && <p className="ml-2.5 text-sm font-medium">{currentStage.stage.name}</p>}
+                  {currentStage && <p className="ml-2.5 font-medium">{currentStage.stage.name}</p>}
                 </div>
-                <Listbox.Button className="bg-primary-600 hover:bg-primary-700 focus:ring-primary-600 relative inline-flex items-center rounded-l-none rounded-r-md p-2 text-sm font-medium text-white focus:z-10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50">
+                <Listbox.Button className="bg-primary-600 hover:bg-primary-700 focus:ring-primary-600 relative inline-flex items-center rounded-l-none rounded-r-md p-2 font-medium text-white focus:z-10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50">
                   <span className="sr-only">Change published status</span>
                   <ChevronDownIcon className="h-5 w-5 text-white" aria-hidden="true" />
                 </Listbox.Button>
@@ -58,7 +58,7 @@ const StageAdvance: React.FC<Props> = ({ stages, currentStageIndex, onChange = (
                     <Listbox.Option
                       key={stageInPipeline.stageId}
                       className={({ active }) =>
-                        classNames('relative cursor-default select-none p-4 text-sm', {
+                        classNames('relative cursor-default select-none p-4', {
                           'bg-primary-500 text-white': active,
                           'text-gray-900': !active,
                         })

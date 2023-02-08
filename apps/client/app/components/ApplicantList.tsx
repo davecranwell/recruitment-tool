@@ -23,7 +23,7 @@ const ApplicantList: React.FC<Props> = ({ applicants = [], emptyText = 'There ar
               <div className="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
                 {applicant.user && (
                   <div>
-                    <p className="text-primary-600 truncate text-sm font-medium">{applicant.user.name}</p>
+                    <p className="text-primary-600 truncate font-medium">{applicant.user.name}</p>
                     <p className="mt-2 flex items-center text-sm text-gray-500">
                       <MailIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
                       <span className="truncate">{applicant.user.email}</span>

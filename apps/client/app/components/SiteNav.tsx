@@ -28,10 +28,10 @@ const SiteNav: React.FC<Props> = ({ navItems }) => {
                   to={item.href}
                   className={({ isActive }) =>
                     classNames(
-                      'text-primary-600 group flex items-center rounded-md py-2 px-2 text-sm font-medium ring-offset-0',
+                      'text-neutral-400 group flex items-center rounded-md py-2 px-2 font-semibold ring-offset-0',
                       {
-                        'bg-primary-600 text-white': isActive,
-                        'hover:bg-primary-50': !isActive,
+                        'bg-primary-600 text-neutral-100': isActive,
+                        'hover:bg-primary-10 hover:text-neutral-600': !isActive,
                       }
                     )
                   }
@@ -41,7 +41,7 @@ const SiteNav: React.FC<Props> = ({ navItems }) => {
                       <item.icon
                         className={classNames('mr-3 h-6 w-6 flex-shrink-0', {
                           'text-white': isActive,
-                          'text-gray-300 group-hover:text-gray-400': !isActive,
+                          'text-neutral-400 group-hover:text-neutral-600': !isActive,
                         })}
                         aria-hidden="true"
                       />

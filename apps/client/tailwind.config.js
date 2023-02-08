@@ -5,12 +5,13 @@ module.exports = {
   content: ['./app/**/*.{ts,tsx,jsx,js}'],
   theme: {
     fontFamily: {
-      sans: ['Inter', ...defaultTheme.fontFamily.sans],
+      sans: ['Nunito', ...defaultTheme.fontFamily.sans],
     },
     colors: {
       // primary: { ...colors.indigo },
       ...colors,
       primary: {
+        10: '#f2f9ff',
         50: '#C9DDF2',
         100: '#C1D8F0',
         200: '#A8C8EA',

@@ -107,11 +107,11 @@ const Profile = () => {
               <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
                 <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
                   {/* <div className="sm:col-span-1">
-                      <dt className="text-sm font-medium text-gray-500">Application for</dt>
+                      <dt className="font-medium text-gray-500">Application for</dt>
                       <dd className="mt-1 text-sm text-gray-900">Backend Developer</dd>
                     </div> */}
                   <div className="sm:col-span-1">
-                    <dt className="text-sm font-medium text-gray-500">Email address</dt>
+                    <dt className="font-medium text-gray-500">Email address</dt>
                     <dd className="mt-1 text-sm text-gray-900">{user.email}</dd>
                   </div>
                   {applicantProfile.askingSalary && (
@@ -119,7 +119,7 @@ const Profile = () => {
                       className="sm:col-span-1"
                       title="This is privileged information only available to certain roles in your organisation. Take care if taking screenshots of this page"
                     >
-                      <dt className="flex items-center text-sm font-medium text-gray-500">
+                      <dt className="flex items-center font-medium text-gray-500">
                         Salary expectation{' '}
                         <LockClosedIcon className="h-4 w-4 flex-shrink-0 text-yellow-600" aria-hidden="true" />
                       </dt>
@@ -127,11 +127,11 @@ const Profile = () => {
                     </div>
                   )}
                   {/* <div className="sm:col-span-1">
-                      <dt className="text-sm font-medium text-gray-500">Phone</dt>
+                      <dt className="font-medium text-gray-500">Phone</dt>
                       <dd className="mt-1 text-sm text-gray-900">+1 555-555-5555</dd>
                     </div> */}
                   {/* <div className="sm:col-span-2">
-                      <dt className="text-sm font-medium text-gray-500">About</dt>
+                      <dt className="font-medium text-gray-500">About</dt>
                       <dd className="mt-1 text-sm text-gray-900">
                         Fugiat ipsum ipsum deserunt culpa aute sint do nostrud anim incididunt cillum culpa consequat.
                         Excepteur qui ipsum aliquip consequat sint. Sit id mollit nulla mollit nostrud in ea officia
@@ -139,7 +139,7 @@ const Profile = () => {
                       </dd>
                     </div> */}
                   {/* <div className="sm:col-span-2">
-                      <dt className="text-sm font-medium text-gray-500">Attachments</dt>
+                      <dt className="font-medium text-gray-500">Attachments</dt>
                       <dd className="mt-1 text-sm text-gray-900">
                         <ul role="list" className="divide-y divide-gray-200 rounded-md border border-gray-200">
                           {attachments.map((attachment) => (
