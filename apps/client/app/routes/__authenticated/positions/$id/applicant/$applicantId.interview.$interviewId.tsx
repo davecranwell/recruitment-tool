@@ -85,7 +85,7 @@ const ViewInterview = () => {
                     name: 'notes',
                     key: `notes_${i}`,
                     label: q.text,
-                    type: 'textarea',
+                    type: 'textarealocalstorage',
                   })),
                   { name: 'positionId', type: 'hidden', defaultValue: id },
                   { name: 'applicantProfileId', type: 'hidden', defaultValue: applicantId },

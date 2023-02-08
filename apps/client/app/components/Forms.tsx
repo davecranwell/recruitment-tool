@@ -8,6 +8,7 @@ import { camelToSentence } from 'app/utils'
 import Button from './Button'
 import Alert from './Alert'
 import Avatar from './Avatar'
+import TextareaLocalStorage from './TextareaLocalStorage'
 
 export type Option = {
   key: string
@@ -165,7 +166,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                 </label>
               )}
               {/* {field.type === 'radio' && field.hint && (
-                <p className="text-sm leading-5 text-gray-500">How do you prefer to receive notifications?</p>
+                <p className="leading-5 text-gray-500">How do you prefer to receive notifications?</p>
               )} */}
               <div className="relative mt-1">
                 {['text', 'email', 'number', 'password', 'url', 'date', 'datetime-local'].includes(field.type) && (
@@ -199,16 +200,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                     defaultValue={field.defaultValue}
                   />
                 )}
-                {field.type === 'textarealocalstorage' && (
-                  <textarea
-                    id={field.name}
-                    name={field.name}
-                    rows={field.size}
-                    required={field.required}
-                    className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-md border border-gray-300 shadow-sm disabled:border-gray-200 disabled:text-slate-400 disabled:shadow-none sm:text-sm"
-                    defaultValue={field.defaultValue}
-                  />
-                )}
+                {field.type === 'textarealocalstorage' && <TextareaLocalStorage keyName={field.key} field={field} />}
                 {field.type === 'select' && (
                   <select
                     id={field.name}
@@ -387,8 +379,12 @@ const FormLayout: React.FC<FormLayoutProps> = ({
 
   const { fields: fieldsWithValidation, orphanedErrors = [] } = processedFields
 
+  const clearLocalStorage = () => {
+    localStorage.clear()
+  }
+
   return (
-    <Form method="post" {...props}>
+    <Form method="post" {...props} onSubmit={() => clearLocalStorage()}>
       <div
         className={classNames({
           'bg-white shadow sm:overflow-hidden sm:rounded-lg': wrapper === 'auto',
@@ -408,7 +404,7 @@ const FormLayout: React.FC<FormLayoutProps> = ({
           >
             {intro && (
               <div>
-                <p className="mt-1 text-sm text-gray-500">{intro}</p>
+                <p className="mt-1 text-gray-500">{intro}</p>
               </div>
             )}
 
