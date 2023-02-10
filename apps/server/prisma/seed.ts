@@ -8,6 +8,13 @@ async function main() {
     data: {
       name: 'VoCoVo Ltd',
       machineName: 'vocovotld',
+      projects: {
+        create: [
+          {
+            name: 'Default project',
+          },
+        ],
+      },
     },
   })
 
@@ -15,6 +22,13 @@ async function main() {
     data: {
       name: 'Strongbyte Ltd',
       machineName: 'strongbyteltd',
+      projects: {
+        create: [
+          {
+            name: 'Default project',
+          },
+        ],
+      },
     },
   })
 
@@ -22,6 +36,13 @@ async function main() {
     data: {
       name: 'Humand',
       machineName: 'humand',
+      projects: {
+        create: [
+          {
+            name: 'Default project',
+          },
+        ],
+      },
       // applicants: {
       //   create: [{ applicantId: applicant.id }],
       // },
@@ -32,6 +53,13 @@ async function main() {
     data: {
       name: 'Corriculo',
       machineName: 'corriculo',
+      projects: {
+        create: [
+          {
+            name: 'Default project',
+          },
+        ],
+      },
       // applicants: {
       //   create: [{ applicantId: applicant.id }],
       // },
