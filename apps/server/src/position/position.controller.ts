@@ -1,4 +1,3 @@
-import { IsBoolean, IsOptional } from 'class-validator'
 import {
   Body,
   ClassSerializerInterceptor,
@@ -14,32 +13,24 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
-import {
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiExtraModels,
-  ApiOkResponse,
-  ApiProperty,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger'
+import { ApiBearerAuth, ApiCreatedResponse, ApiExtraModels, ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { PrismaClassSerializerInterceptorPaginated } from 'src/class-serializer-paginated.interceptor'
 import { ApiPaginatedResponse, PaginatedDto, PaginationArgsDto } from 'src/page/pagination-args.dto'
 
-import { ApplicantProfile, ApplicantProfileWithUser } from 'src/applicant-profile/entities/applicant-profile.entity'
+import { ApplicantProfileForPositionWithStage } from 'src/applicant-profile-for-position/entities/applicant-profile-for-position.entity'
+import { ApplicantProfileWithUser } from 'src/applicant-profile/entities/applicant-profile.entity'
 import { RequestWithUser } from 'src/authentication/authentication.controller'
 import JwtAuthenticationGuard from 'src/authentication/guards/jwtAuthentication.guard'
 import { Pipeline } from 'src/pipeline/entities/pipeline.entity'
-import { Position } from './entities/position.entity'
-import { ApplicantProfileForPositionWithStage } from 'src/applicant-profile-for-position/entities/applicant-profile-for-position.entity'
 import { Stage } from 'src/stage/entities/stage.entity'
+import { Position } from './entities/position.entity'
 
-import { PositionService, PositionQueryFeatures } from './position.service'
+import { InterviewWithStageScoringApplicant } from 'src/interview/entities/interview.entity'
 import { CreatePositionDto } from './dto/create-position.dto'
 import { UpdateApplicantStageDto } from './dto/update-applicant-stage.dto'
 import { UpdatePositionDto } from './dto/update-position.dto'
-import { InterviewWithStageScoringApplicant } from 'src/interview/entities/interview.entity'
+import { PositionQueryFeatures, PositionService } from './position.service'
 
 @ApiTags('Positions')
 @ApiBearerAuth('access-token')
