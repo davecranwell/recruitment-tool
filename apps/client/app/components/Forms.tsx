@@ -1,5 +1,6 @@
+import type { ReactElement } from 'react'
 import React from 'react'
-import { Transition } from '@remix-run/react/dist/transition'
+import type { Transition } from '@remix-run/react/dist/transition'
 import { ExclamationCircleIcon } from '@heroicons/react/solid'
 import { Form } from '@remix-run/react'
 import classNames from 'classnames'
@@ -363,7 +364,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
 
 type FormLayoutProps = {
   title?: string
-  intro?: React.ReactNode | string
+  intro?: ReactElement | string
   fields: FieldDef[]
   submitText?: string
   submitWidth?: 'full' | 'auto' | 'half' | undefined
@@ -412,11 +413,7 @@ const FormLayout: React.FC<FormLayoutProps> = ({
               'bg-white py-6 px-4 sm:p-6': wrapper === 'auto',
             })}
           >
-            {intro && (
-              <div>
-                <p className="mt-1 text-gray-500">{intro}</p>
-              </div>
-            )}
+            {intro && <div className="mt-1 text-gray-500">{intro}</div>}
 
             {orphanedErrors.length > 0 && <Alert type="error" message={orphanedErrors} />}
 

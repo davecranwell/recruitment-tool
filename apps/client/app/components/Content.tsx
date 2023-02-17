@@ -1,10 +1,12 @@
 import { Link } from '@remix-run/react'
 import classNames from 'classnames'
+import { ReactElement } from 'react'
 import Button from './Button'
 
 type Props = {
   children: React.ReactNode
   title?: string
+  intro?: ReactElement | string
   titleLink?: string
   titleSize?: 'largest' | 'larger' | 'large'
   primaryAction?: {
@@ -22,6 +24,7 @@ type Props = {
 const Content: React.FC<Props> = ({
   children,
   title,
+  intro,
   titleLink,
   primaryAction,
   secondaryAction,
@@ -63,6 +66,8 @@ const Content: React.FC<Props> = ({
           )}
         </div>
       )}
+
+      {intro && <div className="mt-1 text-gray-500 font-medium text-lg">{intro}</div>}
 
       <div>{children}</div>
     </Component>

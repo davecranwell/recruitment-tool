@@ -3,7 +3,6 @@
 import { PlusIcon } from '@heroicons/react/solid'
 import { Link } from '@remix-run/react'
 
-import { titleCase } from 'app/utils'
 import React from 'react'
 
 type Props = {
@@ -21,7 +20,7 @@ const Empty: React.FC<Props> = ({ icon, title, createLink, createText, intro }) 
     <div className="text-center mx-auto max-w-lg">
       <Icon className="mx-auto h-12 w-12 text-gray-400" />
 
-      <h3 className="py-4 text-lg font-medium">{title}</h3>
+      <h3 className="py-4 text-lg font-medium text-gray-500">{title}</h3>
       {intro && <p className="mt-1 text-sm text-gray-500">{intro}.</p>}
       {createLink && (
         <div className="mt-6">

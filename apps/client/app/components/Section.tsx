@@ -4,13 +4,14 @@ type Props = {
   children: React.ReactNode
   footer?: React.ReactNode
   title?: string
+  [x: string]: any
 }
 
-const Section: React.FC<Props> = ({ title, children, footer }) => {
+const Section: React.FC<Props> = ({ title, children, footer, ...props }) => {
   const id = useId()
 
   return (
-    <section aria-labelledby={id}>
+    <section aria-labelledby={id} {...props}>
       <div className="bg-white shadow sm:overflow-hidden sm:rounded-lg">
         <div className="divide-y divide-gray-200">
           {title && (

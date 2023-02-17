@@ -50,7 +50,14 @@ const Projects = () => {
         {projects.data.map((project: Project) => (
           <StackedListItem key={project.id} link={`/projects/${project.id}/edit`}>
             <div className="flex items-center justify-between font-medium">
-              <p className="text-primary-600 truncate ">{project.name}</p>
+              <p className="text-primary-600 truncate ">
+                {project.name}{' '}
+                {project?._count?.positions && project?._count?.positions > 0 ? (
+                  <span className={'ml-auto inline-block py-0.5 px-3 text-xs rounded-full text-gray-500 bg-gray-50'}>
+                    {project?._count?.positions}
+                  </span>
+                ) : null}
+              </p>
               <p className="text-gray-500 text-sm truncate">{project.description}</p>
             </div>
           </StackedListItem>

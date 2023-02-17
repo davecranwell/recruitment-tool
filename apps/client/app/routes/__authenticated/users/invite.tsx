@@ -11,6 +11,10 @@ import Form, { withValues } from 'app/components/Forms'
 
 import { inviteUserformFields } from 'app/models/users/form'
 
+export const handle = {
+  hideBannerAction: true,
+}
+
 export const action: ActionFunction = async (data) => {
   const { request } = data
 
@@ -41,19 +45,16 @@ const NewUser = () => {
   const transition = useTransition()
 
   return (
-    <Content title={'Invite a user to the organisation'}>
-      <Form
-        submitText="Send invitation"
-        intro={
-          <>
-            We'll send an invitation email so they can join with the role you give them below. Invitations expire after{' '}
-            <strong>2 days</strong>.
-          </>
-        }
-        fields={fields}
-        errors={errors}
-        transition={transition}
-      />
+    <Content
+      title={'Invite your colleagues to AppliCan'}
+      intro={
+        <>
+          We'll send an invitation email so they can join with the role you give them below. Invitations expire after{' '}
+          <strong>2 days</strong>.
+        </>
+      }
+    >
+      <Form submitText="Send invitation" fields={fields} errors={errors} transition={transition} />
     </Content>
   )
 }

@@ -31,7 +31,7 @@ const Users = () => {
         titleLink={'/users'}
         primaryAction={
           canAddUsers && {
-            label: 'Invite',
+            label: 'Invite a colleague',
             link: '/users/invite',
           }
         }

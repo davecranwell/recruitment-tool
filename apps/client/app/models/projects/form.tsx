@@ -51,7 +51,7 @@ const formFields = (
         colspan: 4,
         label: 'Interviewers',
         type: 'multicombobox',
-        hint: 'Interviewers may only take part in interviews and provide feedback. They have no control over the hiring process beyond this.',
+        hint: 'Interviewers may only take part in interviews and provide feedback. They have no control over the hiring process.',
         options: interviewUsers,
         optionLabel: 'user',
         optionRenderer: (option: Option) => (

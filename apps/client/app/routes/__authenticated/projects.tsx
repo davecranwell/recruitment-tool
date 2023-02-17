@@ -31,7 +31,7 @@ const Projects = () => {
         titleLink={'/projects'}
         primaryAction={
           canCreateProject && {
-            label: 'Create',
+            label: 'Create a new project',
             link: '/projects/new',
           }
         }

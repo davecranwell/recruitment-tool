@@ -1,20 +1,21 @@
+import { useState } from 'react'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
-import { json } from '@remix-run/node'
-import { redirect } from '@remix-run/node'
-
-import { useActionData, useLoaderData, useMatches, useTransition } from '@remix-run/react'
+import { json, redirect } from '@remix-run/node'
+import { useActionData, useLoaderData, useTransition } from '@remix-run/react'
 
 import { api } from 'app/api.server'
 
 import Content from 'app/components/Content'
-import { Option, withValues } from 'app/components/Forms'
-import Form from 'app/components/Forms'
+import type { Option } from 'app/components/Forms'
+import Form, { withValues } from 'app/components/Forms'
 import { notify, requireAuth } from 'app/sessions.server'
 
 import formFields from 'app/models/projects/form'
-import Breadcrumb from '~/components/Breadcrumb'
-import { User } from '~/models/users/User'
-import { useState } from 'react'
+
+import Alert from '~/components/Alert'
+import Button from '~/components/Button'
+import Section from '~/components/Section'
+import type { User } from '~/models/users/User'
 
 export const handle = {
   hideBannerAction: true,
@@ -34,7 +35,7 @@ export const action: ActionFunction = async (data) => {
         description:
           'Users affected by changes to project roles may need to log out and in again for changes to take effect',
       },
-      0
+      10_000
     )
 
     return redirect(`/projects`, { headers })
@@ -97,7 +98,21 @@ const EditProject = () => {
 
   return (
     <Content title={project.name}>
+      {currentHiringManagers.length < 1 && (
+        <Alert
+          className="mb-4"
+          type="warning"
+          message={
+            'There are no hiring managers configured for this project. Only organisation owners will be able to change applicant stages'
+          }
+        />
+      )}
+
       <Form submitText="Save changes" fields={fields} errors={errors} transition={transition} />
+
+      <Section title="Danger zone" className="mt-8">
+        <Button color="danger" text="Delete project" />
+      </Section>
     </Content>
   )
 }
