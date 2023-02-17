@@ -24,7 +24,7 @@ export class SchedulerService {
       include: { organisation: true },
     })
 
-    this.logger.log(`Sending ${unsent.length} invitations`)
+    if (unsent.length) this.logger.log(`Sending ${unsent.length} invitations`)
 
     for (const invitation of unsent) {
       const { email, id, organisation } = invitation
