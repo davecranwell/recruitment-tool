@@ -1,8 +1,8 @@
+import { Ability } from '@casl/ability'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
-import { Ability } from '@casl/ability'
 
-import { PaginatedDto, PaginationArgsDto } from 'src/page/pagination-args.dto'
+import { PaginationArgsDto } from 'src/page/pagination-args.dto'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { UserEntity } from 'src/user/entities/user.entity'
 import { UsersInOrganisation } from 'src/users-in-organisation/entities/users-in-organisation.entity'
@@ -46,17 +46,12 @@ export class OrganisationService {
     })
   }
 
-  // findAll() {
-  //   return `This action returns all organisation`
-  // }
-
   async findUsers(organisationId: number, paginationArgs: PaginationArgsDto) {
     const userOrgs = await paginate<UsersInOrganisation, Prisma.UsersInOrganisationFindFirstArgs>(
       this.prisma.usersInOrganisation,
       { where: { organisationId }, include: { user: true } },
       { ...paginationArgs }
     )
-    //;(userOrgs as unknown as PaginatedDto<UserEntity>).data = userOrgs.data.map((userOrg) => ({ ...userOrg.user }))
     return userOrgs
   }
 
