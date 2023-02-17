@@ -36,6 +36,7 @@ export class ProjectController {
   @Get(':id')
   @ApiOperation({ summary: 'Get information about one project' })
   @ApiOkResponse({ type: Project })
+  @UseInterceptors(ClassSerializerInterceptor)
   async findOne(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number
@@ -46,6 +47,7 @@ export class ProjectController {
   @Post()
   @ApiOperation({ summary: 'Create a new project' })
   @ApiCreatedResponse({ type: () => Project, description: 'Project created' })
+  @UseInterceptors(ClassSerializerInterceptor)
   async create(@Req() request: RequestWithUser, @Body() createProjectDto: CreateProjectDto) {
     const ability = new Ability(request.user.abilities)
 

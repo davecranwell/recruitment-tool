@@ -4,6 +4,7 @@ import invariant from 'tiny-invariant'
 
 // import { notify } from '~/components/Notifications'
 import type { Organisation } from '~/models/organisation/Organisation'
+import type { Message } from './components/Alert'
 
 invariant(process.env.BACKEND_ROOT_URL, 'BACKEND_ROOT_URL must be set')
 invariant(process.env.GOOGLE_AUTH_CLIENT_ID, 'GOOGLE_AUTH_CLIENT_ID must be set')
@@ -110,7 +111,7 @@ export async function logout(request: Request) {
   })
 }
 
-async function createNotice(session: Session, message: string, type: string, ttl: number = 3000) {
+async function createNotice(session: Session, message: Message, type: string, ttl: number = 3000) {
   session.flash('global', {
     type,
     message,
@@ -122,10 +123,10 @@ async function createNotice(session: Session, message: string, type: string, ttl
 
 export function notify(session: Session) {
   return {
-    success: async (message: string, ttl?: number) => await createNotice(session, message, 'success', ttl),
-    error: async (message: string, ttl: number = 0) => await createNotice(session, message, 'error', ttl),
-    warning: async (message: string, ttl: number = 5000) => await createNotice(session, message, 'warning', ttl),
-    info: async (message: string, ttl?: number) => await createNotice(session, message, 'info', ttl),
+    success: async (message: Message, ttl?: number) => await createNotice(session, message, 'success', ttl),
+    error: async (message: Message, ttl: number = 0) => await createNotice(session, message, 'error', ttl),
+    warning: async (message: Message, ttl: number = 5000) => await createNotice(session, message, 'warning', ttl),
+    info: async (message: Message, ttl?: number) => await createNotice(session, message, 'info', ttl),
   }
 }
 

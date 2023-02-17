@@ -1,5 +1,6 @@
-import { MetaFunction } from '@remix-run/node'
-import { Link, Outlet, RouteMatch, useMatches, useOutletContext } from '@remix-run/react'
+import type { MetaFunction } from '@remix-run/node'
+import type { RouteMatch } from '@remix-run/react'
+import { Link, Outlet, useMatches, useOutletContext } from '@remix-run/react'
 
 import type { SessionData } from '~/sessions.server'
 

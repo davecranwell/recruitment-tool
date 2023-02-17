@@ -51,6 +51,7 @@ const Projects = () => {
           <StackedListItem key={project.id} link={`/projects/${project.id}/edit`}>
             <div className="flex items-center justify-between font-medium">
               <p className="text-primary-600 truncate ">{project.name}</p>
+              <p className="text-gray-500 text-sm truncate">{project.description}</p>
             </div>
           </StackedListItem>
         ))}

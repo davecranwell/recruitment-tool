@@ -29,7 +29,7 @@ const Avatar: React.FC<Props> = ({ name = '', size, imageUrl }) => {
     >
       <span
         className={classNames('text-g font-medium leading-none text-gray-500', {
-          'text-xs': size === 'xs',
+          'text-[0.55rem]': size === 'xs',
           'text-sm': size === 's',
           'text-lg': size === 'lg',
           'text-xl': size === 'xl',

@@ -274,6 +274,7 @@ model Assessment {
   positionId         Int
   // Notes will contain a json.stringified value. We don't need to query it so text is fine for now.
   // I'm not entirely sure what making it json would do to the size of the table. Bit wary.
+  // One month later: storing this as json might be better so we don't have to parse it ourselves when we select this field
   notes              String?
   scoringSystemId    Int
   type               AssessmentType @default(INTERVIEW)

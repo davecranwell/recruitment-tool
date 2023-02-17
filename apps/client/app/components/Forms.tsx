@@ -9,6 +9,7 @@ import Button from './Button'
 import Alert from './Alert'
 import Avatar from './Avatar'
 import TextareaLocalStorage from './TextareaLocalStorage'
+import MultiCombobox from './MultiCombobox'
 
 export type Option = {
   key: string
@@ -23,9 +24,12 @@ export type FieldDef = {
   enabled?: boolean
   type: string
   options?: Option[]
+  optionLabel?: string
+  optionRenderer?: Function
   hint?: string
   cols?: number
   colspan?: number
+  group?: string
   content?: FieldDef[]
   label?: string
   required?: boolean
@@ -112,15 +116,17 @@ export const withActionErrors = (formFields: FieldDef[], errors?: NestTargetMess
 
 export const withValues = (formFields: FieldDef[], values: any) => {
   if (values.constructor.name !== 'Object')
-    throw new Error(`withValues argument 'values' is not a plain javascript object`)
+    throw new Error(`withValues argument 'values' should be a plain javascript object`)
 
   const enumerateFields = (fields: FieldDef[]): FieldDef[] => {
-    return fields.map((field) => {
+    return fields.map((field, index) => {
       if (field.content) {
         field.content = enumerateFields(field.content)
       }
+
       if (field.name && values[field.name] !== undefined) {
-        const val = Array.isArray(values[field.name]) ? values[field.name].shift() : values[field.name]
+        // field.group allows multiple fields to share a field name, each taking an entry from the combined value array
+        const val = field.group ? values[field.group][index] : values[field.name]
 
         field.defaultValue = field.valueTransform ? field.valueTransform(val) : val
       }
@@ -201,6 +207,9 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                   />
                 )}
                 {field.type === 'textarealocalstorage' && <TextareaLocalStorage keyName={field.key} field={field} />}
+                {field.type === 'multicombobox' && (
+                  <MultiCombobox field={field} optionName={field.optionLabel} optionRenderer={field.optionRenderer} />
+                )}
                 {field.type === 'select' && (
                   <select
                     id={field.name}
@@ -323,7 +332,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                   </fieldset>
                 )}
                 {field.type === 'title' && (
-                  <h2 className="text-lg font-medium leading-6 text-gray-900">{field.text}</h2>
+                  <h2 className="text-lg font-medium leading-6 text-gray-900">{field.label || field.text}</h2>
                 )}
                 {field.errors && field.errors.length > 0 && (
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
@@ -387,7 +396,8 @@ const FormLayout: React.FC<FormLayoutProps> = ({
     <Form method="post" {...props} onSubmit={() => clearLocalStorage()}>
       <div
         className={classNames({
-          'bg-white shadow sm:overflow-hidden sm:rounded-lg': wrapper === 'auto',
+          // this used to have sm:overflow-hidden. I guess future dave will find out why
+          'bg-white shadow sm:rounded-lg': wrapper === 'auto',
         })}
       >
         <div className="divide-y divide-gray-200">

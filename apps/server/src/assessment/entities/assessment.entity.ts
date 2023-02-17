@@ -1,7 +1,7 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger'
 import { Assessment as AssessmentModel, AssessmentType, ScoringSystemType } from '@prisma/client'
 import { ValidateNested } from 'class-validator'
-import { Exclude, Type } from 'class-transformer'
+import { Exclude, Transform, Type } from 'class-transformer'
 
 import { Interview } from 'src/interview/entities/interview.entity'
 import { ApplicantProfile } from 'src/applicant-profile/entities/applicant-profile.entity'
@@ -35,6 +35,13 @@ export class Assessment implements AssessmentModel {
   interviewId: number | null
 
   @ApiProperty()
+  @Transform(({ value }) => {
+    try {
+      return JSON.parse(value)
+    } catch (e) {
+      return value
+    }
+  })
   notes: string | null
 
   @ApiProperty()

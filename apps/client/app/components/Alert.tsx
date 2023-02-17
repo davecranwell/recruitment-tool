@@ -7,8 +7,10 @@ export type AlertMessageBody = {
   description?: string | string[]
 }
 
+export type Message = string | string[] | AlertMessageBody
+
 export type AlertProps = {
-  message: string | string[] | AlertMessageBody
+  message: Message
   type: 'success' | 'info' | 'warning' | 'error'
 }
 

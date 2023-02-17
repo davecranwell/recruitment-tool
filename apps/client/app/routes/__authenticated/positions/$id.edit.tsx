@@ -18,6 +18,7 @@ export const handle = {
 
 export const action: ActionFunction = async (data) => {
   const { request, params } = data
+  const { session } = await requireAuth(request)
 
   const result = await api(data, `/position/${params.id}`, 'PATCH', await request.formData())
   if (result.ok) return redirect(`/positions/${params.id}`)
@@ -27,9 +28,8 @@ export const action: ActionFunction = async (data) => {
 
 export const loader: LoaderFunction = async (data) => {
   const { request, params } = data
-  // return invariant(params.id, 'Expected position ID')
-
   const { sessionData } = await requireAuth(request)
+
   const projectRes = await api(data, `/organisation/${sessionData.activeOrganisation.id}/projects`)
   const positionRes = await api(data, `/position/${params.id}`)
 

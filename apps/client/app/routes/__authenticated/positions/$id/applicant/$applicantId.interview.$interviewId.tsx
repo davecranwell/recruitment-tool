@@ -67,7 +67,6 @@ const ViewInterview = () => {
   }
 
   const { score, notes } = assessments[0] || {}
-  const jsonNotes = notes && JSON.parse(notes)
 
   return (
     <main className="py-10">
@@ -83,6 +82,7 @@ const ViewInterview = () => {
                 [
                   ...questions?.questions?.map((q: Question, i: number) => ({
                     name: 'notes',
+                    group: 'notes',
                     key: `notes_${i}`,
                     label: q.text,
                     type: 'textarealocalstorage',
@@ -93,7 +93,7 @@ const ViewInterview = () => {
                 ],
                 {
                   ...assessments[0],
-                  notes: jsonNotes,
+                  notes,
                 }
               )}
               transition={transition}

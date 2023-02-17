@@ -26,9 +26,9 @@ const PositionsIndex = () => {
     <Content titleSize="larger">
       <Empty
         icon={FolderIcon}
-        title={'There are no Projects in this Organisation to which you have access'}
+        title={'There are no projects in this organisation to which you have access'}
         intro={
-          'Projects are create by Organisation Owners who grant user access to projects individually. If you feel you are missing access to a project, you may need to talk to your Organisation Owner to correct this'
+          'Projects are create by organisation owners who grant users access individually. You may need to talk to your organisation owner if you feel you should have access to more projects'
         }
       />
     </Content>
