@@ -17,6 +17,39 @@ const paginate = createPaginator({ perPage: 20 })
 export class ProjectService {
   constructor(private prisma: PrismaService) {}
 
+  private async processRoles(organisationId, data) {
+    let { hiringManagers = [], interviewers = [] } = data
+
+    // normalise to an array so we can more easily concat together
+    if (!Array.isArray(hiringManagers)) hiringManagers = [hiringManagers]
+    if (!Array.isArray(interviewers)) interviewers = [interviewers]
+
+    const allRoleUsers = [...hiringManagers, ...interviewers]
+
+    // check the users provided are in the organisation
+    const findUsers = await this.prisma.usersInOrganisation.findMany({
+      where: {
+        organisationId,
+        userId: { in: allRoleUsers },
+      },
+    })
+
+    if (findUsers.length !== allRoleUsers.length) {
+      throw new BadRequestException('One of the user IDs provided does not exist in this organisation')
+    }
+
+    const newManagersRoles = hiringManagers.map((user) => ({
+      userId: user,
+      role: ProjectRoleType.HIRING_MANAGER,
+    }))
+    const newInterviewersRoles = interviewers.map((user) => ({
+      userId: user,
+      role: ProjectRoleType.INTERVIEWER,
+    }))
+
+    return { newManagersRoles, newInterviewersRoles }
+  }
+
   async findOne(id: number, user: UserEntity) {
     const project = await this.prisma.project.findUnique({
       where: { id },
@@ -32,12 +65,17 @@ export class ProjectService {
   }
 
   async create(data: CreateProjectDto) {
+    const { newManagersRoles, newInterviewersRoles } = await this.processRoles(data.organisationId, data)
+
     const project = await this.prisma.project.create({
       data: {
         name: data.name,
         description: data.description,
         organisation: {
           connect: { id: data.organisationId },
+        },
+        userRoles: {
+          create: [...newManagersRoles, ...newInterviewersRoles],
         },
       },
     })
@@ -46,42 +84,13 @@ export class ProjectService {
   }
 
   async update(id: number, data: UpdateProjectDto, user: UserEntity) {
-    const ability = new Ability(user.abilities)
-
     const project = await this.findOne(id, user)
 
-    //this.slack.postMessage({ text: 'hi', channel: 'recruitment-app' })
-
+    const ability = new Ability(user.abilities)
     if (!ability.can(Action.Update, new Project(project))) throw new ForbiddenException()
 
-    let { hiringManagers, interviewers } = data
-    if (!Array.isArray(hiringManagers)) hiringManagers = [hiringManagers]
-    if (!Array.isArray(interviewers)) interviewers = [interviewers]
-
-    const allRoleUsers = [...hiringManagers, ...interviewers]
-
-    // check the users provided are in the organisation
-    const findUsers = await this.prisma.usersInOrganisation.findMany({
-      where: {
-        organisationId: project.organisationId,
-        userId: { in: allRoleUsers },
-      },
-    })
-
-    if (findUsers.length !== allRoleUsers.length) {
-      throw new BadRequestException('One of the user IDs provided does not exist in this organisation')
-    }
-
-    const newManagersRoles = hiringManagers.map((user) => ({
-      projectId: id,
-      userId: user,
-      role: ProjectRoleType.HIRING_MANAGER,
-    }))
-    const newInterviewersRoles = interviewers.map((user) => ({
-      projectId: id,
-      userId: user,
-      role: ProjectRoleType.INTERVIEWER,
-    }))
+    //this.slack.postMessage({ text: 'hi', channel: 'recruitment-app' })
+    const { newManagersRoles, newInterviewersRoles } = await this.processRoles(project.organisationId, data)
 
     // Perform the deletion of old and creation of new in a transaction
     const [deleted, created, updatedProject] = await this.prisma.$transaction([
@@ -89,7 +98,16 @@ export class ProjectService {
         where: { projectId: id },
       }),
       this.prisma.projectUserRole.createMany({
-        data: [...newManagersRoles, ...newInterviewersRoles],
+        data: [
+          ...newManagersRoles.map((role) => {
+            role.projectId = id
+            return role
+          }),
+          ...newInterviewersRoles.map((role) => {
+            role.projectId = id
+            return role
+          }),
+        ],
       }),
       this.prisma.project.update({
         where: { id },
