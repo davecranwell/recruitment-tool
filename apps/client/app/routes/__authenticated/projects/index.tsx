@@ -12,6 +12,7 @@ import { StackedList, StackedListItem } from 'app/components/StackedList'
 
 import { useAppAbility } from 'app/hooks/useAppAbility'
 import type { Project } from 'app/models/projects/Project'
+import Counter from '~/components/Counter'
 
 export const loader: LoaderFunction = async (data) => {
   const { request } = data
@@ -53,9 +54,7 @@ const Projects = () => {
               <p className="text-primary-600 truncate ">
                 {project.name}{' '}
                 {project?._count?.positions && project?._count?.positions > 0 ? (
-                  <span className={'ml-auto inline-block py-0.5 px-3 text-xs rounded-full text-gray-500 bg-gray-50'}>
-                    {project?._count?.positions}
-                  </span>
+                  <Counter>{project?._count?.positions}</Counter>
                 ) : null}
               </p>
               <p className="text-gray-500 text-sm truncate">{project.description}</p>

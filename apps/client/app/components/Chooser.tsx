@@ -2,6 +2,7 @@ import { Fragment, useState } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronDownIcon } from '@heroicons/react/solid'
 import classNames from 'classnames'
+import Counter from './Counter'
 
 type Props = {
   items: Array<any>
@@ -31,11 +32,7 @@ const Chooser: React.FC<Props> = ({ value, className, label, items, onChange = (
                 <span className="block truncate">
                   {label && <span className="font-bold text-gray-700">{label}:</span>} {selected.key}
                 </span>
-                {selected.count && (
-                  <span className={'ml-auto inline-block py-0.5 px-3 text-xs rounded-full bg-gray-50'}>
-                    {selected.count}
-                  </span>
-                )}
+                {selected.count && <Counter>{selected.count}</Counter>}
               </span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                 <ChevronDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />

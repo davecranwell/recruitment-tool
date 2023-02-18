@@ -1,5 +1,6 @@
 import { NavLink } from '@remix-run/react'
 import classNames from 'classnames'
+import Counter from './Counter'
 
 type Props = {
   tabs: Tab[]
@@ -50,13 +51,9 @@ const Tabs: React.FC<Props> = ({ tabs }) => {
               >
                 {tab.name}
                 {tab.count ? (
-                  <span
-                    className={
-                      'bg-primary-100 text-primary-600 ml-4 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block'
-                    }
-                  >
+                  <Counter className="ml-2" color="dark">
                     {tab.count}
-                  </span>
+                  </Counter>
                 ) : null}
               </NavLink>
             ))}
