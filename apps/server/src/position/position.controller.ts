@@ -121,11 +121,11 @@ export class PositionController {
 
   @Get(':id/pipeline')
   @ApiOkResponse({ type: () => Pipeline })
-  findPipelineWithStages(
+  findPipelineStages(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number
   ) {
-    return this.positionService.findPipelineWithStages(id, request.user)
+    return this.positionService.findPipelineStages(id, request.user)
   }
 
   @Patch(':id')

@@ -240,17 +240,25 @@ export class PositionService {
     return new InterviewWithStageScoringApplicant(interview)
   }
 
-  async findPipelineWithStages(positionId: number, user: UserEntity) {
+  async findPipelineStages(positionId: number, user: UserEntity) {
     const position = await this.findOne(positionId, user)
 
     if (!position.pipelineId) throw new ForbiddenException()
 
     return this.prisma.pipeline.findUnique({
       where: { id: position.pipelineId },
-      include: {
+      select: {
         stages: {
           orderBy: { order: 'asc' },
-          include: { stage: { include: { _count: { select: { applicants: true } } } } },
+          include: {
+            stage: {
+              include: {
+                _count: {
+                  select: { applicants: { where: { positionId } } },
+                },
+              },
+            },
+          },
         },
       },
     })

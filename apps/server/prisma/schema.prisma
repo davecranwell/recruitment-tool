@@ -136,6 +136,7 @@ model UsersInOrganisation {
   user         User         @relation(fields: [userId], references: [id])
 
   @@id([userId, organisationId])
+  @@index([organisationId])
 }
 
 model UserRole {
@@ -176,6 +177,7 @@ model ApplicantProfileForPosition {
   stage            Stage            @relation(fields: [stageId], references: [id])
 
   @@id([applicantProfileId, positionId])
+  @@index([positionId])
 }
 
 model ProjectUserRole {
@@ -189,6 +191,7 @@ model ProjectUserRole {
   user    User            @relation(fields: [userId], references: [id])
 
   @@id([userId, projectId])
+  @@index([projectId])
 }
 
 model Stage {
@@ -262,6 +265,8 @@ model Interview {
   assessments      Assessment[]
 
   @@unique([applicantProfileId, stageId, positionId])
+  @@index([positionId])
+  @@index([applicantProfileId])
 }
 
 model Assessment {
@@ -302,6 +307,7 @@ model InterviewAttendee {
   user      User      @relation(fields: [userId], references: [id])
 
   @@id([interviewId, userId])
+  @@index([interviewId])
 }
 
 model Questions {

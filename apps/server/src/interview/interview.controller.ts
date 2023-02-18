@@ -43,7 +43,7 @@ export class InterviewController {
 
     // get position by ID and check permissions on that project
     const position = await this.positionService.findOne(positionId, request.user, { includeUserRoles: true })
-    const pipeline = await this.positionService.findPipelineWithStages(positionId, request.user)
+    const pipeline = await this.positionService.findPipelineStages(positionId, request.user)
 
     const ability = new Ability(request.user.abilities)
 
