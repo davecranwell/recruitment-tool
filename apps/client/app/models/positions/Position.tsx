@@ -1,10 +1,6 @@
-import { Project } from '../projects/Project'
+import type { Project } from '../projects/Project'
 
-export enum PositionEmploymentType {
-  FULL,
-  PART,
-  CONTRACT,
-}
+export type PositionEmploymentType = 'FULL' | 'PART' | 'CONTRACT'
 
 export type Position = {
   id: number
@@ -18,4 +14,5 @@ export type Position = {
   location?: string
   salaryRange?: string
   project?: Partial<Project>
+  approved?: boolean
 }

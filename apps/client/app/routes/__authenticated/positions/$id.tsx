@@ -1,4 +1,4 @@
-import { CalendarIcon, CurrencyDollarIcon, LocationMarkerIcon, LockClosedIcon } from '@heroicons/react/solid'
+import { CalendarIcon, ClockIcon, CurrencyDollarIcon, LocationMarkerIcon, LockClosedIcon } from '@heroicons/react/solid'
 import type { LoaderFunction, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import type { RouteMatch } from '@remix-run/react'
@@ -12,7 +12,7 @@ import Content from 'app/components/Content'
 import { MetaList, MetaListItem } from '~/components/MetaList'
 
 import type { Position } from '~/models/positions/Position'
-import { dateTimeFormat } from '~/utils'
+import { dateTimeFormat, toSentence } from '~/utils'
 import Breadcrumb from 'app/components/Breadcrumb'
 
 export const handle = {
@@ -61,6 +61,7 @@ const PositionDetail = () => {
           )}
         </MetaListItem>
         <MetaListItem icon={LocationMarkerIcon}>{location!}</MetaListItem>
+        {employment && <MetaListItem icon={ClockIcon}>{toSentence(employment)}</MetaListItem>}
         {closingDate && <MetaListItem icon={CalendarIcon}>{`Closing on ${dateTimeFormat(closingDate!)}`}</MetaListItem>}
       </MetaList>
 

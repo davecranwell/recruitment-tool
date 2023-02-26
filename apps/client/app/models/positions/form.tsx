@@ -27,7 +27,7 @@ const formFields = (session: SessionData, projects: Project[]): FieldDef[] => [
         defaultValue: '',
       },
       {
-        name: 'type',
+        name: 'employment',
         colspan: 2,
         required: true,
         label: 'Employment type',
@@ -35,11 +35,11 @@ const formFields = (session: SessionData, projects: Project[]): FieldDef[] => [
         options: [
           {
             key: 'Full time',
-            value: 'FULLTIME',
+            value: 'FULL',
           },
           {
             key: 'Part time',
-            value: 'PARTTIME',
+            value: 'PART',
           },
           {
             key: 'Contract',
@@ -58,14 +58,14 @@ const formFields = (session: SessionData, projects: Project[]): FieldDef[] => [
         colspan: 4,
         label: 'Location',
         type: 'text',
-        hint: 'e.g Remote / Remote (UK) / Office',
+        hint: 'e.g "Remote", "Remote (UK)", "Office"',
       },
       {
         name: 'salaryRange',
         colspan: 4,
-        label: 'Salary range',
+        label: 'Compensation',
         type: 'text',
-        hint: 'e.g $50,000 / $50k - $70k + Stock etc',
+        hint: 'e.g "£15/hr", "$30,000", "$30k - $40k"',
       },
     ],
   },

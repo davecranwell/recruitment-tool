@@ -4,6 +4,7 @@ import {
   CalendarIcon,
   CurrencyDollarIcon,
   LocationMarkerIcon,
+  ClockIcon,
 } from '@heroicons/react/outline'
 import { FolderIcon, LockClosedIcon, PlusIcon } from '@heroicons/react/solid'
 import type { LoaderFunction, MetaFunction } from '@remix-run/node'
@@ -19,12 +20,13 @@ import { MetaList, MetaListItem } from 'app/components/MetaList'
 import { StackedList, StackedListItem } from 'app/components/StackedList'
 
 import { useAppAbility } from 'app/hooks/useAppAbility'
-import { dateTimeFormat } from 'app/utils'
+import { dateTimeFormat, titleCase, toSentence } from 'app/utils'
 import Chooser from '~/components/Chooser'
 import type { Position } from '~/models/positions/Position'
 import type { Project } from '~/models/projects/Project'
 import Button from '~/components/Button'
 import Pill from '~/components/Pill'
+import classNames from 'classnames'
 
 export const handle = {
   hideBannerAction: true,
@@ -108,17 +110,23 @@ const Positions = () => {
         {positions.data.map((position: Position) => (
           <StackedListItem key={position.id} link={`/positions/${position.id}`}>
             <div className="flex items-center justify-between">
-              <p className="text-primary-600 truncate font-medium">{position.name}</p>
+              <p
+                className={classNames('text-primary-600 truncate font-medium', {
+                  'opacity-30': !position.approved,
+                })}
+              >
+                {position.name}
+              </p>
 
               <div className="ml-2 flex flex-shrink-0">
-                <Pill status="bad">Approved</Pill>
-
-                {/* <p className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
-                  {position.type}
-                </p> */}
+                {!position.approved && <Pill status="bad">Approval needed</Pill>}
               </div>
             </div>
-            <MetaList className="mt-2 text-sm">
+            <MetaList
+              className={classNames('mt-2 text-sm', {
+                'opacity-30': !position.approved,
+              })}
+            >
               <MetaListItem
                 icon={CurrencyDollarIcon}
                 title="This information is only visible to organisation owners or hiring managers"
@@ -131,6 +139,7 @@ const Positions = () => {
                 )}
               </MetaListItem>
               <MetaListItem icon={LocationMarkerIcon}>{position.location!}</MetaListItem>
+              {position.employment && <MetaListItem icon={ClockIcon}>{toSentence(position.employment)}</MetaListItem>}
               <MetaListItem icon={CalendarIcon}>{`Closing on ${dateTimeFormat(position.closingDate!)}`}</MetaListItem>
               <MetaListItem icon={CheckCircleIcon}></MetaListItem>
             </MetaList>

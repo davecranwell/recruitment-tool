@@ -70,6 +70,8 @@ export class PositionService {
         description: data.description,
         openingDate: data.openingDate,
         closingDate: data.closingDate,
+        employment: data.employment,
+        approved: project.approvalsNeeded > 0 ? false : true,
         project: {
           connect: { id: data.projectId },
         },
