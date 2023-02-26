@@ -14,7 +14,7 @@ import Divider from '~/components/Divider'
 
 import { newUserFormFields } from '~/models/users/form'
 import GoogleLogin from 'app/components/GoogleLogin'
-import logo from '../../images/logo.svg'
+import logo from '../../images/logo2.svg'
 
 export const loader: LoaderFunction = async (data) => {
   const { request } = data

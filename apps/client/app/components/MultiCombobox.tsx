@@ -1,5 +1,6 @@
 import { Combobox } from '@headlessui/react'
 import { ChevronDownIcon, XIcon } from '@heroicons/react/solid'
+import classNames from 'classnames'
 import { Fragment, useEffect, useState } from 'react'
 
 import type { FieldDef, Option } from './Forms'
@@ -41,7 +42,18 @@ const MultiComboBox: React.FC<Props> = ({ field, optionName = 'item', optionRend
     <>
       <Combobox value={selected} onChange={handleChange} multiple>
         <div className="relative">
-          <div className="form-select flex flex-wrap relative focus:ring-primary-500 focus:border-primary-500 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:outline-none disabled:border-gray-200 disabled:text-slate-400 disabled:shadow-none sm:text-sm">
+          <div
+            className={classNames(
+              'form-select flex flex-wrap relative focus:ring-primary-500 focus:border-primary-500 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:outline-none disabled:border-gray-200 disabled:text-slate-400 shadow-sm disabled:shadow-none sm:text-sm',
+              {
+                'border-red-700': field.errors && field.errors.length,
+              }
+            )}
+            aria-invalid={field.errors && field.errors.length ? 'true' : 'false'}
+            aria-describedby={
+              field.errors && field.errors.length ? `${field.name}-errors` : `${field.name}-description`
+            }
+          >
             {selected.length > 0 && (
               <ul className="flex flex-wrap">
                 {selected.map((option: Option, index) => (
@@ -73,9 +85,7 @@ const MultiComboBox: React.FC<Props> = ({ field, optionName = 'item', optionRend
               onChange={(event) => setQuery(event.target.value)}
               className="w-full border-none p-0 text-sm leading-5 text-gray-900 focus:ring-0"
             />
-            <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
-              <ChevronDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-            </Combobox.Button>
+            <Combobox.Button className="absolute w-8 inset-y-0 right-0 flex items-center"></Combobox.Button>
           </div>
           <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
             {unSelectedItems.length > 0 &&

@@ -1,7 +1,8 @@
 import { CalendarIcon, CurrencyDollarIcon, LocationMarkerIcon, LockClosedIcon } from '@heroicons/react/solid'
 import type { LoaderFunction, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
-import { Link, Outlet, RouteMatch, useLoaderData, useMatches } from '@remix-run/react'
+import type { RouteMatch } from '@remix-run/react'
+import { Link, Outlet, useLoaderData, useMatches } from '@remix-run/react'
 
 import { api } from 'app/api.server'
 import { requireAuth } from '~/sessions.server'
@@ -27,9 +28,13 @@ export const loader: LoaderFunction = async (data) => {
   const { request, params } = data
   await requireAuth(request)
 
-  const stages = await api(data, `/position/${params.id}/pipeline`)
-  const position = await api(data, `/position/${params.id}`)
-  return json({ stages: await stages.json(), position: await position.json() })
+  const stagesRes = await api(data, `/position/${params.id}/pipeline`)
+  const positionRes = await api(data, `/position/${params.id}`)
+
+  const stages = await stagesRes.json()
+  const position = await positionRes.json()
+
+  return json({ stages, position })
 }
 
 const PositionDetail = () => {
@@ -47,7 +52,7 @@ const PositionDetail = () => {
       <MetaList className="mb-4">
         <MetaListItem
           icon={CurrencyDollarIcon}
-          title="This is privileged information only available to certain roles in your organisation. Take care if taking screenshots of this page"
+          title="This information is only visible to organisation owners or hiring managers"
         >
           {salaryRange && (
             <>

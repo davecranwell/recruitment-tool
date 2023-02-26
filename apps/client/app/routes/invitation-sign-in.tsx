@@ -16,7 +16,7 @@ import { UnauthorisedResponse } from 'app/utils/errors'
 
 import { loginFields, loginToAcceptInvitationFields } from 'app/models/users/form'
 
-import logo from '../../images/logo.svg'
+import logo from '../../images/logo2.svg'
 
 export const loader: LoaderFunction = async (data) => {
   const { request } = data

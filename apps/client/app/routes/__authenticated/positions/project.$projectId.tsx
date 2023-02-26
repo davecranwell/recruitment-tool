@@ -1,4 +1,10 @@
-import { BriefcaseIcon, CalendarIcon, CurrencyDollarIcon, LocationMarkerIcon } from '@heroicons/react/outline'
+import {
+  BriefcaseIcon,
+  CheckCircleIcon,
+  CalendarIcon,
+  CurrencyDollarIcon,
+  LocationMarkerIcon,
+} from '@heroicons/react/outline'
 import { FolderIcon, LockClosedIcon, PlusIcon } from '@heroicons/react/solid'
 import type { LoaderFunction, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
@@ -18,6 +24,7 @@ import Chooser from '~/components/Chooser'
 import type { Position } from '~/models/positions/Position'
 import type { Project } from '~/models/projects/Project'
 import Button from '~/components/Button'
+import Pill from '~/components/Pill'
 
 export const handle = {
   hideBannerAction: true,
@@ -75,7 +82,7 @@ const Positions = () => {
               className={'max-w-md w-full lg:w-1/3 justify-items-stretch'}
               label={'Project'}
               value={projectItems.find((project: any) => project.value === parseInt(projectId!, 10))}
-              onChange={(value: any) => navigate(`/positions/project/${value.value}`)}
+              onChange={({ value }: { value: number }) => navigate(`/positions/project/${value}`)}
               items={projectItems}
             />
             <div className="mt-3 flex sm:mt-0 sm:ml-4">
@@ -102,16 +109,19 @@ const Positions = () => {
           <StackedListItem key={position.id} link={`/positions/${position.id}`}>
             <div className="flex items-center justify-between">
               <p className="text-primary-600 truncate font-medium">{position.name}</p>
+
               <div className="ml-2 flex flex-shrink-0">
+                <Pill status="bad">Approved</Pill>
+
                 {/* <p className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
-                {position.type}
-              </p> */}
+                  {position.type}
+                </p> */}
               </div>
             </div>
             <MetaList className="mt-2 text-sm">
               <MetaListItem
                 icon={CurrencyDollarIcon}
-                title="This is privileged information only available to certain roles in your organisation. Take care if taking screenshots of this page"
+                title="This information is only visible to organisation owners or hiring managers"
               >
                 {position.salaryRange && (
                   <>
@@ -122,6 +132,7 @@ const Positions = () => {
               </MetaListItem>
               <MetaListItem icon={LocationMarkerIcon}>{position.location!}</MetaListItem>
               <MetaListItem icon={CalendarIcon}>{`Closing on ${dateTimeFormat(position.closingDate!)}`}</MetaListItem>
+              <MetaListItem icon={CheckCircleIcon}></MetaListItem>
             </MetaList>
           </StackedListItem>
         ))}

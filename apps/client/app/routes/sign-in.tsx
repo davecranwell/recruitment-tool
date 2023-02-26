@@ -12,7 +12,7 @@ import Form from 'app/components/Forms'
 import GoogleLogin from 'app/components/GoogleLogin'
 import Divider from '~/components/Divider'
 
-import logo from '../../images/logo.svg'
+import logo from '../../images/logo2.svg'
 
 export const loader: LoaderFunction = async ({ request }) => {
   if (await hasSession(request)) {

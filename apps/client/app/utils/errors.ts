@@ -21,9 +21,17 @@ export const NotFoundResponse = ({ headers }: { headers?: Headers } = {}) =>
     headers,
   })
 
-export const ErrorResponse = ({ headers, statusText }: { headers?: Headers; statusText: string }) =>
-  new Response(`An error occured: "${statusText}"`, {
-    status: 500,
+export const ErrorResponse = ({
+  status,
+  headers,
+  statusText,
+}: {
+  status: number
+  headers?: Headers
+  statusText: string
+}) =>
+  new Response('An error occured', {
+    status: status || 500,
     statusText: `An unexpected error occured: "${statusText}"`,
     headers,
   })

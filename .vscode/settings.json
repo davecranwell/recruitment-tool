@@ -17,7 +17,8 @@
   "search.exclude": {
     "**/node_modules": true,
     "**/build": true,
-    "**/dist": true
+    "**/dist": true,
+    "**/apps/timeline": true
   },
   "files.associations": {
     "*.css": "tailwindcss"

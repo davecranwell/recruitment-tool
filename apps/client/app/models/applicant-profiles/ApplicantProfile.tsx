@@ -1,3 +1,8 @@
+export type Interviews = {
+  averageScore: number
+  scoringSystem: any
+}
+
 export type ApplicantProfile = {
   id: number
   askingSalary: string
@@ -7,6 +12,7 @@ export type ApplicantProfile = {
     email: string
     name: string
   }
+  interviews: Interviews[]
 }
 
 export type LinkedApplicantProfile = ApplicantProfile & {

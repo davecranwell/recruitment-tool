@@ -1,20 +1,30 @@
 import { StarIcon } from '@heroicons/react/solid'
+import classNames from 'classnames'
 import { useEffect } from 'react'
 import { useState } from 'react'
 
 type Props = {
   value: any
   type: 'LINEAR' | 'LIKERT'
+  size: 'xs' | 's' | 'm' | 'lg' | 'xl'
+  showLabel: boolean
   schema: any
   onChoose?: Function
+  interactive?: boolean
 }
 
-const ScoreAssessment: React.FC<Props> = ({ value = -1, type, schema, onChoose = () => {} }) => {
+const ScoreAssessment: React.FC<Props> = ({
+  value = -1,
+  type,
+  schema,
+  onChoose = () => {},
+  interactive = true,
+  size = 'lg',
+  showLabel = true,
+}) => {
   const [wrapperHovered, setWrapperHovered] = useState(false)
   const [hoveredIndex, setHoveredIndex] = useState(-1)
   const [initialIndex, setInitialIndex] = useState(-1)
-
-  const iconSize = `h-20 w-20`
 
   useEffect(() => {
     const idx = schema.findIndex((item: any) => item.val === value)
@@ -25,29 +35,45 @@ const ScoreAssessment: React.FC<Props> = ({ value = -1, type, schema, onChoose =
 
   return (
     <div
-      className={`grid grid-flow-col ${type === 'LINEAR' && 'justify-center'}`}
-      onMouseEnter={() => setWrapperHovered(true)}
-      onMouseLeave={() => setWrapperHovered(false)}
+      className={classNames({ 'grid grid-flow-col': interactive, 'justify-center': type === 'LINEAR' })}
+      onMouseEnter={() => interactive && setWrapperHovered(true)}
+      onMouseLeave={() => interactive && setWrapperHovered(false)}
     >
       {schema.map((item: any, index: number) => (
         <button
           key={item.key}
-          onMouseEnter={() => setHoveredIndex(index)}
-          onMouseLeave={() => setHoveredIndex(initialIndex)}
-          onClick={() => onChoose(item.val)}
+          onMouseEnter={() => interactive && setHoveredIndex(index)}
+          onMouseLeave={() => interactive && setHoveredIndex(initialIndex)}
+          onClick={() => interactive && onChoose(item.val)}
         >
           {type === 'LINEAR' && (
             <StarIcon
-              className={`${iconSize} ${wrapperHovered ? 'text-amber-400' : 'text-amber-300 '} ${
-                hoveredIndex >= index ? 'opacity-100' : 'opacity-30'
-              }`}
+              className={classNames(``, {
+                'h-20 w-20': size === 'lg',
+                'h-10 w-10': size === 'm',
+                'h-5 w-5': size === 's',
+                'text-amber-400': wrapperHovered,
+                'text-amber-300 ': !wrapperHovered,
+                'opacity-100': hoveredIndex >= index,
+                'opacity-30': hoveredIndex < index,
+              })}
               aria-hidden="true"
             />
           )}
           {type === 'LIKERT' && (
             <div>
-              <div className={`text-[40px] ${hoveredIndex >= index ? 'opacity-100' : 'opacity-30'}`}>{item.icon}</div>
-              {item.key}
+              <div
+                className={classNames(``, {
+                  'text-[40px]': size === 'lg',
+                  'text-[20px]': size === 'm',
+                  'text-[10px]': size === 's',
+                  'opacity-100': hoveredIndex >= index,
+                  'opacity-30': hoveredIndex < index,
+                })}
+              >
+                {item.icon}
+              </div>
+              {showLabel && item.key}
             </div>
           )}
         </button>

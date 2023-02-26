@@ -117,7 +117,7 @@ const Profile = () => {
                   {applicantProfile.askingSalary && (
                     <div
                       className="sm:col-span-1"
-                      title="This is privileged information only available to certain roles in your organisation. Take care if taking screenshots of this page"
+                      title="This information is only visible to organisation owners or hiring managers"
                     >
                       <dt className="flex items-center font-medium text-gray-500">
                         Salary expectation{' '}

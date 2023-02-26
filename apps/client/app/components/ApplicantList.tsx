@@ -1,8 +1,9 @@
-import { UsersIcon, MailIcon } from '@heroicons/react/solid'
+import { UsersIcon, MailIcon, CheckCircleIcon } from '@heroicons/react/solid'
 
 import type { LinkedApplicantProfile } from '~/models/applicant-profiles/ApplicantProfile'
 
 import Empty from './Empty'
+import ScoreAssessment from './ScoreAssessment'
 import { StackedList, StackedListItem } from './StackedList'
 
 type Props = {
@@ -30,15 +31,16 @@ const ApplicantList: React.FC<Props> = ({ applicants = [], emptyText = 'There ar
                     </p>
                   </div>
                 )}
-                <div className="hidden md:block">
-                  <div>
-                    <p className="text-sm text-gray-900">
-                      {/* Applied on <time dateTime={application.date}>{application.dateFull}</time> */}
-                    </p>
-                    <p className="mt-2 flex items-center text-sm text-gray-500">
-                      {/* <CheckCircleIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-green-400" aria-hidden="true" />
-                        {application.stage} */}
-                    </p>
+                <div>
+                  <p className="text-sm text-gray-400">Latest assessment</p>
+                  <div className="mt-2 flex items-center text-sm text-gray-500">
+                    <ScoreAssessment
+                      value={applicant.interviews[0].averageScore}
+                      size={'m'}
+                      showLabel={false}
+                      interactive={false}
+                      {...applicant.interviews[0].scoringSystem}
+                    />
                   </div>
                 </div>
               </div>

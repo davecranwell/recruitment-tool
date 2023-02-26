@@ -19,7 +19,6 @@ const formFields = (
   {
     name: 'row2',
     type: 'row',
-    cols: 4,
     content: [
       {
         name: 'startDateTime',

@@ -27,7 +27,7 @@ export type FieldDef = {
   options?: Option[]
   optionLabel?: string
   optionRenderer?: Function
-  hint?: string
+  hint?: ReactElement | string
   cols?: number
   colspan?: number
   group?: string
@@ -172,10 +172,8 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                   {field.required && <span className="text-sm text-red-600">&nbsp; *</span>}
                 </label>
               )}
-              {/* {field.type === 'radio' && field.hint && (
-                <p className="leading-5 text-gray-500">How do you prefer to receive notifications?</p>
-              )} */}
-              <div className="relative mt-1">
+
+              <div className="mt-1">
                 {['text', 'email', 'number', 'password', 'url', 'date', 'datetime-local'].includes(field.type) && (
                   <input
                     type={field.type}
@@ -333,7 +331,9 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                   </fieldset>
                 )}
                 {field.type === 'title' && (
-                  <h2 className="text-lg font-medium leading-6 text-gray-900">{field.label || field.text}</h2>
+                  <div className="border-t-2 border-gray-100 mt-8 pt-6">
+                    <h2 className="text-lg font-bold leading-6 text-gray-900">{field.label || field.text}</h2>
+                  </div>
                 )}
                 {field.errors && field.errors.length > 0 && (
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
@@ -342,15 +342,19 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                 )}
               </div>
               {field.type !== 'radio' && field.hint && (
-                <p className="mt-2 text-sm text-gray-500" id={`${field.name}-description`}>
+                <p
+                  className={classNames('mt-2 ', {
+                    'font-medium': field.type === 'title',
+                    'text-sm  text-gray-500': field.type !== 'title',
+                  })}
+                  id={`${field.name}-description`}
+                >
                   {field.hint}
                 </p>
               )}
               {field.errors && field.errors.length > 0 && (
-                <div className="mt-1 text-sm text-red-600" id={`${field.name}-errors`}>
-                  <div className="mt-2 text-sm text-red-600" id="email-error">
-                    {Array.isArray(field.errors) ? field.errors.map((msg) => <div key={msg}>{msg}</div>) : field.errors}
-                  </div>
+                <div className="mt-2 text-sm text-red-600" id={`${field.name}-errors`}>
+                  {Array.isArray(field.errors) ? field.errors.map((msg) => <div key={msg}>{msg}</div>) : field.errors}
                 </div>
               )}
             </>
@@ -397,7 +401,6 @@ const FormLayout: React.FC<FormLayoutProps> = ({
     <Form method="post" {...props} onSubmit={() => clearLocalStorage()}>
       <div
         className={classNames({
-          // this used to have sm:overflow-hidden. I guess future dave will find out why
           'bg-white shadow sm:rounded-lg': wrapper === 'auto',
         })}
       >
@@ -410,7 +413,7 @@ const FormLayout: React.FC<FormLayoutProps> = ({
 
           <div
             className={classNames('space-y-6', {
-              'bg-white py-6 px-4 sm:p-6': wrapper === 'auto',
+              'py-6 px-4 sm:p-6': wrapper === 'auto',
             })}
           >
             {intro && <div className="mt-1 text-gray-500">{intro}</div>}

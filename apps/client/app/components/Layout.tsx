@@ -14,7 +14,7 @@ import Sidebar from './Sidebar'
 import SiteNav from './SiteNav'
 import UserNav from './UserNav'
 
-import logo from '../../images/logo.svg'
+import logo from '../../images/logo2.svg'
 import { Link } from '@remix-run/react'
 
 type Props = {
@@ -96,7 +96,7 @@ const Layout: React.FC<Props> = ({ children, sessionData, globalMessage }) => {
                     <span className="flex min-w-0 items-center justify-between space-x-3">
                       <Avatar name={sessionData?.user.name} imageUrl={sessionData?.user.avatarUrl} size="m" />
                       <span className="flex min-w-0 flex-1 flex-col">
-                        <span className="text-primary-600 truncate font-medium">{sessionData?.user?.name}</span>
+                        <span className="truncate font-medium">{sessionData?.user?.name}</span>
                         <span className="text-neutral-400 truncate text-sm">
                           {sessionData?.activeOrganisation?.name}
                         </span>

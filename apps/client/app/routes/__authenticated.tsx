@@ -1,11 +1,11 @@
-import React from 'react'
-import { Links, Meta, Outlet, useCatch, useLoaderData } from '@remix-run/react'
-import { json } from '@remix-run/node'
 import { Ability } from '@casl/ability'
 import type { PackRule } from '@casl/ability/extra'
 import { unpackRules } from '@casl/ability/extra'
+import { json } from '@remix-run/node'
+import { Outlet, useLoaderData } from '@remix-run/react'
+import React from 'react'
 
-import { requireAuth, getSessionFromCookie, commitSession } from 'app/sessions.server'
+import { commitSession, requireAuth } from 'app/sessions.server'
 
 import Layout from '~/components/Layout'
 import { AbilityProvider } from '~/hooks/useAppAbility'

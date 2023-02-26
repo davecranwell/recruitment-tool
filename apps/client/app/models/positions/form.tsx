@@ -15,16 +15,43 @@ const formFields = (session: SessionData, projects: Project[]): FieldDef[] => [
     defaultValue: '',
   },
   {
-    name: 'name',
-    required: true,
-    label: 'Position Name',
-    type: 'text',
-    defaultValue: '',
-  },
-  {
     name: 'row1',
     type: 'row',
-    cols: 4,
+    content: [
+      {
+        name: 'name',
+        colspan: 4,
+        required: true,
+        label: 'Position Name',
+        type: 'text',
+        defaultValue: '',
+      },
+      {
+        name: 'type',
+        colspan: 2,
+        required: true,
+        label: 'Employment type',
+        type: 'select',
+        options: [
+          {
+            key: 'Full time',
+            value: 'FULLTIME',
+          },
+          {
+            key: 'Part time',
+            value: 'PARTTIME',
+          },
+          {
+            key: 'Contract',
+            value: 'CONTRACT',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'row2',
+    type: 'row',
     content: [
       {
         name: 'location',
@@ -43,9 +70,8 @@ const formFields = (session: SessionData, projects: Project[]): FieldDef[] => [
     ],
   },
   {
-    name: 'row2',
+    name: 'row3',
     type: 'row',
-    cols: 4,
     content: [
       {
         name: 'openingDate',
