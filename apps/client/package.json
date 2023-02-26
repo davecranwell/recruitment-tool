@@ -21,7 +21,7 @@
   "dependencies": {
     "@casl/ability": "^5.4.4",
     "@casl/react": "^3.0.0",
-    "@headlessui/react": "^1.6.1",
+    "@headlessui/react": "^1.7.10",
     "@heroicons/react": "^1.0.6",
     "@react-oauth/google": "^0.2.6",
     "@remix-run/dev": "^1.7.2",
