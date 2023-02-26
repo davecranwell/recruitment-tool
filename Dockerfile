@@ -14,6 +14,7 @@ COPY ./turbobuild/out/json .
 FROM base as builder
 ARG SCOPE
 ENV NODE_ENV production
+ENV DISABLE_ERD true
 
 WORKDIR /app
 COPY --from=base /app .
