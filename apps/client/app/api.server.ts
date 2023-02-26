@@ -13,7 +13,6 @@ export async function api(
   body?: any
 ): Promise<any> {
   const { request } = data || {}
-
   const { accessToken } = (request && (await getSessionData(request))) || {}
 
   const bodyPayload = body instanceof FormData ? JSON.stringify(formDataToJson(body)) : JSON.stringify(body)
@@ -47,8 +46,9 @@ export async function api(
     case 429:
       throw RateLimitedResponse()
 
+    case 409:
     case 500:
-      throw ErrorResponse({ statusText: apiRes.statusText })
+      throw ErrorResponse({ status: apiRes.status, statusText: apiRes.statusText })
   }
 
   return json(await apiRes.json(), { status: apiRes.status })

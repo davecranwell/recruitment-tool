@@ -1,7 +1,7 @@
 import type { LinksFunction, MetaFunction } from '@remix-run/node'
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useCatch } from '@remix-run/react'
 
-import logo from '../images/logo.svg'
+import logo from '../images/logo2.svg'
 import styles from './tailwind.css'
 
 export const links: LinksFunction = () => [
@@ -54,14 +54,24 @@ const ErrorPage: React.FC<ErrorPageProps> = ({ title, children }) => {
 
         <h1 className="py-4 text-2xl font-bold text-gray-900 text-center">{title}</h1>
         <div className="text-center">{children}</div>
+
+        <Scripts />
       </body>
-      <Scripts />
     </html>
   )
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
-  return <ErrorPage title="An error occured">{process.env.NODE_ENV === 'development' && error.message}</ErrorPage>
+  return (
+    <ErrorPage title="An error occured">
+      {process.env.NODE_ENV === 'development' && (
+        <>
+          <div>{error.message}</div>
+          <div>{error.stack}</div>
+        </>
+      )}
+    </ErrorPage>
+  )
 }
 
 export function CatchBoundary() {
