@@ -32,7 +32,7 @@ const Button: React.FC<Props> = ({
     <ButtonRoot
       type={type}
       className={classNames(
-        `flex items-center justify-center rounded-md border py-2 px-4 font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2`,
+        `flex items-center justify-center rounded-md border py-2 px-4 font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 whitespace-nowrap`,
         {
           'bg-primary-600 hover:bg-primary-700 focus:ring-primary-600 border-transparent text-white':
             color === 'primary',

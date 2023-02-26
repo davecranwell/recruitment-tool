@@ -26,7 +26,7 @@ const Chooser: React.FC<Props> = ({ value, className, label, items, onChange = (
       {({ open }) => (
         <div className={className}>
           {/* {label && <Listbox.Label className="block font-bold text-gray-700">{label}</Listbox.Label>} */}
-          <div className="relative mt-2">
+          <div className="relative">
             <Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">
               <span className="flex items-center">
                 <span className="block truncate">
