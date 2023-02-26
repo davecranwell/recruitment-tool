@@ -49,9 +49,7 @@ export class ProjectController {
   @ApiCreatedResponse({ type: () => Project, description: 'Project created' })
   @UseInterceptors(ClassSerializerInterceptor)
   async create(@Req() request: RequestWithUser, @Body() createProjectDto: CreateProjectDto) {
-    const ability = new Ability(request.user.abilities)
-
-    if (!ability.can(Action.Create, new Project(createProjectDto))) throw new ForbiddenException()
+    if (!request.user.abilities.can(Action.Create, new Project(createProjectDto))) throw new ForbiddenException()
 
     return this.projectService.create(createProjectDto)
   }

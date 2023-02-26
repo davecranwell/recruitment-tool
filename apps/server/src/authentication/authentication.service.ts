@@ -109,6 +109,9 @@ export class AuthenticationService {
     }
   }
 
+  // Only used when returning a user with abilities back to a calling third party external service.
+  // Not to be used when creating a user internally for sharing around the session:
+  // see userService.getSessionUserWithAbilities() for that
   private async addAbilities(user: UserEntity) {
     user.abilities = await this.caslPermissions.asPackedForUser(user)
     return new UserEntity(user)

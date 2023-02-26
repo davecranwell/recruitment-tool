@@ -46,8 +46,10 @@ export class AssessmentController {
     // get position by ID and check permissions on that project
     const position = await this.positionService.findOne(positionId, request.user, { includeUserRoles: true })
 
-    const ability = new Ability(request.user.abilities)
-    if (!ability.can(Action.Manage, new Position(position)) && !ability.can(Action.Read, new Position(position))) {
+    if (
+      !request.user.abilities.can(Action.Manage, new Position(position)) &&
+      !request.user.abilities.can(Action.Read, new Position(position))
+    ) {
       throw new ForbiddenException()
     }
 

@@ -47,8 +47,7 @@ export class InvitationService {
     const organisation = await this.prisma.organisation.findUnique({ where: { id: organisationId } })
     if (!organisation) throw new NotFoundException('Organisation with this ID does not exist')
 
-    const ability = new Ability(user.abilities)
-    if (!ability.can(Action.Manage, new Organisation({ id: organisationId }))) throw new ForbiddenException()
+    if (!user.abilities.can(Action.Manage, new Organisation({ id: organisationId }))) throw new ForbiddenException()
 
     const invitation = await this.prisma.invitation.create({
       data: {

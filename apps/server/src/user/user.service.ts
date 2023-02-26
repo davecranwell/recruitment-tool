@@ -12,7 +12,7 @@ import { UserEntity } from './entities/user.entity'
 export class UserService {
   constructor(private prisma: PrismaService, private readonly caslPermissions: CaslPermissions) {}
 
-  async findOne(id: number, requestUser: UserEntity) {
+  async findOne(id: number, user: UserEntity) {
     const record = await this.prisma.user.findUnique({
       where: { id },
       select: {
@@ -25,7 +25,7 @@ export class UserService {
             organisationId: {
               // Limit the organisations returned only to those the requesting user already
               // has access to themselves
-              in: requestUser.organisations.map((org) => org.organisationId),
+              in: user.organisations.map((org) => org.organisationId),
             },
           },
         },
@@ -37,13 +37,12 @@ export class UserService {
     // It's intended for org admins to see about their users but they can see all that users organisations
     // even the ones the admin is not part of.
     // see clietn: __authenticated/users/$id.edit.tsx
-    const ability = new Ability(requestUser.abilities)
-    if (!ability.can(Action.Read, new UserEntity(record))) throw new ForbiddenException()
+    if (!user.abilities.can(Action.Read, new UserEntity(record))) throw new ForbiddenException()
 
     return new UserEntity(record)
   }
 
-  async findOrganisations(id: number, requestUser: UserEntity) {
+  async findOrganisations(id: number, user: UserEntity) {
     return this.prisma.organisation.findMany({
       where: { users: { some: { userId: id } } },
     })
@@ -60,17 +59,17 @@ export class UserService {
     throw new NotFoundException('User with this id does not exist')
   }
 
-  async getByIdWithAbilities(id: number) {
+  async getSessionUserWithAbilities(id: number) {
     const user = (await this.prisma.user.findUnique({
       where: { id },
       include: { organisations: { include: { organisation: true } } },
     })) as UserEntity
 
     if (user) {
-      user.abilities = await this.caslPermissions.asJsonForUser(user)
-
+      user.abilities = await this.caslPermissions.createForUser(user)
       return new UserEntity(user)
     }
+
     throw new NotFoundException('User with this id does not exist')
   }
 

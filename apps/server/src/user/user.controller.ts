@@ -61,8 +61,7 @@ export class UserController {
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number
   ) {
-    const ability = new Ability(request.user.abilities)
-    if (!ability.can(Action.Read, new UserEntity({ id }))) throw new ForbiddenException()
+    if (!request.user.abilities.can(Action.Read, new UserEntity({ id }))) throw new ForbiddenException()
 
     return this.userService.findOrganisations(id, request.user)
   }

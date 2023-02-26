@@ -93,8 +93,7 @@ export class OrganisationService {
   async findProjects(organisationId: number, user: UserEntity, paginationArgs: PaginationArgsDto) {
     // if you're an org admin, get all projects
     // if you're a regular user, get all projects you're allocated to in some way
-    const ability = new Ability(user.abilities)
-    const isOrgOwner = ability.can(Action.Manage, new Organisation({ id: organisationId }))
+    const isOrgOwner = user.abilities.can(Action.Manage, new Organisation({ id: organisationId }))
 
     return await paginate<Project, Prisma.ProjectFindManyArgs>(
       this.prisma.project,
@@ -125,8 +124,7 @@ export class OrganisationService {
     user: UserEntity,
     paginationArgs: PaginationArgsDto
   ) {
-    const ability = new Ability(user.abilities)
-    const isOrgOwner = ability.can(Action.Manage, new Organisation({ id: organisationId }))
+    const isOrgOwner = user.abilities.can(Action.Manage, new Organisation({ id: organisationId }))
 
     const results = await paginate<Position, Prisma.PositionFindManyArgs>(
       this.prisma.position,
@@ -164,8 +162,7 @@ export class OrganisationService {
   async findPositions(organisationId: number, user: UserEntity, paginationArgs: PaginationArgsDto) {
     // if you're an org admin, get all positions
     // if you're a regular user, get all positions within the projects you're allocated to
-    const ability = new Ability(user.abilities)
-    if (ability.can(Action.Manage, new Organisation({ id: organisationId }))) {
+    if (user.abilities.can(Action.Manage, new Organisation({ id: organisationId }))) {
       return await paginate<Position, Prisma.PositionFindManyArgs>(
         this.prisma.position,
         { where: { project: { organisationId } }, include: { project: true }, orderBy: { project: { name: 'asc' } } },

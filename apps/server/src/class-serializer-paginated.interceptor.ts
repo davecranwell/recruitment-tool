@@ -54,7 +54,7 @@ export function PrismaClassSerializerInterceptorPaginated(classToIntercept: Type
       response: PaginatedResult<typeof classToIntercept> | PlainLiteralObject | Array<PlainLiteralObject>,
       options: ClassTransformOptions
     ): PaginatedResult<typeof classToIntercept> | PlainLiteralObject | Array<PlainLiteralObject> {
-      const abilities = new Ability(Interceptor.user.abilities)
+      const abilities = Interceptor.user.abilities
 
       if (isResponsePaginated(response)) {
         const res = response as PaginatedResult<typeof classToIntercept>

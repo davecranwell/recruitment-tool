@@ -33,9 +33,8 @@ export class InvitationController {
   @UseInterceptors(ClassSerializerInterceptor)
   @Post()
   async create(@Req() request: RequestWithUser, @Body() data: CreateInvitationDto) {
-    const ability = new Ability(request.user.abilities)
-
-    if (!ability.can(Action.Manage, new Organisation({ id: data.organisationId }))) throw new ForbiddenException()
+    if (!request.user.abilities.can(Action.Manage, new Organisation({ id: data.organisationId })))
+      throw new ForbiddenException()
 
     return this.invitationService.create(data, request.user)
   }

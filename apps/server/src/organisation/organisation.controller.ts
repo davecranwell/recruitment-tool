@@ -60,9 +60,7 @@ export class OrganisationController {
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number
   ) {
-    const ability = new Ability(request.user.abilities)
-
-    if (!ability.can(Action.Read, new Organisation({ id }))) throw new ForbiddenException()
+    if (!request.user.abilities.can(Action.Read, new Organisation({ id }))) throw new ForbiddenException()
 
     return this.organisationService.findOne(+id)
   }
@@ -71,9 +69,8 @@ export class OrganisationController {
   @ApiOperation({ summary: 'Create a new organisation' })
   @ApiCreatedResponse({ type: () => Organisation, description: 'Organisation created' })
   async create(@Req() request: RequestWithUser, @Body() createOrganisationDto: CreateOrganisationDto) {
-    const ability = new Ability(request.user.abilities)
-
-    if (!ability.can(Action.Create, new Organisation(createOrganisationDto))) throw new ForbiddenException()
+    if (!request.user.abilities.can(Action.Create, new Organisation(createOrganisationDto)))
+      throw new ForbiddenException()
 
     return this.organisationService.create(createOrganisationDto)
   }
@@ -94,9 +91,7 @@ export class OrganisationController {
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
     @Query() paginationArgs: PaginationArgsDto
   ) {
-    const ability = new Ability(request.user.abilities)
-
-    if (!ability.can(Action.Manage, new Organisation({ id }))) throw new ForbiddenException()
+    if (!request.user.abilities.can(Action.Manage, new Organisation({ id }))) throw new ForbiddenException()
 
     return this.organisationService.findUsers(+id, paginationArgs)
   }
@@ -110,9 +105,7 @@ export class OrganisationController {
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
     @Param('userId', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) userId: number
   ) {
-    const ability = new Ability(request.user.abilities)
-
-    if (!ability.can(Action.Manage, new Organisation({ id }))) throw new ForbiddenException()
+    if (!request.user.abilities.can(Action.Manage, new Organisation({ id }))) throw new ForbiddenException()
 
     return this.organisationService.findUser(id, userId)
   }
@@ -127,8 +120,7 @@ export class OrganisationController {
     @Param('userId', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) userId: number,
     @Body() patchData: PatchOrganisationUserDto
   ) {
-    const ability = new Ability(request.user.abilities)
-    if (!ability.can(Action.Manage, new Organisation({ id }))) throw new ForbiddenException()
+    if (!request.user.abilities.can(Action.Manage, new Organisation({ id }))) throw new ForbiddenException()
 
     return this.organisationService.patchUser(id, userId, patchData)
   }
@@ -143,9 +135,7 @@ export class OrganisationController {
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
     @Query() paginationArgs: PaginationArgsDto
   ) {
-    const ability = new Ability(request.user.abilities)
-
-    if (!ability.can(Action.Read, new Organisation({ id }))) throw new ForbiddenException()
+    if (!request.user.abilities.can(Action.Read, new Organisation({ id }))) throw new ForbiddenException()
 
     return this.organisationService.findProjects(+id, request.user, paginationArgs)
   }
@@ -167,9 +157,7 @@ export class OrganisationController {
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
     @Query() paginationArgs: PaginationArgsDto
   ) {
-    const ability = new Ability(request.user.abilities)
-
-    if (!ability.can(Action.Read, new Organisation({ id }))) throw new ForbiddenException()
+    if (!request.user.abilities.can(Action.Read, new Organisation({ id }))) throw new ForbiddenException()
 
     return this.organisationService.findPositions(id, request.user, paginationArgs)
   }
@@ -189,9 +177,10 @@ export class OrganisationController {
 
     if (project.organisationId !== id) throw new NotFoundException()
 
-    const ability = new Ability(request.user.abilities)
-
-    if (!ability.can(Action.Read, new Organisation({ id })) || !ability.can(Action.Read, new Project(project))) {
+    if (
+      !request.user.abilities.can(Action.Read, new Organisation({ id })) ||
+      !request.user.abilities.can(Action.Read, new Project(project))
+    ) {
       throw new ForbiddenException()
     }
 
