@@ -3,12 +3,21 @@ import type { SessionData } from 'app/sessions.server'
 import Avatar from '~/components/Avatar'
 import type { User } from '../users/User'
 
+const optionRenderer = (option: Option) => (
+  <span className="flex items-center">
+    <Avatar name={option.key} size="xs" imageUrl={option.avatarUrl} />
+    <span className="ml-3">{option.key}</span>
+  </span>
+)
+
 const formFields = (
   session: SessionData,
   onManagerChange: Function,
   onInterviewerChange: Function,
+  onFinancialManagerChange: Function,
   managerUsers: Option[],
-  interviewUsers: Option[]
+  interviewUsers: Option[],
+  financialUsers: Option[]
 ): FieldDef[] => [
   {
     name: 'name',
@@ -36,12 +45,7 @@ const formFields = (
         hint: 'Hiring managers can manage applicants for the role, including changing their stage or disqualifying them. They can also see more sensitive information about the roles and applicants.',
         options: managerUsers,
         optionLabel: 'user',
-        optionRenderer: (option: Option) => (
-          <span className="flex items-center">
-            <Avatar name={option.key} size="xs" imageUrl={option.avatarUrl} />
-            <span className="ml-3">{option.key}</span>
-          </span>
-        ),
+        optionRenderer,
         props: {
           onChange: onManagerChange,
         },
@@ -54,15 +58,48 @@ const formFields = (
         hint: 'Interviewers may only take part in interviews and provide feedback. They have no control over the hiring process.',
         options: interviewUsers,
         optionLabel: 'user',
-        optionRenderer: (option: Option) => (
-          <span className="flex items-center">
-            <Avatar name={option.key} size="xs" imageUrl={option.avatarUrl} />
-            <span className="ml-3">{option.key}</span>
-          </span>
-        ),
+        optionRenderer,
         props: {
           onChange: onInterviewerChange,
         },
+      },
+    ],
+  },
+  {
+    name: 'approvaltitle',
+    label: 'Financial approval',
+    hint: (
+      <>
+        You may optionally define financial budget holders who must approval the creation of new positions.{' '}
+        <strong>Choosing financial managers will automatically cause new positions to require approval.</strong>
+      </>
+    ),
+    type: 'title',
+  },
+  {
+    name: 'row2',
+    type: 'row',
+    cols: 4,
+    content: [
+      {
+        name: 'financialManagers',
+        colspan: 4,
+        label: 'Financial managers',
+        type: 'multicombobox',
+        options: financialUsers,
+        optionLabel: 'user',
+        optionRenderer,
+        props: {
+          onChange: onFinancialManagerChange,
+        },
+      },
+      {
+        name: 'approvalsNeeded',
+        colspan: 4,
+        label: 'Required number of approvals',
+        hint: 'If financial managers are selected and this is left blank, this defaults to 1 approval',
+        type: 'number',
+        defaultValue: '',
       },
     ],
   },

@@ -20,6 +20,9 @@ export class Project implements ProjectModel {
   @ApiProperty()
   organisationId: number
 
+  @ApiProperty()
+  approvalsNeeded: number | null
+
   @Exclude()
   createdAt: Date
 

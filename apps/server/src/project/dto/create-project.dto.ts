@@ -2,8 +2,9 @@ import { ApiProperty } from '@nestjs/swagger'
 import { Transform } from 'class-transformer'
 import { IsNotEmpty, IsNumber, IsOptional, MaxLength } from 'class-validator'
 import { NoArrayIntersection } from 'src/util/noIntersection.constraint.decorator'
+import { UpdateProjectDto } from './update-project.dto'
 
-export class CreateProjectDto {
+export class CreateProjectDto extends UpdateProjectDto {
   @ApiProperty({ required: true })
   @IsNotEmpty()
   @MaxLength(100)
@@ -17,28 +18,4 @@ export class CreateProjectDto {
   @ApiProperty({ required: true })
   @IsNumber()
   organisationId: number
-
-  @ApiProperty({ isArray: true })
-  @Transform(({ value }) => {
-    if (!Array.isArray(value)) return [parseInt(value, 10)]
-    return value.map((val) => parseInt(val, 10))
-  })
-  @IsNumber({}, { each: true })
-  @IsOptional()
-  @NoArrayIntersection('interviewers', {
-    message: 'Hiring managers and Interviewers can not have both roles at once on a project',
-  })
-  hiringManagers?: number[]
-
-  @ApiProperty({ isArray: true })
-  @Transform(({ value }) => {
-    if (!Array.isArray(value)) return [parseInt(value, 10)]
-    return value.map((val) => parseInt(val, 10))
-  })
-  @IsNumber({}, { each: true })
-  @IsOptional()
-  @NoArrayIntersection('hiringManagers', {
-    message: 'Hiring managers and Interviewers can not have both roles at once on a project',
-  })
-  interviewers?: number[]
 }

@@ -27,8 +27,11 @@ export class ScoringSystem implements ScoringSystemModel {
   @ApiProperty()
   schema: any
 
+  @Exclude()
   createdAt: Date
+  @Exclude()
   updatedAt: Date
+
   Interview?: Interview[]
 }
 
@@ -90,6 +93,10 @@ export class Interview implements InterviewModel {
 
   @ApiProperty()
   scoringSystemId: number
+
+  @ValidateNested()
+  @Type(() => ScoringSystem)
+  scoringSystem?: ScoringSystem
 
   @ValidateNested()
   @Type(() => ApplicantProfile)

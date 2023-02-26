@@ -4,11 +4,11 @@ generator client {
   previewFeatures = ["filteredRelationCount"]
 }
 
-generator erd {
-  provider = "prisma-erd-generator"
-  output   = "ER.md"
-  theme    = "neutral"
-}
+// generator erd {
+//   provider = "prisma-erd-generator"
+//   output   = "ER.md"
+//   theme    = "neutral"
+// }
 
 // generator nestjsDto {
 //   provider                        = "prisma-generator-nestjs-dto"
@@ -39,6 +39,7 @@ model User {
   userRoles           UserRolesOfUser[]
   organisations       UsersInOrganisation[]
   assessments         Assessment[]
+  approvals           Approval[]
 }
 
 model ApplicantProfile {
@@ -86,12 +87,13 @@ model ApplicantProfileForOrganisation {
 }
 
 model Project {
-  id             Int      @id @default(autoincrement())
-  name           String
-  description    String?
-  organisationId Int
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @default(now())
+  id              Int      @id @default(autoincrement())
+  name            String
+  description     String?
+  organisationId  Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now())
+  approvalsNeeded Int?
 
   organisation Organisation      @relation(fields: [organisationId], references: [id])
   positions    Position[]
@@ -114,6 +116,7 @@ model Position {
   pipelineId     Int?
   projectId      Int
   organisationId Int
+  approved       Boolean                 @default(true)
 
   organisation      Organisation                  @relation(fields: [organisationId], references: [id])
   pipeline          Pipeline?                     @relation(fields: [pipelineId], references: [id])
@@ -121,8 +124,20 @@ model Position {
   applicantProfiles ApplicantProfileForPosition[]
   interviews        Interview[]
   assessments       Assessment[]
+  approvals         Approval[]
 
   @@index([projectId])
+}
+
+model Approval {
+  positionId Int
+  userId     Int
+
+  user     User     @relation(fields: [userId], references: [id])
+  position Position @relation(fields: [positionId], references: [id])
+
+  @@id([userId, positionId])
+  @@index([positionId])
 }
 
 model UsersInOrganisation {
@@ -241,6 +256,7 @@ model Invitation {
   organisation Organisation @relation(fields: [organisationId], references: [id])
 
   @@index([organisationId])
+  @@index([sent])
 }
 
 model Interview {
@@ -360,6 +376,7 @@ enum UserRoleType {
 }
 
 enum ProjectRoleType {
+  FINANCIAL_MANAGER
   HIRING_MANAGER
   INTERVIEWER
 }

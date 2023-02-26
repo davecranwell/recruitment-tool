@@ -9,6 +9,7 @@ import { Organisation } from 'src/organisation/entities/organisation.entity'
 
 import { ApplicantProfileForPosition } from 'src/applicant-profile-for-position/entities/applicant-profile-for-position.entity'
 import { ApplicantProfileForOrganisation } from 'src/applicant-profile-for-organisation/entities/applicant-profile-for-organisation.entity'
+import { Interview } from 'src/interview/entities/interview.entity'
 
 export class ApplicantProfile implements ApplicantProfileModel {
   @ApiProperty()
@@ -52,4 +53,9 @@ export class ApplicantProfileWithUser extends ApplicantProfile {
   @ValidateNested()
   @Type(() => User)
   user: User
+
+  @ApiProperty({ type: () => Interview })
+  @ValidateNested()
+  @Type(() => Interview)
+  interviews: Interview
 }

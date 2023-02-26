@@ -24,13 +24,14 @@ import { RequestWithUser } from 'src/authentication/authentication.controller'
 import JwtAuthenticationGuard from 'src/authentication/guards/jwtAuthentication.guard'
 import { Pipeline } from 'src/pipeline/entities/pipeline.entity'
 import { Stage } from 'src/stage/entities/stage.entity'
-import { Position } from './entities/position.entity'
+import { Position, PositionWithApprovals } from './entities/position.entity'
 
 import { InterviewWithStageScoringApplicant } from 'src/interview/entities/interview.entity'
 import { CreatePositionDto } from './dto/create-position.dto'
 import { UpdateApplicantStageDto } from './dto/update-applicant-stage.dto'
 import { UpdatePositionDto } from './dto/update-position.dto'
 import { PositionQueryFeatures, PositionService } from './position.service'
+import { ApprovePositionDto } from './dto/approve-position.dto'
 
 @ApiTags('Positions')
 @ApiBearerAuth('access-token')
@@ -129,11 +130,24 @@ export class PositionController {
   }
 
   @Patch(':id')
+  @ApiOkResponse({ type: () => Position })
+  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Position))
   update(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: string,
     @Body() data: UpdatePositionDto
   ) {
     return this.positionService.update(+id, data, request.user)
+  }
+
+  @Post(':id/approve')
+  @ApiOkResponse({ type: () => Position })
+  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Position))
+  approve(
+    @Req() request: RequestWithUser,
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: string,
+    @Body() data: ApprovePositionDto
+  ) {
+    return this.positionService.approve(+id, data, request.user)
   }
 }

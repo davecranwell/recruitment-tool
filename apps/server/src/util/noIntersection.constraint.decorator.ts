@@ -19,7 +19,7 @@ function validateNoIntersection(value1, value2) {
   return true
 }
 
-export function NoArrayIntersection(property: string, validationOptions?: ValidationOptions) {
+export function NoArrayIntersection(property: string[] | string, validationOptions?: ValidationOptions) {
   return (object: any, propertyName: string) => {
     registerDecorator({
       target: object.constructor,
@@ -35,9 +35,18 @@ export function NoArrayIntersection(property: string, validationOptions?: Valida
 export class NoArrayIntersectionConstraint implements ValidatorConstraintInterface {
   validate(value: any, args: ValidationArguments) {
     const [relatedPropertyName] = args.constraints
-    const relatedValue = (args.object as any)[relatedPropertyName]
 
-    return validateNoIntersection(value, relatedValue)
+    if (!Array.isArray(relatedPropertyName)) {
+      const relatedValue = (args.object as any)[relatedPropertyName]
+
+      return validateNoIntersection(value, relatedValue)
+    } else {
+      return relatedPropertyName.every((prop) => {
+        const relatedValue = (args.object as any)[prop]
+
+        return validateNoIntersection(value, relatedValue)
+      })
+    }
   }
 
   defaultMessage(args: ValidationArguments) {

@@ -50,6 +50,18 @@ export class AssessmentService {
 
     if (!assessment) throw new BadRequestException('This assessment could not be created')
 
+    const avgScore = await this.prisma.assessment.aggregate({ where: { interviewId }, _avg: { score: true } })
+
+    // now update the average scoring of the interview
+    if (avgScore._avg.score) {
+      await this.prisma.interview.update({
+        where: { id: interviewId },
+        data: {
+          averageScore: avgScore._avg.score,
+        },
+      })
+    }
+
     return new Assessment(assessment)
   }
 

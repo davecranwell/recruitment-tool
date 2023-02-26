@@ -1,9 +1,9 @@
+import { useState } from 'react'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { redirect } from '@remix-run/node'
 import { Ability, subject } from '@casl/ability'
 import { unpackRules } from '@casl/ability/extra'
-
 import { useActionData, useLoaderData, useTransition } from '@remix-run/react'
 
 import { api } from 'app/api.server'
@@ -15,8 +15,8 @@ import { notify, requireAuth } from 'app/sessions.server'
 
 import formFields from 'app/models/projects/form'
 import { ForbiddenResponse } from '~/utils/errors'
-import { User } from '~/models/users/User'
-import { useState } from 'react'
+import type { User } from '~/models/users/User'
+
 import Alert from '~/components/Alert'
 
 export const handle = {
@@ -60,7 +60,8 @@ const NewProject = () => {
   const errors = useActionData()
   const transition = useTransition()
   const [chosenManagers, chooseManagers] = useState([])
-  const [chosenInterviewrs, chooseInterviews] = useState([])
+  const [chosenInterviewers, chooseInterviewers] = useState([])
+  const [chosenFinancialManagers, chooseFinancialManagers] = useState([])
 
   const allUsers = users.data
     // remove the current user
@@ -72,21 +73,42 @@ const NewProject = () => {
     }))
 
   const managerUsers = allUsers.filter(
-    (user: Option) => !chosenInterviewrs.find((item: Option) => item.value === user.value)
+    (user: Option) =>
+      !chosenInterviewers.find((item: Option) => item.value === user.value) &&
+      !chosenFinancialManagers.find((item: Option) => item.value === user.value)
   )
   const interviewerUsers = allUsers.filter(
-    (user: Option) => !chosenManagers.find((item: Option) => item.value === user.value)
+    (user: Option) =>
+      !chosenManagers.find((item: Option) => item.value === user.value) &&
+      !chosenFinancialManagers.find((item: Option) => item.value === user.value)
+  )
+  const financialUsers = allUsers.filter(
+    (user: Option) =>
+      !chosenManagers.find((item: Option) => item.value === user.value) &&
+      !chosenInterviewers.find((item: Option) => item.value === user.value)
   )
 
-  const fields = withValues(formFields(sessionData, chooseManagers, chooseInterviews, managerUsers, interviewerUsers), {
-    hiringManagers: [],
-    interviewers: [],
-  })
+  const fields = withValues(
+    formFields(
+      sessionData,
+      chooseManagers,
+      chooseInterviewers,
+      chooseFinancialManagers,
+      managerUsers,
+      interviewerUsers,
+      financialUsers
+    ),
+    {
+      hiringManagers: [],
+      interviewers: [],
+      financialManagers: [],
+    }
+  )
 
   return (
     <Content
       title="Create a project"
-      intro="Projects allow you to group your positions by department, hiring round, or any other business need. A hiring
+      intro="Projects allow you to group your positions by department, hiring round, or another business need. A hiring
     team is assigned to each project and only those assigned can work on positions within it."
     >
       <Form

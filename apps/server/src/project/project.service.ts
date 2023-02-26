@@ -18,13 +18,14 @@ export class ProjectService {
   constructor(private prisma: PrismaService) {}
 
   private async processRoles(organisationId, data) {
-    let { hiringManagers = [], interviewers = [] } = data
+    let { hiringManagers = [], interviewers = [], financialManagers = [] } = data
 
     // normalise to an array so we can more easily concat together
     if (!Array.isArray(hiringManagers)) hiringManagers = [hiringManagers]
     if (!Array.isArray(interviewers)) interviewers = [interviewers]
+    if (!Array.isArray(financialManagers)) financialManagers = [financialManagers]
 
-    const allRoleUsers = [...hiringManagers, ...interviewers]
+    const allRoleUsers = [...hiringManagers, ...interviewers, ...financialManagers]
 
     // check the users provided are in the organisation
     const findUsers = await this.prisma.usersInOrganisation.findMany({
@@ -46,8 +47,12 @@ export class ProjectService {
       userId: user,
       role: ProjectRoleType.INTERVIEWER,
     }))
+    const newFinancialManagersRoles = financialManagers.map((user) => ({
+      userId: user,
+      role: ProjectRoleType.FINANCIAL_MANAGER,
+    }))
 
-    return { newManagersRoles, newInterviewersRoles }
+    return { newManagersRoles, newInterviewersRoles, newFinancialManagersRoles }
   }
 
   async findOne(id: number, user: UserEntity) {
@@ -57,25 +62,27 @@ export class ProjectService {
     })
     if (!project) throw new NotFoundException('Position with this ID does not exist')
 
-    const ability = new Ability(user.abilities)
-
-    if (!ability.can(Action.Read, new Project(project))) throw new ForbiddenException()
+    if (!user.abilities.can(Action.Read, new Project(project))) throw new ForbiddenException()
 
     return new Project(project)
   }
 
   async create(data: CreateProjectDto) {
-    const { newManagersRoles, newInterviewersRoles } = await this.processRoles(data.organisationId, data)
+    const { newManagersRoles, newInterviewersRoles, newFinancialManagersRoles } = await this.processRoles(
+      data.organisationId,
+      data
+    )
 
     const project = await this.prisma.project.create({
       data: {
         name: data.name,
         description: data.description,
+        approvalsNeeded: data.approvalsNeeded,
         organisation: {
           connect: { id: data.organisationId },
         },
         userRoles: {
-          create: [...newManagersRoles, ...newInterviewersRoles],
+          create: [...newManagersRoles, ...newInterviewersRoles, ...newFinancialManagersRoles],
         },
       },
     })
@@ -86,11 +93,13 @@ export class ProjectService {
   async update(id: number, data: UpdateProjectDto, user: UserEntity) {
     const project = await this.findOne(id, user)
 
-    const ability = new Ability(user.abilities)
-    if (!ability.can(Action.Update, new Project(project))) throw new ForbiddenException()
+    if (!user.abilities.can(Action.Update, new Project(project))) throw new ForbiddenException()
 
     //this.slack.postMessage({ text: 'hi', channel: 'recruitment-app' })
-    const { newManagersRoles, newInterviewersRoles } = await this.processRoles(project.organisationId, data)
+    const { newManagersRoles, newInterviewersRoles, newFinancialManagersRoles } = await this.processRoles(
+      project.organisationId,
+      data
+    )
 
     // Perform the deletion of old and creation of new in a transaction
     const [deleted, created, updatedProject] = await this.prisma.$transaction([
@@ -107,6 +116,10 @@ export class ProjectService {
             role.projectId = id
             return role
           }),
+          ...newFinancialManagersRoles.map((role) => {
+            role.projectId = id
+            return role
+          }),
         ],
       }),
       this.prisma.project.update({
@@ -114,6 +127,7 @@ export class ProjectService {
         data: {
           name: data.name,
           description: data.description,
+          approvalsNeeded: data.approvalsNeeded,
         },
         include: { userRoles: { include: { user: { select: { name: true, avatarUrl: true } } } } },
       }),

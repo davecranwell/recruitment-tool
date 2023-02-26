@@ -45,9 +45,7 @@ export class InterviewController {
     const position = await this.positionService.findOne(positionId, request.user, { includeUserRoles: true })
     const pipeline = await this.positionService.findPipelineStages(positionId, request.user)
 
-    const ability = new Ability(request.user.abilities)
-
-    if (!ability.can(Action.Manage, new Position(position))) throw new ForbiddenException()
+    if (!request.user.abilities.can(Action.Manage, new Position(position))) throw new ForbiddenException()
 
     // check if an interview with this applicant at this stage already exists
     const dupe = await this.interviewService.findByApplicantAndStage(applicantProfileId, stageId)

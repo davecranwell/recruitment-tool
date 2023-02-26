@@ -1,28 +1,28 @@
+import { Ability } from '@casl/ability'
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common'
 import { ApplicantProfile, Prisma } from '@prisma/client'
-import { Ability } from '@casl/ability'
+import { ApiProperty } from '@nestjs/swagger'
+import { Transform } from 'class-transformer'
+import { IsBoolean, IsOptional } from 'class-validator'
 
 import { PrismaService } from 'src/prisma/prisma.service'
 
 import { PaginatedDto, PaginationArgsDto } from 'src/page/pagination-args.dto'
 import { createPaginator } from 'src/util/pagination'
+import { Action } from 'src/casl/actions'
 
 import { CreatePositionDto } from './dto/create-position.dto'
 import { UpdatePositionDto } from './dto/update-position.dto'
+import { ApprovePositionDto } from './dto/approve-position.dto'
+import { UpdateApplicantStageDto } from './dto/update-applicant-stage.dto'
 
 import {
   ApplicantProfileForPosition,
   ApplicantProfileForPositionWithStage,
 } from 'src/applicant-profile-for-position/entities/applicant-profile-for-position.entity'
-import { Action } from 'src/casl/actions'
+import { InterviewWithStageScoringApplicant } from 'src/interview/entities/interview.entity'
 import { UserEntity } from 'src/user/entities/user.entity'
-import { Interview, InterviewWithStageScoringApplicant } from 'src/interview/entities/interview.entity'
-import { UpdateApplicantStageDto } from './dto/update-applicant-stage.dto'
 import { Position } from './entities/position.entity'
-import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsOptional } from 'class-validator'
-import { Stage } from 'src/stage/entities/stage.entity'
-import { Transform } from 'class-transformer'
 
 export class PositionQueryFeatures {
   @ApiProperty({ required: false })
@@ -36,6 +36,12 @@ export class PositionQueryFeatures {
   @IsBoolean()
   @Transform(({ obj, key }) => obj[key] === 'true')
   includeUserRoles?: boolean
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ obj, key }) => obj[key] === 'true')
+  includeApprovals?: boolean
 }
 
 const paginate = createPaginator({ perPage: 20 })
@@ -49,9 +55,11 @@ export class PositionService {
     const project = await this.prisma.project.findUnique({ where: { id: data.projectId } })
     if (!project) throw new NotFoundException('Project with this ID does not exist')
 
-    const ability = new Ability(user.abilities)
     if (
-      !ability.can(Action.Create, new Position({ projectId: data.projectId, organisationId: project.organisationId }))
+      !user.abilities.can(
+        Action.Create,
+        new Position({ projectId: data.projectId, organisationId: project.organisationId })
+      )
     ) {
       throw new ForbiddenException()
     }
@@ -79,51 +87,55 @@ export class PositionService {
   async findOne(
     id: number,
     user: UserEntity,
-    positionFeatures: PositionQueryFeatures = { includeUserRoles: false, includePipeline: false }
+    positionFeatures: PositionQueryFeatures = {
+      includeUserRoles: false,
+      includePipeline: false,
+      includeApprovals: false,
+    }
   ) {
+    const isIncludingAnything =
+      positionFeatures.includePipeline || positionFeatures.includeUserRoles || positionFeatures.includeApprovals
+
     const position = await this.prisma.position.findUnique({
       where: { id },
-      include: {
-        pipeline: {
+      ...(isIncludingAnything && {
+        include: {
           ...(positionFeatures.includePipeline === true && {
-            include: {
-              stages: {
-                orderBy: { order: 'asc' },
-                include: { stage: { include: { _count: { select: { applicants: true } } } } },
+            pipeline: {
+              include: {
+                stages: {
+                  orderBy: { order: 'asc' },
+                  include: { stage: { include: { _count: { select: { applicants: true } } } } },
+                },
               },
             },
           }),
-        },
-        project: {
           ...(positionFeatures.includeUserRoles === true && {
-            include: {
-              userRoles: {
-                include: { user: { select: { name: true, avatarUrl: true } } },
+            project: {
+              include: {
+                userRoles: {
+                  include: { user: { select: { name: true, avatarUrl: true } } },
+                },
+              },
+            },
+          }),
+          ...(positionFeatures.includeApprovals === true && {
+            approvals: {
+              include: {
+                user: true,
               },
             },
           }),
         },
-      },
+      }),
     })
 
     if (!position) throw new NotFoundException('Position with this ID does not exist')
 
-    const ability = new Ability(user.abilities)
-
-    if (!ability.can(Action.Read, new Position(position))) throw new ForbiddenException()
+    if (!user.abilities.can(Action.Read, new Position(position))) throw new ForbiddenException()
 
     return new Position(position)
   }
-
-  // async findByOrganisation(organisationId: number, paginationArgs: PaginationArgsDto) {
-  //   const positions = await paginate<Position, Prisma.PositionFindManyArgs>(
-  //     this.prisma.position,
-  //     { where: { organisationId } },
-  //     { ...paginationArgs }
-  //   )
-
-  //   return positions
-  // }
 
   async findAllApplicants(positionId: number, user: UserEntity, paginationArgs: PaginationArgsDto) {
     // used to test access to the position
@@ -133,7 +145,19 @@ export class PositionService {
       this.prisma.applicantProfileForPosition,
       {
         where: { positionId },
-        include: { applicantProfile: { include: { user: { select: { name: true, email: true } } } } },
+        include: {
+          applicantProfile: {
+            include: {
+              user: { select: { name: true, email: true } },
+              interviews: {
+                select: { averageScore: true, scoringSystem: true },
+                take: 1,
+                where: { averageScore: { not: null } },
+                orderBy: { startDateTime: 'desc' },
+              },
+            },
+          },
+        },
       },
       { ...paginationArgs }
     )
@@ -158,7 +182,19 @@ export class PositionService {
       this.prisma.applicantProfileForPosition,
       {
         where: { positionId, stageId },
-        include: { applicantProfile: { include: { user: { select: { name: true, email: true } } } } },
+        include: {
+          applicantProfile: {
+            include: {
+              user: { select: { name: true, email: true } },
+              interviews: {
+                select: { averageScore: true, scoringSystem: true },
+                take: 1,
+                where: { averageScore: { not: null } },
+                orderBy: { startDateTime: 'desc' },
+              },
+            },
+          },
+        },
       },
       { ...paginationArgs }
     )
@@ -180,7 +216,7 @@ export class PositionService {
         applicantProfile: {
           include: {
             user: { select: { name: true, email: true } },
-            interviews: { select: { id: true, stageId: true } },
+            interviews: { select: { id: true, stageId: true, averageScore: true } },
           },
         },
         stage: true,
@@ -265,11 +301,9 @@ export class PositionService {
   }
 
   async update(id: number, data: UpdatePositionDto, user: UserEntity) {
-    const ability = new Ability(user.abilities)
-
     const position = await this.findOne(id, user)
 
-    if (!ability.can(Action.Update, new Position(position))) throw new ForbiddenException()
+    if (!user.abilities.can(Action.Update, new Position(position))) throw new ForbiddenException()
 
     return this.prisma.position.update({
       where: { id },
@@ -293,9 +327,7 @@ export class PositionService {
   ) {
     const position = await this.findOne(positionId, user)
 
-    const ability = new Ability(user.abilities)
-
-    if (!ability.can(Action.Update, new Position(position))) throw new ForbiddenException()
+    if (!user.abilities.can(Action.Update, new Position(position))) throw new ForbiddenException()
 
     // check if chosen stage is allowed
     const stageValid = await this.prisma.stagesInPipeline.findFirst({
@@ -313,5 +345,64 @@ export class PositionService {
         stageId: data.stage,
       },
     })
+  }
+
+  async approve(positionId: number, data: ApprovePositionDto, user: UserEntity) {
+    const position = await this.findOne(positionId, user, { includeUserRoles: true, includeApprovals: true })
+
+    // Unusual test. Approvers should NOT be the project manager as approval is a higher privilege than that.
+    if (
+      !user.abilities.can(Action.Approve, new Position(position)) ||
+      user.abilities.can(Action.Manage, new Position(position))
+    )
+      throw new ForbiddenException()
+
+    const isApproved = position.project.approvalsNeeded <= position.approvals.length + (data.approved ? 1 : -1)
+
+    // avoid trying to delete if this user doesn't have an approval to delete
+    const canDelete = position.approvals.some(
+      (approval) => approval.userId === user.id && approval.positionId === positionId
+    )
+
+    const updatedPosition = await this.prisma.position.update({
+      where: { id: positionId },
+      data: {
+        approved: isApproved,
+        approvals: {
+          ...(data.approved && {
+            upsert: {
+              where: {
+                userId_positionId: {
+                  userId: user.id,
+                  positionId,
+                },
+              },
+              update: {},
+              create: {
+                user: {
+                  connect: {
+                    id: user.id,
+                  },
+                },
+              },
+            },
+          }),
+          ...(!data.approved &&
+            canDelete && {
+              delete: {
+                userId_positionId: {
+                  userId: user.id,
+                  positionId,
+                },
+              },
+            }),
+        },
+      },
+      include: {
+        approvals: true,
+      },
+    })
+
+    return new Position(updatedPosition)
   }
 }

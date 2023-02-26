@@ -40,6 +40,8 @@ export const action: ActionFunction = async (data) => {
 
     return redirect(`/projects`, { headers })
   }
+
+  return result
 }
 
 export const loader: LoaderFunction = async (data) => {
@@ -64,15 +66,20 @@ const EditProject = () => {
   const errors = useActionData()
   const transition = useTransition()
   const [chosenManagers, chooseManagers] = useState([])
-  const [chosenInterviewrs, chooseInterviews] = useState([])
+  const [chosenInterviewers, chooseInterviewers] = useState([])
+  const [chosenFinancialManagers, chooseFinancialManagers] = useState([])
 
-  const currentHiringManagers = project.userRoles
-    .filter((userRole) => userRole.role === 'HIRING_MANAGER')
-    .map((userRole) => ({ key: userRole.user.name, value: userRole.userId, avatarUrl: userRole.user.avatarUrl }))
+  const mapRole = (userRole) => ({
+    key: userRole.user.name,
+    value: userRole.userId,
+    avatarUrl: userRole.user.avatarUrl,
+  })
 
-  const currentInterviewers = project.userRoles
-    .filter((userRole) => userRole.role === 'INTERVIEWER')
-    .map((userRole) => ({ key: userRole.user.name, value: userRole.userId, avatarUrl: userRole.user.avatarUrl }))
+  const currentHiringManagers = project.userRoles.filter((userRole) => userRole.role === 'HIRING_MANAGER').map(mapRole)
+  const currentInterviewers = project.userRoles.filter((userRole) => userRole.role === 'INTERVIEWER').map(mapRole)
+  const currentFinancialManagers = project.userRoles
+    .filter((userRole) => userRole.role === 'FINANCIAL_MANAGER')
+    .map(mapRole)
 
   const allUsers = users.data
     // remove the current user
@@ -84,17 +91,38 @@ const EditProject = () => {
     }))
 
   const managerUsers = allUsers.filter(
-    (user: Option) => !chosenInterviewrs.find((item: Option) => item.value === user.value)
+    (user: Option) =>
+      !chosenInterviewers.find((item: Option) => item.value === user.value) &&
+      !chosenFinancialManagers.find((item: Option) => item.value === user.value)
   )
   const interviewerUsers = allUsers.filter(
-    (user: Option) => !chosenManagers.find((item: Option) => item.value === user.value)
+    (user: Option) =>
+      !chosenManagers.find((item: Option) => item.value === user.value) &&
+      !chosenFinancialManagers.find((item: Option) => item.value === user.value)
+  )
+  const financialUsers = allUsers.filter(
+    (user: Option) =>
+      !chosenManagers.find((item: Option) => item.value === user.value) &&
+      !chosenInterviewers.find((item: Option) => item.value === user.value)
   )
 
-  const fields = withValues(formFields(sessionData, chooseManagers, chooseInterviews, managerUsers, interviewerUsers), {
-    ...project,
-    hiringManagers: currentHiringManagers,
-    interviewers: currentInterviewers,
-  })
+  const fields = withValues(
+    formFields(
+      sessionData,
+      chooseManagers,
+      chooseInterviewers,
+      chooseFinancialManagers,
+      managerUsers,
+      interviewerUsers,
+      financialUsers
+    ),
+    {
+      ...project,
+      hiringManagers: currentHiringManagers,
+      interviewers: currentInterviewers,
+      financialManagers: currentFinancialManagers,
+    }
+  )
 
   return (
     <Content title={project.name}>

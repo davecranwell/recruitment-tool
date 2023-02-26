@@ -1,4 +1,4 @@
-import { ApiProperty, ApiUnprocessableEntityResponse } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
 import { ValidateNested } from 'class-validator'
 import { Exclude, Expose, Type } from 'class-transformer'
 import { Position as PositionModel, PositionEmploymentType } from '@prisma/client'
@@ -8,6 +8,7 @@ import { ApplicantProfileForPosition } from 'src/applicant-profile-for-position/
 import { ApplicantProfile } from 'src/applicant-profile/entities/applicant-profile.entity'
 import { Pipeline } from 'src/pipeline/entities/pipeline.entity'
 import { Project } from 'src/project/entities/project.entity'
+import { Approval } from 'src/approval/entities/approval.entity'
 
 export class Position implements PositionModel {
   @ApiProperty()
@@ -24,6 +25,9 @@ export class Position implements PositionModel {
 
   @ApiProperty()
   closingDate: Date | null
+
+  @ApiProperty()
+  approved: boolean
 
   @ApiProperty()
   createdAt: Date
@@ -66,6 +70,10 @@ export class Position implements PositionModel {
   @Type(() => ApplicantProfile)
   applicantProfiles?: ApplicantProfileForPosition[]
 
+  @ValidateNested()
+  @Type(() => Approval)
+  approvals?: Approval[]
+
   constructor(partial: Partial<Position>) {
     Object.assign(this, partial)
   }
@@ -76,6 +84,18 @@ export class PositionOnlyOrgId {
   organisationId: number
 
   constructor(partial: Partial<PositionOnlyOrgId>) {
+    Object.assign(this, partial)
+  }
+}
+
+export class PositionWithApprovals extends Position {
+  @ApiProperty({ type: () => Approval, isArray: true })
+  @ValidateNested()
+  @Type(() => Approval)
+  approvals?: Approval[]
+
+  constructor(partial: Partial<PositionWithApprovals>) {
+    super(partial)
     Object.assign(this, partial)
   }
 }
