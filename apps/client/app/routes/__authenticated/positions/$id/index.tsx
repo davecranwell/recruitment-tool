@@ -1,5 +1,5 @@
 import type { LoaderFunction } from '@remix-run/node'
-import { Link, useLoaderData, useOutletContext, useParams } from '@remix-run/react'
+import { useLoaderData, useOutletContext, useParams } from '@remix-run/react'
 import invariant from 'tiny-invariant'
 
 import { api } from 'app/api.server'
@@ -10,6 +10,7 @@ import type { LinkedApplicantProfile } from 'app/models/applicant-profiles/Appli
 import Tabs from 'app/components/Tabs'
 import ApplicantList from '~/components/ApplicantList'
 import Content from '~/components/Content'
+import type { Stage } from '~/models/positions/Stage'
 
 export const loader: LoaderFunction = async (data) => {
   const { request, params } = data
@@ -21,13 +22,12 @@ export const loader: LoaderFunction = async (data) => {
 }
 
 const PositionApplicants = () => {
-  const stages = useOutletContext() as any
+  const { stages } = useOutletContext() as any
   const applicants = useLoaderData()
   const { id } = useParams()
 
-  const totalCount = stages.stages.reduce((acc: number, curr: any) => {
-    const { stage } = curr
-    return (acc = acc + stage._count.applicants)
+  const totalCount = stages.reduce((acc: number, stage: Stage) => {
+    return (acc = acc + (stage?._count?.applicants || 0))
   }, 0)
 
   const tabs = [
@@ -39,10 +39,10 @@ const PositionApplicants = () => {
   ]
 
   tabs.push(
-    ...stages.stages.map(({ stage }: { stage: any }) => ({
+    ...stages.map((stage: Stage) => ({
       name: stage.name,
       href: `/positions/${id}/stage/${stage.id}`,
-      count: stage._count.applicants,
+      count: stage?._count?.applicants,
     }))
   )
 

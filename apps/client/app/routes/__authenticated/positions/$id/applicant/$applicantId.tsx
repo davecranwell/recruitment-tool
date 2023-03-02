@@ -15,7 +15,7 @@ import {
 import { api } from '~/api.server'
 import { notify, requireAuth } from '~/sessions.server'
 
-import type { StageInPipeline } from 'app/models/positions/Stage'
+import type { Stage } from 'app/models/positions/Stage'
 
 import Button from '~/components/Button'
 import PersonHeader from '~/components/PersonHeader'
@@ -61,8 +61,8 @@ const Profile = () => {
   const { applicantProfile, stage } = profile
   const { user } = applicantProfile
 
-  const stageIndex = stages.findIndex((stageItem: StageInPipeline) => stageItem.stageId === stage.id)
-  const stageInterview = applicantProfile.interviews.filter((interview: any) => interview.stageId === stage.id).pop()
+  const stageIndex = stages.findIndex((stageItem: Stage) => stageItem.id === stage.id)
+  const stageInterview = applicantProfile.interviews.filter((interview: any) => interview.id === stage.id).pop()
 
   const handleAdvanceStage = (data: any) => {
     const formData = new FormData()
@@ -87,7 +87,7 @@ const Profile = () => {
             color="secondary"
             component={Link}
             to={`/positions/${id}/applicant/${applicantId}/interview/${stageInterview.id}`}
-            text={`Go to ${stages[stageIndex].stage.name} interview`}
+            text={`Go to ${stages[stageIndex].name} interview`}
           />
         )}
         <StageAdvance stages={stages} currentStageIndex={stageIndex} onChange={handleAdvanceStage} />

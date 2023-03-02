@@ -6,7 +6,7 @@ import { api } from '~/api.server'
 import { requireAuth } from '~/sessions.server'
 
 import type { LinkedApplicantProfile } from 'app/models/applicant-profiles/ApplicantProfile'
-
+import type { Stage as StageType } from '~/models/positions/Stage'
 import Tabs from 'app/components/Tabs'
 import ApplicantList from '~/components/ApplicantList'
 import Content from '~/components/Content'
@@ -21,13 +21,12 @@ export const loader: LoaderFunction = async (data) => {
 }
 
 const Stage = () => {
-  const stages = useOutletContext() as any
+  const { stages } = useOutletContext() as any
   const applicants = useLoaderData()
   const { id } = useParams()
 
-  const totalCount = stages.stages.reduce((acc: number, curr: any) => {
-    const { stage } = curr
-    return (acc = acc + stage._count.applicants)
+  const totalCount = stages.reduce((acc: number, stage: StageType) => {
+    return (acc = acc + (stage?._count?.applicants || 0))
   }, 0)
 
   const tabs = [
@@ -39,10 +38,10 @@ const Stage = () => {
   ]
 
   tabs.push(
-    ...stages.stages.map(({ stage }: { stage: any }) => ({
+    ...stages.map((stage: StageType) => ({
       name: stage.name,
       href: `/positions/${id}/stage/${stage.id}`,
-      count: stage._count.applicants,
+      count: stage?._count?.applicants,
     }))
   )
 

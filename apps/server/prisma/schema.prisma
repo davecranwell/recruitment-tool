@@ -87,17 +87,19 @@ model ApplicantProfileForOrganisation {
 }
 
 model Project {
-  id              Int      @id @default(autoincrement())
-  name            String
-  description     String?
-  organisationId  Int
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @default(now())
-  approvalsNeeded Int?
+  id                Int      @id @default(autoincrement())
+  name              String
+  description       String?
+  organisationId    Int
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @default(now())
+  approvalsNeeded   Int?
+  defaultPipelineId Int?
 
-  organisation Organisation      @relation(fields: [organisationId], references: [id])
-  positions    Position[]
-  userRoles    ProjectUserRole[]
+  defaultPipeline Pipeline?         @relation(fields: [defaultPipelineId], references: [id])
+  organisation    Organisation      @relation(fields: [organisationId], references: [id])
+  positions       Position[]
+  userRoles       ProjectUserRole[]
 
   @@index([organisationId])
 }
@@ -215,10 +217,12 @@ model Stage {
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
+  order       Int?
+  pipelineId  Int?
 
   applicants ApplicantProfileForPosition[]
   interviews Interview[]
-  pipeline   StagesInPipeline[]
+  pipeline   Pipeline?                     @relation(fields: [pipelineId], references: [id])
 }
 
 model Pipeline {
@@ -229,21 +233,22 @@ model Pipeline {
   updatedAt   DateTime @default(now())
 
   positions Position[]
-  stages    StagesInPipeline[]
+  projects  Project[]
+  stages    Stage[]
 }
 
-model StagesInPipeline {
-  stageId    Int
-  pipelineId Int
-  order      Int
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now())
+// model StagesInPipeline {
+//   stageId    Int
+//   pipelineId Int
+//   order      Int
+//   createdAt  DateTime @default(now())
+//   updatedAt  DateTime @default(now())
 
-  pipeline Pipeline @relation(fields: [pipelineId], references: [id])
-  stage    Stage    @relation(fields: [stageId], references: [id])
+//   pipeline Pipeline @relation(fields: [pipelineId], references: [id])
+//   stage    Stage    @relation(fields: [stageId], references: [id])
 
-  @@id([stageId, pipelineId])
-}
+//   @@id([stageId, pipelineId])
+// }
 
 model Invitation {
   id             Int           @id @default(autoincrement())

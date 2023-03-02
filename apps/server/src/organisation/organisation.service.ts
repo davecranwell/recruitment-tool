@@ -106,13 +106,51 @@ export class OrganisationService {
                 userId: user.id,
                 role: {
                   // TODO: we're specifying these so that other roles in the project (like an interviewee) can't see the wrong stuff
-                  in: ['HIRING_MANAGER', 'INTERVIEWER'],
+                  in: ['HIRING_MANAGER', 'INTERVIEWER', 'FINANCIAL_MANAGER'],
                 },
               },
             },
           }),
         },
-        include: { _count: { select: { positions: true } } },
+        include: {
+          _count: {
+            select: {
+              positions: {
+                ...(!isOrgOwner && {
+                  where: {
+                    OR: [
+                      {
+                        project: {
+                          userRoles: {
+                            some: {
+                              userId: user.id,
+                              role: {
+                                in: ['FINANCIAL_MANAGER'],
+                              },
+                            },
+                          },
+                        },
+                      },
+                      {
+                        approved: true,
+                        project: {
+                          userRoles: {
+                            some: {
+                              userId: user.id,
+                              role: {
+                                in: ['HIRING_MANAGER', 'INTERVIEWER'],
+                              },
+                            },
+                          },
+                        },
+                      },
+                    ],
+                  },
+                }),
+              },
+            },
+          },
+        },
       },
       { ...paginationArgs }
     )
@@ -125,6 +163,7 @@ export class OrganisationService {
     paginationArgs: PaginationArgsDto
   ) {
     const isOrgOwner = user.abilities.can(Action.Manage, new Organisation({ id: organisationId }))
+    const isFinancialManager = user.abilities.can(Action.Approve, new Position({ projectId }))
 
     const results = await paginate<Position, Prisma.PositionFindManyArgs>(
       this.prisma.position,
@@ -137,6 +176,7 @@ export class OrganisationService {
         where: {
           organisationId,
           projectId,
+          ...(!isOrgOwner && !isFinancialManager && { approved: true }),
           ...(!isOrgOwner && {
             project: {
               userRoles: {
@@ -144,7 +184,7 @@ export class OrganisationService {
                   userId: user.id,
                   role: {
                     // TODO: we're specifying these so that other roles in the project (like an interviewee) can't see the wrong stuff
-                    in: ['HIRING_MANAGER', 'INTERVIEWER'],
+                    in: ['HIRING_MANAGER', 'INTERVIEWER', 'FINANCIAL_MANAGER'],
                   },
                 },
               },
@@ -186,7 +226,7 @@ export class OrganisationService {
                 userId: user.id,
                 role: {
                   // TODO: we're specifying these so that other roles in the project (like an interviewee) can't see the wrong stuff
-                  in: ['HIRING_MANAGER', 'INTERVIEWER'],
+                  in: ['HIRING_MANAGER', 'INTERVIEWER', 'FINANCIAL_MANAGER'],
                 },
               },
             },

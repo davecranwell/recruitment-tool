@@ -201,35 +201,19 @@ async function main() {
         create: [
           {
             order: 1,
-            stage: {
-              create: {
-                name: 'Stage 1',
-              },
-            },
+            name: 'Stage 1',
           },
           {
             order: 2,
-            stage: {
-              create: {
-                name: 'Stage 2',
-              },
-            },
+            name: 'Stage 2',
           },
           {
             order: 3,
-            stage: {
-              create: {
-                name: 'Stage 3',
-              },
-            },
+            name: 'Stage 3',
           },
           {
             order: 4,
-            stage: {
-              create: {
-                name: 'Disqualified',
-              },
-            },
+            name: 'Disqualified',
           },
         ],
       },
@@ -243,19 +227,11 @@ async function main() {
         create: [
           {
             order: 1,
-            stage: {
-              create: {
-                name: 'Offered',
-              },
-            },
+            name: 'Offered',
           },
           {
             order: 4,
-            stage: {
-              create: {
-                name: 'Disqualified',
-              },
-            },
+            name: 'Disqualified',
           },
         ],
       },
@@ -317,7 +293,7 @@ async function main() {
   // get standard pipeline first stage Id
   const standardPipelineStages = await prisma.pipeline.findUnique({
     where: { id: standardPipeline.id },
-    include: { stages: { orderBy: { order: 'asc' }, include: { stage: true } } },
+    include: { stages: { orderBy: { order: 'asc' } } },
   })
 
   const applicant1Profile = await prisma.applicantProfile.create({
@@ -332,7 +308,7 @@ async function main() {
       },
       positions: {
         create: {
-          stageId: standardPipelineStages.stages[0].stageId,
+          stageId: standardPipelineStages.stages[0].id,
           positionId: position1.id,
         },
       },
@@ -407,7 +383,7 @@ async function main() {
   const interview1 = await prisma.interview.create({
     data: {
       applicantProfileId: applicant1Profile.id,
-      stageId: standardPipelineStages.stages[0].stageId,
+      stageId: standardPipelineStages.stages[0].id,
       positionId: position1.id,
       scoringSystemId: scoringSystem1.id,
       startDateTime: new Date(),
