@@ -103,7 +103,7 @@ export class CaslPermissions {
         {
           action: [Action.Manage, Action.Create, Action.Update],
           subject: 'Position',
-          conditions: { projectId: { $in: projectIdsManager } },
+          conditions: { projectId: { $in: projectIdsManager }, approved: true },
         },
         {
           // This is a weird one, but 'review' status is only used for viewing applicantProfile entities
@@ -125,13 +125,21 @@ export class CaslPermissions {
         {
           action: Action.Read,
           subject: 'Position',
-          conditions: { projectId: { $in: projectIdsRead } },
+          conditions: { projectId: { $in: projectIdsRead }, approved: true },
         },
       ])
     }
 
+    // being a financial manager is like being an interviewer in that seeing projects is important
+    // but approving them is your only major role.
+    // Reading projects matters, but only for approving positions
     if (projectIdsFinancialManager.length) {
       perms = perms.concat([
+        {
+          action: Action.Read,
+          subject: 'Project',
+          conditions: { id: { $in: projectIdsFinancialManager } },
+        },
         {
           action: [Action.Approve, Action.Read],
           subject: 'Position',
