@@ -54,7 +54,7 @@ export class InterviewController {
     }
 
     // check if stage is one allowed for this position, given the stages assigned to this project
-    if (!pipeline.stages.map((stage) => stage.stageId).includes(stageId)) {
+    if (!pipeline.stages.map((stage) => stage.id).includes(stageId)) {
       throw new NotFoundException('This stage does not exist')
     }
 
