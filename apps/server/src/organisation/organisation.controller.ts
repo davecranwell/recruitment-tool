@@ -24,15 +24,12 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 
-import { Ability } from '@casl/ability'
-
 import { RequestWithUser } from 'src/authentication/authentication.controller'
 import JwtAuthenticationGuard from 'src/authentication/guards/jwtAuthentication.guard'
 import { PrismaClassSerializerInterceptorPaginated } from 'src/class-serializer-paginated.interceptor'
 import { ApiPaginatedResponse, PaginatedDto, PaginationArgsDto } from 'src/page/pagination-args.dto'
 import { Action } from 'src/casl/actions'
 import { Position } from 'src/position/entities/position.entity'
-import { UserEntity } from 'src/user/entities/user.entity'
 import { UsersInOrganisation } from 'src/users-in-organisation/entities/users-in-organisation.entity'
 
 import { CreateOrganisationDto } from './dto/create-organisation.dto'
@@ -147,20 +144,23 @@ export class OrganisationController {
   //   return this.positionService.findByOrg(+orgId, paginationArgs)
   // }
 
-  @Get(':id/positions/')
-  @ApiOperation({ summary: 'List all positions created for an organisation' })
-  @ApiExtraModels(PaginatedDto)
-  @ApiPaginatedResponse(Position)
-  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Position))
-  async findPositions(
-    @Req() request: RequestWithUser,
-    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
-    @Query() paginationArgs: PaginationArgsDto
-  ) {
-    if (!request.user.abilities.can(Action.Read, new Organisation({ id }))) throw new ForbiddenException()
+  // TODO: disabled this because without the project specified, it's impossible to know which project role the user might be playing,
+  // so the positions returned can't be checked meaningfully for conditions where the user should or shouldn't be able to see them
+  //
+  // @Get(':id/positions/')
+  // @ApiOperation({ summary: 'List all positions created for an organisation' })
+  // @ApiExtraModels(PaginatedDto)
+  // @ApiPaginatedResponse(Position)
+  // @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Position))
+  // async findPositions(
+  //   @Req() request: RequestWithUser,
+  //   @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
+  //   @Query() paginationArgs: PaginationArgsDto
+  // ) {
+  //   if (!request.user.abilities.can(Action.Read, new Organisation({ id }))) throw new ForbiddenException()
 
-    return this.organisationService.findPositions(id, request.user, paginationArgs)
-  }
+  //   return this.organisationService.findPositions(id, request.user, paginationArgs)
+  // }
 
   @Get(':id/project/:projectId/positions')
   @ApiOperation({ summary: 'List positions by project' })
