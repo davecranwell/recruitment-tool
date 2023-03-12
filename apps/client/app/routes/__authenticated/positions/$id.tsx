@@ -1,8 +1,9 @@
 import { CalendarIcon, ClockIcon, CurrencyDollarIcon, LocationMarkerIcon, LockClosedIcon } from '@heroicons/react/solid'
-import type { LoaderFunction, MetaFunction } from '@remix-run/node'
+import type { LoaderArgs, LoaderFunction, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import type { RouteMatch } from '@remix-run/react'
 import { Link, Outlet, useLoaderData, useMatches } from '@remix-run/react'
+import { PositionControllerGetPipelineReturnType } from 'sharedtypes/position.returntypes'
 
 import { api } from 'app/api.server'
 import { requireAuth } from '~/sessions.server'
@@ -14,6 +15,7 @@ import { MetaList, MetaListItem } from '~/components/MetaList'
 import type { Position } from '~/models/positions/Position'
 import { dateTimeFormat, toSentence } from '~/utils'
 import Breadcrumb from 'app/components/Breadcrumb'
+import Button from '~/components/Button'
 
 export const handle = {
   breadcrumb: (match: RouteMatch) => <Link to={match.pathname}>{match.data.position.name}</Link>,
@@ -24,14 +26,14 @@ export const meta: MetaFunction = ({ data }) => {
   return { title: position.name }
 }
 
-export const loader: LoaderFunction = async (data) => {
+export const loader = async (data: LoaderArgs) => {
   const { request, params } = data
   await requireAuth(request)
 
-  const stagesRes = await api(data, `/position/${params.id}/pipeline`)
+  const stagesRes = await api<PositionControllerGetPipelineReturnType>(data, `/position/${params.id}/pipeline`)
   const positionRes = await api(data, `/position/${params.id}`)
 
-  const stages = await stagesRes.json()
+  const stages: PositionControllerGetPipelineReturnType = await stagesRes.json()
   const position = await positionRes.json()
 
   return json({ stages, position })
@@ -39,14 +41,14 @@ export const loader: LoaderFunction = async (data) => {
 
 const PositionDetail = () => {
   const matches = useMatches()
-  const { position, stages } = useLoaderData()
+  const { position, stages } = useLoaderData<typeof loader>()
   const { id, name, closingDate, description, location, salaryRange, employment } = position as Position
 
   return (
     <Content
       title={name}
       titleSize="larger"
-      // primaryAction={{ label: 'Create', link: '/positions/new' }}
+      primaryAction={<Button color="success" text="Approve" />}
       secondaryAction={{ label: 'Edit', link: `/positions/${id}/edit` }}
     >
       <MetaList className="mb-4">
