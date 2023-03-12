@@ -39,6 +39,7 @@ const Button: React.FC<Props> = ({
           'bg-red-600 hover:bg-red-700 focus:ring-red-600 border-transparent text-white': color === 'danger',
           'focus:ring-primary-500 border border-gray-300 border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-offset-gray-100':
             color === 'secondary',
+          'bg-green-600 hover:bg-green-700 focus:ring-primary-600 border-transparent text-white': color === 'success',
           'w-full': width === 'full',
           'w-1/2': width === 'half',
         }
