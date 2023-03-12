@@ -1,6 +1,7 @@
 import { Link } from '@remix-run/react'
 import classNames from 'classnames'
-import { ReactElement } from 'react'
+import type { ReactElement } from 'react'
+
 import Button from './Button'
 
 type Props = {
@@ -9,14 +10,18 @@ type Props = {
   intro?: ReactElement | string
   titleLink?: string
   titleSize?: 'largest' | 'larger' | 'large'
-  primaryAction?: {
-    label: string
-    link: string
-  }
-  secondaryAction?: {
-    label: string
-    link: string
-  }
+  primaryAction?:
+    | {
+        label: string
+        link: string
+      }
+    | ReactElement
+  secondaryAction?:
+    | {
+        label: string
+        link: string
+      }
+    | ReactElement
   padX?: boolean
   as?: keyof JSX.IntrinsicElements
 }
@@ -54,10 +59,12 @@ const Content: React.FC<Props> = ({
 
           {(primaryAction || secondaryAction) && (
             <div className="mt-4 flex space-x-4 md:mt-0 md:ml-4">
-              {secondaryAction && (
+              {secondaryAction && !secondaryAction.link && secondaryAction}
+              {secondaryAction && secondaryAction.link && (
                 <Button component={Link} color="secondary" to={secondaryAction.link} text={secondaryAction.label} />
               )}
-              {primaryAction && (
+              {primaryAction && !primaryAction.link && primaryAction}
+              {primaryAction && primaryAction.link && (
                 <>
                   <Button component={Link} to={primaryAction.link} text={primaryAction.label} />
                 </>
