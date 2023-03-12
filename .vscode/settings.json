@@ -32,5 +32,6 @@
     "**/Thumbs.db": true
     // "**/node_modules": true
   },
-  "todo-tree.filtering.excludeGlobs": ["**/node_modules", "**/build", "**/dist"]
+  "todo-tree.filtering.excludeGlobs": ["**/node_modules", "**/build", "**/dist"],
+  "typescript.preferences.importModuleSpecifier": "non-relative"
 }
