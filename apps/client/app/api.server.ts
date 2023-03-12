@@ -1,4 +1,4 @@
-import type { DataFunctionArgs } from '@remix-run/node'
+import type { DataFunctionArgs, TypedResponse } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { getClientIPAddress } from 'remix-utils'
 
@@ -6,12 +6,7 @@ import { getSessionData } from 'app/sessions.server'
 import { formDataToJson } from 'app/utils'
 import { ErrorResponse, ForbiddenResponse, NotFoundResponse, RateLimitedResponse } from 'app/utils/errors'
 
-export async function api(
-  data: DataFunctionArgs | null,
-  url: string,
-  method: string = 'GET',
-  body?: any
-): Promise<any> {
+export async function api<T>(data: DataFunctionArgs | null, url: string, method: string = 'GET', body?: any) {
   const { request } = data || {}
   const { accessToken } = (request && (await getSessionData(request))) || {}
 
@@ -29,12 +24,14 @@ export async function api(
     body: bodyPayload,
   })
 
+  const returnData = await apiRes.json()
+
   switch (apiRes.status) {
     case 401:
       // Logged in users (those with an access token) should get logged out if they experience a 401
       // anyone without an accesstoken should see the error message
       if (accessToken) throw redirect('/sign-out')
-      return json(await apiRes.json(), { status: apiRes.status })
+      return json(returnData, { status: apiRes.status })
 
     // NB: can't catch 400 here as 400 is a bad request i.e a request that had errors to be returned to user
     case 404:
@@ -51,5 +48,5 @@ export async function api(
       throw ErrorResponse({ status: apiRes.status, statusText: apiRes.statusText })
   }
 
-  return json(await apiRes.json(), { status: apiRes.status })
+  return json(returnData as T, { status: apiRes.status }) as TypedResponse<T>
 }
