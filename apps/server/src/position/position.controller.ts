@@ -33,6 +33,14 @@ import { UpdatePositionDto } from './dto/update-position.dto'
 import { PositionQueryFeatures, PositionService } from './position.service'
 import { ApprovePositionDto } from './dto/approve-position.dto'
 
+// export type test = {
+//   stages: (Stage & {
+//     _count: {
+//       applicants: number
+//     }
+//   })[]
+// }
+
 @ApiTags('Positions')
 @ApiBearerAuth('access-token')
 @Controller('position')
@@ -49,7 +57,7 @@ export class PositionController {
   @Get(':id')
   @ApiOkResponse({ type: () => Position })
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Position))
-  findOne(
+  async findOne(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
     @Query() positionFeatures: PositionQueryFeatures
@@ -61,7 +69,7 @@ export class PositionController {
   @ApiExtraModels(PaginatedDto, ApplicantProfileWithUser)
   @ApiPaginatedResponse(ApplicantProfileWithUser)
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(ApplicantProfileWithUser))
-  findAllApplicants(
+  async findAllApplicants(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
     @Query() paginationArgs: PaginationArgsDto
@@ -73,7 +81,7 @@ export class PositionController {
   @ApiExtraModels(PaginatedDto, ApplicantProfileWithUser)
   @ApiPaginatedResponse(ApplicantProfileWithUser)
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(ApplicantProfileWithUser))
-  findApplicantsAtStage(
+  async findApplicantsAtStage(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
     @Param('stageId', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) stageId: number,
@@ -86,7 +94,7 @@ export class PositionController {
   @ApiExtraModels(Stage, ApplicantProfileForPositionWithStage)
   @ApiResponse({ type: () => ApplicantProfileForPositionWithStage })
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(ApplicantProfileForPositionWithStage))
-  findApplicant(
+  async findApplicant(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
     @Param('applicantId', ParseIntPipe) applicantId: number
@@ -98,7 +106,7 @@ export class PositionController {
   @ApiExtraModels(ApplicantProfileWithUser)
   @ApiResponse({ type: () => ApplicantProfileWithUser })
   @UseInterceptors(ClassSerializerInterceptor)
-  changeApplicantStage(
+  async changeApplicantStage(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
     @Param('applicantId', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND }))
@@ -112,7 +120,7 @@ export class PositionController {
   @ApiExtraModels(Stage, InterviewWithStageScoringApplicant)
   @ApiResponse({ type: () => InterviewWithStageScoringApplicant })
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(InterviewWithStageScoringApplicant))
-  findApplicantInterview(
+  async findApplicantInterview(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
     @Param('interviewId', ParseIntPipe) interviewId: number
@@ -122,17 +130,24 @@ export class PositionController {
 
   @Get(':id/pipeline')
   @ApiOkResponse({ type: () => Pipeline })
-  findPipelineStages(
+  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Pipeline))
+  async findPipelineStages(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number
   ) {
-    return this.positionService.findPipelineStages(id, request.user)
+    return this.positionService.findPipelineStages(id, request.user) as Promise<{
+      stages: (Stage & {
+        _count: {
+          applicants: number
+        }
+      })[]
+    }>
   }
 
   @Patch(':id')
   @ApiOkResponse({ type: () => Position })
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Position))
-  update(
+  async update(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: string,
     @Body() data: UpdatePositionDto
@@ -143,7 +158,7 @@ export class PositionController {
   @Post(':id/approve')
   @ApiOkResponse({ type: () => Position })
   @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Position))
-  approve(
+  async approve(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: string,
     @Body() data: ApprovePositionDto
