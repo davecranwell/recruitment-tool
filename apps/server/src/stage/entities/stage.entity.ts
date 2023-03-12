@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Exclude } from 'class-transformer'
 import { ApplicantProfileForPosition } from 'src/applicant-profile-for-position/entities/applicant-profile-for-position.entity'
-import { StagesInPipeline } from 'src/stages-in-pipeline/entities/stages-in-pipeline.entity'
+import { Pipeline } from 'src/pipeline/entities/pipeline.entity'
 
 export class Stage {
   @ApiProperty()
@@ -19,6 +19,6 @@ export class Stage {
   @Exclude()
   updatedAt: Date
 
-  pipeline?: StagesInPipeline[]
+  pipeline?: Pipeline[]
   applicants?: ApplicantProfileForPosition[]
 }

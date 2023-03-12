@@ -78,6 +78,11 @@ export class PositionService {
         organisation: {
           connect: { id: project.organisationId },
         },
+        pipeline: {
+          connect: {
+            id: project.defaultPipelineId,
+          },
+        },
       },
     })
   }
@@ -107,7 +112,7 @@ export class PositionService {
               include: {
                 stages: {
                   orderBy: { order: 'asc' },
-                  include: { stage: { include: { _count: { select: { applicants: true } } } } },
+                  include: { _count: { select: { applicants: true } } },
                 },
               },
             },
@@ -289,12 +294,8 @@ export class PositionService {
         stages: {
           orderBy: { order: 'asc' },
           include: {
-            stage: {
-              include: {
-                _count: {
-                  select: { applicants: { where: { positionId } } },
-                },
-              },
+            _count: {
+              select: { applicants: { where: { positionId } } },
             },
           },
         },
@@ -332,8 +333,8 @@ export class PositionService {
     if (!user.abilities.can(Action.Update, new Position(position))) throw new ForbiddenException()
 
     // check if chosen stage is allowed
-    const stageValid = await this.prisma.stagesInPipeline.findFirst({
-      where: { pipelineId: position.pipelineId, stageId: data.stage },
+    const stageValid = await this.prisma.stage.findFirst({
+      where: { pipelineId: position.pipelineId, id: data.stage },
     })
 
     if (!stageValid) throw new ForbiddenException()

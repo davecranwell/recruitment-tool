@@ -2,11 +2,15 @@ export type Stage = {
   id: number
   name: string
   description?: String
-}
-
-export type StageInPipeline = {
-  stageId: number
   pipelineId: number
   order: number
-  stage: Stage
+  _count?: {
+    applicants: number
+  }
 }
+
+// export type StageInPipeline = {
+//   stageId: number
+
+//   stage: Stage
+// }

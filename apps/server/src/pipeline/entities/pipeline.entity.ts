@@ -5,7 +5,6 @@ import { ValidateNested } from 'class-validator'
 
 import { Position } from 'src/position/entities/position.entity'
 import { Stage } from 'src/stage/entities/stage.entity'
-import { StagesInPipeline } from 'src/stages-in-pipeline/entities/stages-in-pipeline.entity'
 
 export class Pipeline implements PipelineModel {
   @ApiProperty()
@@ -25,7 +24,7 @@ export class Pipeline implements PipelineModel {
 
   @ValidateNested()
   @Type(() => Stage)
-  stages?: StagesInPipeline[]
+  stages?: Stage[]
 
   @ValidateNested()
   @Type(() => Position)

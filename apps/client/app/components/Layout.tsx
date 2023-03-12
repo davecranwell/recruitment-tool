@@ -1,5 +1,5 @@
 import { Menu } from '@headlessui/react'
-import { BriefcaseIcon, FolderIcon, HomeIcon, UserGroupIcon } from '@heroicons/react/outline'
+import { BriefcaseIcon, ChevronDoubleRightIcon, FolderIcon, HomeIcon, UserGroupIcon } from '@heroicons/react/outline'
 import { SelectorIcon } from '@heroicons/react/solid'
 import type { SessionData } from '@remix-run/node'
 import * as React from 'react'
@@ -52,6 +52,7 @@ const Layout: React.FC<Props> = ({ children, sessionData, globalMessage }) => {
       { name: 'Organisation', type: 'heading' },
       // { name: 'Settings', href: '/config', icon: CogIcon },
       { name: 'Projects', href: '/projects', icon: FolderIcon },
+      { name: 'Pipelines', href: '/Pipelines', icon: ChevronDoubleRightIcon },
       { name: 'Users', href: '/users', icon: UserGroupIcon },
     ])
   }

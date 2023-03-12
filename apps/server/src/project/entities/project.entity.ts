@@ -6,6 +6,7 @@ import { ProjectUserRole } from 'src/project-user-role/entities/project-user-rol
 import { Position } from 'src/position/entities/position.entity'
 import { Exclude, Type } from 'class-transformer'
 import { ValidateNested } from 'class-validator'
+import { Pipeline } from 'src/pipeline/entities/pipeline.entity'
 
 export class Project implements ProjectModel {
   @ApiProperty()
@@ -19,6 +20,9 @@ export class Project implements ProjectModel {
 
   @ApiProperty()
   organisationId: number
+
+  @ApiProperty()
+  defaultPipelineId: number
 
   @ApiProperty()
   approvalsNeeded: number | null
@@ -36,6 +40,11 @@ export class Project implements ProjectModel {
   @Type(() => ProjectUserRole)
   userRoles?: ProjectUserRole[]
   positions?: Position[]
+
+  @ValidateNested()
+  @ApiProperty({ type: () => Pipeline })
+  @Type(() => Pipeline)
+  defaultPipeline?: Pipeline
 
   constructor(partial: Partial<Project>) {
     Object.assign(this, partial)
