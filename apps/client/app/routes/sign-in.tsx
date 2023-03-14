@@ -12,7 +12,7 @@ import Form from 'app/components/Forms'
 import GoogleLogin from 'app/components/GoogleLogin'
 import Divider from '~/components/Divider'
 
-import logo from '../../images/logo2.svg'
+import logo from '../../images/logo3.svg'
 
 export const loader: LoaderFunction = async ({ request }) => {
   if (await hasSession(request)) {
@@ -62,7 +62,7 @@ const SignIn = () => {
       <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="text-center mb-6">
-            <img src={logo} className="mx-auto h-7 w-auto flex" alt="AppliCan" />
+            <img src={logo} className="mx-auto h-12 w-auto flex" alt="AppliCan" />
           </div>
 
           <h2 className="text-center text-3xl font-bold text-gray-900">Sign in to your account</h2>

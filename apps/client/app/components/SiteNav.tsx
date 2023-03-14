@@ -30,7 +30,7 @@ const SiteNav: React.FC<Props> = ({ navItems }) => {
                     classNames(
                       'text-neutral-400 group flex items-center rounded-md py-2 px-2 font-semibold ring-offset-0',
                       {
-                        'bg-primary-600 text-neutral-100': isActive,
+                        'bg-primary text-neutral-100': isActive,
                         'hover:bg-primary-10 hover:text-neutral-600': !isActive,
                       }
                     )

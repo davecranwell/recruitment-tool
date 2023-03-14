@@ -46,7 +46,7 @@ const Content: React.FC<Props> = ({
           {title && (
             <div className="min-w-0 flex-1">
               <h2
-                className={classNames('font-bold sm:truncate', {
+                className={classNames('text-neutral-600 font-bold sm:truncate', {
                   'text-2xl leading-7 sm:text-3xl': titleSize === 'largest',
                   'text-lg leading-7 sm:text-2xl': titleSize === 'larger',
                 })}

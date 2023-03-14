@@ -16,7 +16,7 @@ import { UnauthorisedResponse } from 'app/utils/errors'
 
 import { loginFields, loginToAcceptInvitationFields } from 'app/models/users/form'
 
-import logo from '../../images/logo2.svg'
+import logo from '../../images/logo3.svg'
 
 export const loader: LoaderFunction = async (data) => {
   const { request } = data
@@ -75,7 +75,7 @@ const AcceptInvitation = () => {
       <div className="flex min-h-full flex-col justify-center py-12 px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="text-center mb-6">
-            <img src={logo} className="mx-auto h-7 w-auto flex" alt="AppliCan" />
+            <img src={logo} className="mx-auto h-12 w-auto flex" alt="AppliCan" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900">You've received an invitation</h2>
           <p className="mt-2 font-medium">

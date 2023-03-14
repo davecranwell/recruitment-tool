@@ -32,7 +32,7 @@ const Chooser: React.FC<Props> = ({ value, className, label, items, onChange = (
                 <span className="block truncate">
                   {label && <span className="font-bold text-gray-700">{label}:</span>} {selected.key}
                 </span>
-                {selected.count && <Counter>{selected.count}</Counter>}
+                {selected.count > 0 && <Counter>{selected.count}</Counter>}
               </span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                 <ChevronDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -52,7 +52,7 @@ const Chooser: React.FC<Props> = ({ value, className, label, items, onChange = (
                     key={`${item.key}${index}`}
                     className={({ active }) =>
                       classNames('relative cursor-default select-none py-2 pl-3 pr-9', {
-                        'text-white bg-primary-600': active,
+                        'text-white bg-primary': active,
                         'text-gray-900': !active,
                       })
                     }
@@ -74,7 +74,7 @@ const Chooser: React.FC<Props> = ({ value, className, label, items, onChange = (
                               'ml-auto mr-2 group inline-block py-0.5 px-3 text-xs rounded-full bg-gray-50',
                               {
                                 'text-gray-900': !active,
-                                'text-primary-600 group-hover': active,
+                                'text-primary group-hover': active,
                               }
                             )}
                           >
@@ -86,7 +86,7 @@ const Chooser: React.FC<Props> = ({ value, className, label, items, onChange = (
                           <span
                             className={classNames('absolute inset-y-0 right-0 flex items-center pr-4', {
                               'text-white': active,
-                              'text-primary-600': !active,
+                              'text-primary': !active,
                             })}
                           >
                             <CheckIcon className="h-5 w-5" aria-hidden="true" />

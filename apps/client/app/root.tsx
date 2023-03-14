@@ -1,7 +1,7 @@
 import type { LinksFunction, MetaFunction } from '@remix-run/node'
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useCatch } from '@remix-run/react'
 
-import logo from '../images/logo2.svg'
+import logo from '../images/logo3.svg'
 import styles from './tailwind.css'
 
 export const links: LinksFunction = () => [
@@ -22,7 +22,7 @@ export const meta: MetaFunction = () => ({
 
 export default function App() {
   return (
-    <html lang="en" className="bg-secondary-50 h-full">
+    <html lang="en" className="bg-neutral-50 h-full">
       <head>
         <Meta />
         <Links />
@@ -44,13 +44,13 @@ type ErrorPageProps = {
 
 const ErrorPage: React.FC<ErrorPageProps> = ({ title, children }) => {
   return (
-    <html lang="en" className="bg-secondary-50 h-full">
+    <html lang="en" className="bg-neutral-50 h-full">
       <head>
         <title>Oh no!</title>
         <Links />
       </head>
       <body className="h-full text-slate-800 flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <img src={logo} alt="" className="flex h-6" />
+        <img src={logo} alt="" className="flex h-12" />
 
         <h1 className="py-4 text-2xl font-bold text-gray-900 text-center">{title}</h1>
         <div className="text-center">{children}</div>

@@ -14,7 +14,7 @@ import Sidebar from './Sidebar'
 import SiteNav from './SiteNav'
 import UserNav from './UserNav'
 
-import logo from '../../images/logo2.svg'
+import logo from '../../images/logo3.svg'
 import { Link } from '@remix-run/react'
 
 type Props = {
@@ -63,6 +63,10 @@ const Layout: React.FC<Props> = ({ children, sessionData, globalMessage }) => {
     { name: 'Sign out', href: '/sign-out' },
   ]
 
+  if (can && can('create', 'Organisation')) {
+    userNavigation.unshift({ name: 'Create an organisation', href: '/create-organisation' })
+  }
+
   if (sessionData?.activeOrganisation && sessionData?.user?.organisations?.length > 1) {
     userNavigation.unshift({
       name: 'Change organisation',
@@ -80,10 +84,10 @@ const Layout: React.FC<Props> = ({ children, sessionData, globalMessage }) => {
       </Sidebar>
 
       <div className="hidden md:fixed md:inset-y-0 md:flex md:w-72 md:flex-col">
-        <div className="bg-white flex flex-grow flex-col overflow-y-auto border-r border-secondary-100 px-2 pt-5">
+        <div className="bg-white flex flex-grow flex-col overflow-y-auto border-r border-neutral-100 px-2 pt-5">
           <div className="px-4 text-center flex align-center justify-center py-6 ">
             <Link to="/">
-              <img src={logo} className="h-7 w-auto flex" alt="AppliCan" />
+              <img src={logo} className="h-12 w-auto flex" alt="AppliCan" />
             </Link>
           </div>
 
@@ -104,7 +108,7 @@ const Layout: React.FC<Props> = ({ children, sessionData, globalMessage }) => {
                       </span>
                     </span>
                     <SelectorIcon
-                      className="h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-secondary-500"
+                      className="h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-neutral-500"
                       aria-hidden="true"
                     />
                   </span>

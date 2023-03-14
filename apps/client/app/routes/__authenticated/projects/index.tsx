@@ -51,7 +51,7 @@ const Projects = () => {
         {projects.data.map((project: Project) => (
           <StackedListItem key={project.id} link={`/projects/${project.id}/edit`}>
             <div className="flex items-center justify-between font-medium">
-              <p className="text-primary-600 truncate ">
+              <p className="text-primary truncate ">
                 {project.name}{' '}
                 {project?._count?.positions && project?._count?.positions > 0 ? (
                   <Counter>{project?._count?.positions}</Counter>

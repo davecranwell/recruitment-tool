@@ -111,7 +111,7 @@ const Positions = () => {
           <StackedListItem key={position.id} link={`/positions/${position.id}`}>
             <div className="flex items-center justify-between">
               <p
-                className={classNames('text-primary-600 truncate font-medium', {
+                className={classNames('text-primary truncate font-medium', {
                   'opacity-30': !position.approved,
                 })}
               >
