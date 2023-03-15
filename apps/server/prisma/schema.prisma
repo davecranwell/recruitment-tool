@@ -32,6 +32,8 @@ model User {
   isRegisteredWithGoogle Boolean  @default(false)
   avatarUrl              String?
   OAuth2Tokens           Json?
+  canCreateOrgs          Boolean  @default(false)
+  maxOrgs                Int      @default(1)
 
   applicantProfiles   ApplicantProfile[]
   interviewsAttending InterviewAttendee[]
@@ -68,10 +70,11 @@ model Organisation {
 
   applicantProfiles ApplicantProfileForOrganisation[]
   invitations       Invitation[]
-  Position          Position[]
+  positions         Position[]
   projects          Project[]
   roles             UserRole[]
   users             UsersInOrganisation[]
+  pipelines         Pipeline[]
 }
 
 model ApplicantProfileForOrganisation {
@@ -226,15 +229,17 @@ model Stage {
 }
 
 model Pipeline {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
+  id             Int      @id @default(autoincrement())
+  name           String
+  description    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now())
+  organisationId Int?
 
-  positions Position[]
-  projects  Project[]
-  stages    Stage[]
+  organisation Organisation? @relation(fields: [organisationId], references: [id])
+  positions    Position[]
+  projects     Project[]
+  stages       Stage[]
 }
 
 // model StagesInPipeline {

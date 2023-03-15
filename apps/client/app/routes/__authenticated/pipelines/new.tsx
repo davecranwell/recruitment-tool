@@ -49,17 +49,14 @@ export const loader: LoaderFunction = async (data) => {
     throw ForbiddenResponse()
   }
 
-  const pipelinesRes = await api(data, `/organisation/${sessionData.activeOrganisation.id}/pipelines`)
-  const pipelines = await pipelinesRes.json()
-
   const usersRes = await api(data, `/organisation/${sessionData.activeOrganisation.id}/users`)
   const users = await usersRes.json()
 
-  return json({ sessionData, users, pipelines })
+  return json({ sessionData, users })
 }
 
 const NewProject = () => {
-  const { sessionData, users, pipelines } = useLoaderData()
+  const { sessionData, users } = useLoaderData()
   const errors = useActionData()
   const transition = useTransition()
   const [chosenManagers, chooseManagers] = useState([])
@@ -99,8 +96,7 @@ const NewProject = () => {
       chooseFinancialManagers,
       managerUsers,
       interviewerUsers,
-      financialUsers,
-      pipelines.data
+      financialUsers
     ),
     {
       hiringManagers: [],

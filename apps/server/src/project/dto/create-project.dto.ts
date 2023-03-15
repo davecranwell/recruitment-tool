@@ -18,4 +18,8 @@ export class CreateProjectDto extends UpdateProjectDto {
   @ApiProperty({ required: true })
   @IsNumber()
   organisationId: number
+
+  @ApiProperty({ required: true })
+  @IsNumber()
+  defaultPipelineId: number
 }

@@ -52,7 +52,7 @@ const Layout: React.FC<Props> = ({ children, sessionData, globalMessage }) => {
       { name: 'Organisation', type: 'heading' },
       // { name: 'Settings', href: '/config', icon: CogIcon },
       { name: 'Projects', href: '/projects', icon: FolderIcon },
-      { name: 'Pipelines', href: '/Pipelines', icon: ChevronDoubleRightIcon },
+      { name: 'Pipelines', href: '/pipelines', icon: ChevronDoubleRightIcon },
       { name: 'Users', href: '/users', icon: UserGroupIcon },
     ])
   }

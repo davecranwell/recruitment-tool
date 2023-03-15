@@ -16,6 +16,10 @@ export class UpdateProjectDto {
   description?: string
 
   @ApiProperty()
+  @IsNumber()
+  defaultPipelineId: number
+
+  @ApiProperty()
   @ValidateIf((obj) => obj.financialManagers)
   @Min(1)
   @Max(10)

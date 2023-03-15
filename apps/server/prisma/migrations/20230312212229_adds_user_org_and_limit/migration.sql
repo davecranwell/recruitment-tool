@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "canCreateOrgs" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "maxOrgs" INTEGER NOT NULL DEFAULT 1;

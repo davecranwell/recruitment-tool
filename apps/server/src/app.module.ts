@@ -13,19 +13,13 @@ import config from './config/configuration'
 import { OrganisationModule } from './organisation/organisation.module'
 import { PositionModule } from './position/position.module'
 import { UserModule } from './user/user.module'
-//import { UsersInOrganisationModule } from './users-in-organisation/users-in-organisation.module'
-//import { UserRoleModule } from './user-role/user-role.module'
-//import { ApplicantProfileForOrganisationModule } from './applicant-profile-for-organisation/applicant-profile-for-organisation.module'
-//import { ApplicantProfileForPositionModule } from './applicant-profile-for-position/applicant-profile-for-position.module'
-//import { ProjectUserRoleModule } from './project-user-role/project-user-role.module'
-//import { UserRolesOfUserModule } from './user-roles-of-user/user-roles-of-user.module'
 import { AssessmentModule } from './assessment/assessment.module'
 import { InterviewModule } from './interview/interview.module'
 import { InvitationModule } from './invitation/invitation.module'
 import { PrismaModule } from './prisma/prisma.module'
-import { ProjectController } from './project/project.controller'
-import { ProjectService } from './project/project.service'
+import { ProjectModule } from './project/project.module'
 import { SchedulerModule } from './scheduler/scheduler.module'
+import { PipelineModule } from '~/pipeline/pipeline.module'
 
 @Module({
   imports: [
@@ -36,35 +30,29 @@ import { SchedulerModule } from './scheduler/scheduler.module'
       ttl: 5,
       limit: 10,
     }),
-    // ScheduleModule.forRoot(),
     AuthenticationModule,
     OrganisationModule,
     PositionModule,
     ApplicantProfileModule,
     UserModule,
-    //UsersInOrganisationModule,
-    //UserRoleModule,
-    //ApplicantProfileForOrganisationModule,
-    //ApplicantProfileForPositionModule,
-    //ProjectUserRoleModule,
-    //UserRolesOfUserModule,
     InvitationModule,
     InterviewModule,
     AssessmentModule,
     SchedulerModule,
+    ProjectModule,
+    PipelineModule,
     // SlackModule.forRoot({
     //   type: 'api',
     //   token: 'xoxb-4735546228627-4721145321431-teUuZ8mHywFkDY8skX3jTM5E',
     // }),
   ],
-  controllers: [AppController, ProjectController],
+  controllers: [AppController],
   providers: [
     AppService,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
-    ProjectService,
   ],
 })
 export class AppModule {}

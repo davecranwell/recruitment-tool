@@ -39,6 +39,7 @@ import { Organisation } from './entities/organisation.entity'
 import { OrganisationService } from './organisation.service'
 import { Project } from 'src/project/entities/project.entity'
 import { ProjectService } from 'src/project/project.service'
+import { Pipeline } from '~/pipeline/entities/pipeline.entity'
 
 @ApiTags('Organisations')
 @ApiBearerAuth('access-token')
@@ -69,7 +70,7 @@ export class OrganisationController {
     if (!request.user.abilities.can(Action.Create, new Organisation(createOrganisationDto)))
       throw new ForbiddenException()
 
-    return this.organisationService.create(createOrganisationDto)
+    return this.organisationService.create(createOrganisationDto, request.user)
   }
 
   // @Get()
@@ -135,6 +136,21 @@ export class OrganisationController {
     if (!request.user.abilities.can(Action.Read, new Organisation({ id }))) throw new ForbiddenException()
 
     return this.organisationService.findProjects(+id, request.user, paginationArgs)
+  }
+
+  @Get(':id/pipelines')
+  @ApiOperation({ summary: 'List all pipelines used in an organisation' })
+  @ApiExtraModels(PaginatedDto)
+  @ApiPaginatedResponse(Pipeline)
+  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Pipeline))
+  async findPipelines(
+    @Req() request: RequestWithUser,
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
+    @Query() paginationArgs: PaginationArgsDto
+  ) {
+    if (!request.user.abilities.can(Action.Manage, new Organisation({ id }))) throw new ForbiddenException()
+
+    return this.organisationService.findPipelines(+id, request.user, paginationArgs)
   }
 
   // @Get()

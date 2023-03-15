@@ -78,6 +78,9 @@ export class ProjectService {
         name: data.name,
         description: data.description,
         approvalsNeeded: data.approvalsNeeded,
+        defaultPipeline: {
+          connect: { id: data.defaultPipelineId },
+        },
         organisation: {
           connect: { id: data.organisationId },
         },
@@ -128,6 +131,7 @@ export class ProjectService {
           name: data.name,
           description: data.description,
           approvalsNeeded: data.approvalsNeeded,
+          defaultPipelineId: data.defaultPipelineId,
         },
         include: { userRoles: { include: { user: { select: { name: true, avatarUrl: true } } } } },
       }),

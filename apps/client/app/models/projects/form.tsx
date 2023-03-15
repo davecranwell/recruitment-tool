@@ -1,6 +1,7 @@
 import type { FieldDef, Option } from 'app/components/Forms'
 import type { SessionData } from 'app/sessions.server'
 import Avatar from '~/components/Avatar'
+import { Pipeline } from '~/models/pipeline/Pipeline'
 import type { User } from '../users/User'
 
 const optionRenderer = (option: Option) => (
@@ -17,7 +18,8 @@ const formFields = (
   onFinancialManagerChange: Function,
   managerUsers: Option[],
   interviewUsers: Option[],
-  financialUsers: Option[]
+  financialUsers: Option[],
+  pipelines: Pipeline[] = []
 ): FieldDef[] => [
   {
     name: 'name',
@@ -27,6 +29,18 @@ const formFields = (
     defaultValue: '',
   },
   { name: 'description', label: 'Description', type: 'textarea', size: 3 },
+  {
+    name: 'defaultPipelineId',
+    required: true,
+    label: 'Default pipeline',
+    type: 'select',
+    options: pipelines.map((pipelines) => ({
+      key: pipelines.name,
+      value: pipelines.id,
+    })),
+    defaultValue: '',
+    hint: 'All positions added to this project will use this pipeline',
+  },
   {
     name: 'rolestitle',
     label: 'Roles',

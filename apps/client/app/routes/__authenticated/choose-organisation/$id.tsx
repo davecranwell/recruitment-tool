@@ -13,4 +13,6 @@ export const loader: LoaderFunction = async (data) => {
     // '/' itself performs a redirect. We have to choose another page.
     return setSessionOrganisation(request, await organisation.json(), '/start')
   }
+
+  throw organisation
 }

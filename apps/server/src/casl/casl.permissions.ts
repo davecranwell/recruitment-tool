@@ -18,6 +18,8 @@ export class CaslPermissions {
   //
   // This would however require that the task of changing organisation be something much more backend-related requiring a full reset of cookie/jwt
   async asJsonForUser(user: UserEntity) {
+    const { canCreateOrgs } = user
+
     const orgIdsOwned: number[] =
       user?.organisations?.filter((org) => org.role === 'ORGANISATION_OWNER').map((orgs) => orgs.organisationId) || []
 
@@ -90,6 +92,11 @@ export class CaslPermissions {
           subject: 'ApplicantProfileForPositionWithStage',
           conditions: { 'position.organisationId': { $in: orgIdsOwned } },
         },
+        {
+          action: Action.Manage,
+          subject: 'Pipeline',
+          conditions: { organisationId: { $in: orgIdsOwned } },
+        },
       ])
     }
 
@@ -148,6 +155,15 @@ export class CaslPermissions {
       ])
     }
 
+    if (canCreateOrgs) {
+      perms = perms.concat([
+        {
+          action: Action.Create,
+          subject: 'Organisation',
+        },
+      ])
+    }
+
     // basic permissions that everyone should have
     perms = perms.concat([
       {
@@ -155,10 +171,6 @@ export class CaslPermissions {
         subject: 'Organisation',
         conditions: { id: { $in: orgIdsMember } },
       },
-      // {
-      //   action: Action.Create,
-      //   subject: 'Organisation',
-      // },
       {
         action: Action.Read,
         subject: 'UserEntity',

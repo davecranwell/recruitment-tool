@@ -1,8 +1,7 @@
-export type Project = {
+export type Pipeline = {
   id: number
   name: string
   description: string
-  defaultPipelinId: number
   _count?: {
     positions: number
   }

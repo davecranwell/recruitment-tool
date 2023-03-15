@@ -50,19 +50,22 @@ export const loader: LoaderFunction = async (data) => {
 
   const projectRes = await api(data, `/project/${params.id}`)
   const usersRes = await api(data, `/organisation/${sessionData.activeOrganisation.id}/users`)
+  const pipelinesRes = await api(data, `/organisation/${sessionData.activeOrganisation.id}/pipelines`)
 
   const project = await projectRes.json()
   const users = await usersRes.json()
+  const pipelines = await pipelinesRes.json()
 
   return json({
     project,
     users,
     sessionData,
+    pipelines,
   })
 }
 
 const EditProject = () => {
-  const { project, users, sessionData } = useLoaderData()
+  const { project, users, sessionData, pipelines } = useLoaderData()
   const errors = useActionData()
   const transition = useTransition()
   const [chosenManagers, chooseManagers] = useState([])
@@ -114,7 +117,8 @@ const EditProject = () => {
       chooseFinancialManagers,
       managerUsers,
       interviewerUsers,
-      financialUsers
+      financialUsers,
+      pipelines.data
     ),
     {
       ...project,

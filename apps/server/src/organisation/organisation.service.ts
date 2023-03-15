@@ -1,4 +1,3 @@
-import { Ability } from '@casl/ability'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 
@@ -15,6 +14,7 @@ import { Organisation } from './entities/organisation.entity'
 
 import { Action } from 'src/casl/actions'
 import { Project } from 'src/project/entities/project.entity'
+import { Pipeline } from '~/pipeline/entities/pipeline.entity'
 
 const paginate = createPaginator({ perPage: 20 })
 
@@ -22,27 +22,62 @@ const paginate = createPaginator({ perPage: 20 })
 export class OrganisationService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: CreateOrganisationDto) {
-    return this.prisma.organisation.create({
-      data: {
-        name: data.name,
-        machineName: data.name.toLowerCase().replace(/[^a-z0-9]/g, '-'),
-        users: {
-          create: [
-            {
-              userId: data.userId,
-              role: 'ORGANISATION_OWNER',
-            },
-          ],
+  async create(data: CreateOrganisationDto, user: UserEntity) {
+    // Creation needs to happen in multiple awkward steps since an org, it's default project and
+    // that project's default pipeline all have to be connected up.
+    // We use an Interaction Transaction to achieve this https://www.prisma.io/docs/guides/performance-and-optimization/prisma-client-transactions-guide?query=&page=1#interactive-transactions
+    return await this.prisma.$transaction(async (tx) => {
+      const newOrg = await tx.organisation.create({
+        data: {
+          name: data.name,
+          machineName: data.name.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+          users: {
+            create: [
+              {
+                userId: user.id,
+                role: 'ORGANISATION_OWNER',
+              },
+            ],
+          },
+          projects: {
+            create: [
+              {
+                name: 'Default project',
+              },
+            ],
+          },
         },
-        projects: {
-          create: [
-            {
-              name: 'Default project',
-            },
-          ],
+        include: {
+          projects: true,
         },
-      },
+      })
+
+      await tx.pipeline.create({
+        data: {
+          name: 'Default pipeline',
+          projects: {
+            connect: {
+              id: newOrg.projects[0].id,
+            },
+          },
+          organisation: {
+            connect: {
+              id: newOrg.id,
+            },
+          },
+          stages: {
+            create: [
+              { name: 'Review', order: 1 },
+              { name: 'Stage 1', order: 2 },
+              { name: 'Stage 2', order: 3 },
+              { name: 'Offer', order: 4 },
+              { name: 'Disqualified', order: 5 },
+            ],
+          },
+        },
+      })
+
+      return new Organisation(newOrg)
     })
   }
 
@@ -88,6 +123,18 @@ export class OrganisationService {
     } catch (e) {
       throw new NotFoundException('User with this ID does not exist in this organisation')
     }
+  }
+
+  async findPipelines(organisationId: number, user: UserEntity, paginationArgs: PaginationArgsDto) {
+    return await paginate<Pipeline, Prisma.PipelineFindManyArgs>(
+      this.prisma.pipeline,
+      {
+        where: {
+          organisationId,
+        },
+      },
+      { ...paginationArgs }
+    )
   }
 
   async findProjects(organisationId: number, user: UserEntity, paginationArgs: PaginationArgsDto) {

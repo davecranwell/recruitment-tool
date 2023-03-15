@@ -6,9 +6,4 @@ export class CreateOrganisationDto {
   @IsNotEmpty()
   @MaxLength(100)
   name: string
-
-  @ApiProperty({ required: true })
-  @IsNotEmpty()
-  @IsNumber()
-  userId: number
 }
