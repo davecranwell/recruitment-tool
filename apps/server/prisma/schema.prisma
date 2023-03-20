@@ -61,13 +61,25 @@ model ApplicantProfile {
   @@index([userId])
 }
 
+model File {
+  id        Int      @id @default(autoincrement())
+  key       String
+  bucket    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  organisation Organisation[]
+}
+
 model Organisation {
   id          Int      @id @default(autoincrement())
   name        String
   machineName String   @unique
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
+  logoId      Int?
 
+  logo              File?                             @relation(fields: [logoId], references: [id])
   applicantProfiles ApplicantProfileForOrganisation[]
   invitations       Invitation[]
   positions         Position[]

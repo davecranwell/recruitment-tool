@@ -43,8 +43,23 @@ export class UserService {
   }
 
   async findOrganisations(id: number, user: UserEntity) {
-    return this.prisma.organisation.findMany({
-      where: { users: { some: { userId: id } } },
+    return this.prisma.usersInOrganisation.findMany({
+      where: { userId: id },
+      select: {
+        role: true,
+        organisation: {
+          select: {
+            id: true,
+            name: true,
+            logo: {
+              select: {
+                key: true,
+                bucket: true,
+              },
+            },
+          },
+        },
+      },
     })
   }
 

@@ -20,6 +20,7 @@ import { PrismaModule } from './prisma/prisma.module'
 import { ProjectModule } from './project/project.module'
 import { SchedulerModule } from './scheduler/scheduler.module'
 import { PipelineModule } from '~/pipeline/pipeline.module'
+import { FileServiceModule } from './file-service/file-service.module'
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { PipelineModule } from '~/pipeline/pipeline.module'
     SchedulerModule,
     ProjectModule,
     PipelineModule,
+    FileServiceModule,
     // SlackModule.forRoot({
     //   type: 'api',
     //   token: 'xoxb-4735546228627-4721145321431-teUuZ8mHywFkDY8skX3jTM5E',

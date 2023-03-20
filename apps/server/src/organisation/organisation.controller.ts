@@ -1,17 +1,22 @@
 import {
+  BadRequestException,
   Body,
   ClassSerializerInterceptor,
   Controller,
+  FileTypeValidator,
   ForbiddenException,
   Get,
   HttpStatus,
+  MaxFileSizeValidator,
   NotFoundException,
   Param,
+  ParseFilePipe,
   ParseIntPipe,
   Patch,
   Post,
   Query,
   Req,
+  UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
@@ -23,6 +28,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger'
+import { FileInterceptor } from '@nestjs/platform-express'
 
 import { RequestWithUser } from 'src/authentication/authentication.controller'
 import JwtAuthenticationGuard from 'src/authentication/guards/jwtAuthentication.guard'
@@ -54,6 +60,7 @@ export class OrganisationController {
   @Get(':id')
   @ApiOperation({ summary: 'Get information about one organisation' })
   @ApiOkResponse({ type: () => Organisation })
+  @UseInterceptors(ClassSerializerInterceptor)
   async findOne(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number
@@ -121,6 +128,33 @@ export class OrganisationController {
     if (!request.user.abilities.can(Action.Manage, new Organisation({ id }))) throw new ForbiddenException()
 
     return this.organisationService.patchUser(id, userId, patchData)
+  }
+
+  @Patch(':id/logo')
+  @ApiOkResponse({ type: () => UsersInOrganisation })
+  @ApiOperation({ summary: 'Update the organisation logo' })
+  @UseInterceptors(ClassSerializerInterceptor)
+  @UseInterceptors(FileInterceptor('file'))
+  async patchOrganisationLogo(
+    @Req() request: RequestWithUser,
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
+    @UploadedFile(
+      new ParseFilePipe({
+        fileIsRequired: false,
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 1000000 }),
+          new FileTypeValidator({ fileType: /(jpg|jpeg|png)$/ }),
+        ],
+        exceptionFactory(error) {
+          throw new BadRequestException('The uploaded file must be less than 1MB in size, and of the format jpg/png')
+        },
+      })
+    )
+    file: Express.Multer.File
+  ) {
+    if (!request.user.abilities.can(Action.Manage, new Organisation({ id }))) throw new ForbiddenException()
+
+    return this.organisationService.patchOrganisationLogo(id, file)
   }
 
   @Get(':id/projects')

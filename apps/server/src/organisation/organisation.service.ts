@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client'
 
 import { PaginationArgsDto } from 'src/page/pagination-args.dto'
 import { PrismaService } from 'src/prisma/prisma.service'
+import { FileServiceService } from '~/file-service/file-service.service'
 import { UserEntity } from 'src/user/entities/user.entity'
 import { UsersInOrganisation } from 'src/users-in-organisation/entities/users-in-organisation.entity'
 import { createPaginator } from 'src/util/pagination'
@@ -20,7 +21,7 @@ const paginate = createPaginator({ perPage: 20 })
 
 @Injectable()
 export class OrganisationService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private fileService: FileServiceService) {}
 
   async create(data: CreateOrganisationDto, user: UserEntity) {
     // Creation needs to happen in multiple awkward steps since an org, it's default project and
@@ -79,6 +80,24 @@ export class OrganisationService {
 
       return new Organisation(newOrg)
     })
+  }
+
+  async patchOrganisationLogo(organisationId: number, file: Express.Multer.File) {
+    const uploadResult = await this.fileService.uploadPublic(file)
+    if (uploadResult) {
+      const { key, bucket } = uploadResult
+      return await this.prisma.file.create({
+        data: {
+          key,
+          bucket,
+          organisation: {
+            connect: {
+              id: organisationId,
+            },
+          },
+        },
+      })
+    }
   }
 
   async findUsers(organisationId: number, paginationArgs: PaginationArgsDto) {
@@ -288,8 +307,8 @@ export class OrganisationService {
   }
 
   async findOne(id: number) {
-    const record = await this.prisma.organisation.findUnique({ where: { id } })
+    const record = await this.prisma.organisation.findUnique({ where: { id }, include: { logo: true } })
     if (!record) throw new NotFoundException('Organisation with this ID does not exist')
-    return record
+    return new Organisation(record)
   }
 }

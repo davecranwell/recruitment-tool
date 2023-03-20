@@ -11,5 +11,9 @@ export type Organisation = {
     machineName: string
     createdAt: Date
     updatedAt: Date
+    logo?: {
+      key: string
+      bucket: string
+    }
   }
 }

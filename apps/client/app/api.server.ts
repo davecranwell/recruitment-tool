@@ -6,7 +6,19 @@ import { getSessionData } from 'app/sessions.server'
 import { formDataToJson } from 'app/utils'
 import { ErrorResponse, ForbiddenResponse, NotFoundResponse, RateLimitedResponse } from 'app/utils/errors'
 
-export async function api<T>(data: DataFunctionArgs | null, url: string, method: string = 'GET', body?: any) {
+type Options = {
+  'Content-Type'?: 'application/json' | 'multipart/form-data' | null
+  rawBody?: any
+  noContentType?: boolean
+}
+
+export async function api<T>(
+  data: DataFunctionArgs | null,
+  url: string,
+  method: string = 'GET',
+  body?: any,
+  options?: Options
+) {
   const { request } = data || {}
   const { accessToken } = (request && (await getSessionData(request))) || {}
 
@@ -17,11 +29,11 @@ export async function api<T>(data: DataFunctionArgs | null, url: string, method:
   const apiRes = await fetch(`${process.env.BACKEND_ROOT_URL}${url}`, {
     method,
     headers: {
-      'Content-Type': 'application/json',
+      ...(!options?.noContentType && { 'Content-Type': 'application/json' }),
       ...(clientIP && { 'X-Forwarded-For': clientIP }),
       ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
     },
-    body: bodyPayload,
+    body: options?.rawBody || bodyPayload,
   })
 
   const returnData = await apiRes.json()
