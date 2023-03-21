@@ -3,6 +3,8 @@ import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { v4 as uuid4 } from 'uuid'
 import { ConfigService } from '@nestjs/config'
 
+type BucketType = 'private' | 'public'
+
 @Injectable()
 export class FileServiceService {
   private s3: S3Client
@@ -13,10 +15,15 @@ export class FileServiceService {
     })
   }
 
-  async uploadPublic(file: Express.Multer.File) {
+  async upload(file: Express.Multer.File, location: BucketType) {
     const fileId = uuid4()
+    const Bucket =
+      location === 'private'
+        ? this.configService.get('AWS_S3_PRIVATE_BUCKET')
+        : this.configService.get('AWS_S3_PUBLIC_BUCKET')
+
     const params = {
-      Bucket: this.configService.get('AWS_PUBLIC_S3_BUCKET'),
+      Bucket,
       Key: `originals/${fileId}`,
       Body: file.buffer,
       ContentType: file.mimetype,
@@ -27,7 +34,7 @@ export class FileServiceService {
 
     return {
       key: fileId,
-      bucket: this.configService.get('AWS_PUBLIC_S3_BUCKET'),
+      bucket: Bucket,
     }
   }
 }

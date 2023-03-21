@@ -42,6 +42,6 @@ export class FileServiceController {
     )
     file: Express.Multer.File
   ) {
-    return this.fileService.uploadPublic(file)
+    return this.fileService.upload(file, 'public')
   }
 }

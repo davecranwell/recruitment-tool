@@ -83,7 +83,7 @@ export class OrganisationService {
   }
 
   async patchOrganisationLogo(organisationId: number, file: Express.Multer.File) {
-    const uploadResult = await this.fileService.uploadPublic(file)
+    const uploadResult = await this.fileService.upload(file, 'public')
     if (uploadResult) {
       const { key, bucket } = uploadResult
       return await this.prisma.file.create({
