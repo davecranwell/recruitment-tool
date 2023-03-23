@@ -21,7 +21,7 @@ export const loader: LoaderFunction = async (data) => {
 const eventTypes = {
   applied: { icon: UserIcon, bgColorClass: 'bg-gray-400' },
   advanced: { icon: ThumbUpIcon, bgColorClass: 'bg-blue-500' },
-  completed: { icon: CheckIcon, bgColorClass: 'bg-green-500' },
+  completed: { icon: CheckIcon, bgColorClass: 'bg-emerald-500' },
 }
 
 const timeline = [
