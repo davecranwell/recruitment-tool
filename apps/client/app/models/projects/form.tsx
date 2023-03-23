@@ -49,7 +49,6 @@ const formFields = (
   {
     name: 'row1',
     type: 'row',
-    cols: 4,
     content: [
       {
         name: 'hiringManagers',
@@ -93,7 +92,6 @@ const formFields = (
   {
     name: 'row2',
     type: 'row',
-    cols: 4,
     content: [
       {
         name: 'financialManagers',

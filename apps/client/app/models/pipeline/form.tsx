@@ -10,11 +10,6 @@ const formFields = (session: SessionData): FieldDef[] => [
     defaultValue: '',
   },
   { name: 'description', label: 'Description', type: 'textarea', size: 3 },
-  {
-    name: 'rolestitle',
-    label: 'Roles',
-    type: 'title',
-  },
   { name: 'organisationId', type: 'hidden', defaultValue: session.activeOrganisation.id },
 ]
 
