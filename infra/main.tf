@@ -13,18 +13,12 @@ provider "aws" {
   region = "eu-north-1"
 }
 
-# Create the S3 bucket
-resource "aws_s3_bucket" "bucket" {
-  bucket = "applican-public-prod"
+resource "aws_s3_bucket" "bucket_dev_public" {
+  bucket = "applican-public-dev"
 }
 
-# resource "aws_s3_bucket_acl" "bucket" {
-#   bucket = aws_s3_bucket.bucket.id
-#   acl    = "public-read"
-# }
-
-resource "aws_s3_bucket_policy" "my_bucket_policy" {
-  bucket = aws_s3_bucket.bucket.id
+resource "aws_s3_bucket_policy" "dev_bucket_policy" {
+  bucket = aws_s3_bucket.bucket_dev_public.id
   policy = jsonencode(
     {
       "Version" : "2012-10-17",
@@ -36,12 +30,56 @@ resource "aws_s3_bucket_policy" "my_bucket_policy" {
             "s3:GetObject"
           ],
           "Resource" : [
-            "arn:aws:s3:::${aws_s3_bucket.bucket.id}/*"
+            "arn:aws:s3:::${aws_s3_bucket.bucket_dev_public.id}/*"
           ]
         }
       ]
   })
+}
 
+resource "aws_iam_policy" "dev_thumbnail_s3_policy" {
+  name = "dev_thumbnail_s3_policy"
+  policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Effect" : "Allow",
+        "Action" : "s3:GetObject",
+        "Resource" : "arn:aws:s3:::${aws_s3_bucket.bucket_dev_public.id}/*"
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : "s3:PutObject",
+        "Resource" : "arn:aws:s3:::${aws_s3_bucket.bucket_dev_public.id}/*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role" "thumbnail_lambda_role" {
+  name = "thumbnail_lambda_role"
+  assume_role_policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [{
+      "Effect" : "Allow",
+      "Principal" : {
+        "Service" : "lambda.amazonaws.com"
+      },
+      "Action" : "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_policy_attachment" "thumbnail_role_s3_policy_attachment" {
+  name       = "thumbnail_role_s3_policy_attachment"
+  roles      = [aws_iam_role.thumbnail_lambda_role.name]
+  policy_arn = aws_iam_policy.dev_thumbnail_s3_policy.arn
+}
+
+resource "aws_iam_policy_attachment" "thumbnail_role_lambda_policy_attachment" {
+  name       = "thumbnail_role_lambda_policy_attachment"
+  roles      = [aws_iam_role.thumbnail_lambda_role.name]
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 data "archive_file" "aws_lambda_function" {
@@ -50,74 +88,36 @@ data "archive_file" "aws_lambda_function" {
   output_path = "thumbnail.zip"
 }
 
-resource "aws_lambda_permission" "allow_bucket1" {
-  statement_id  = "AllowExecutionFromS3Bucket1"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.thumbnail.arn
-  principal     = "s3.amazonaws.com"
-  source_arn    = aws_s3_bucket.bucket.arn
-}
-
-# Create the Lambda function
+# # Create the Lambda function
 resource "aws_lambda_function" "thumbnail" {
   function_name    = "thumbnail"
   filename         = data.archive_file.aws_lambda_function.output_path
   source_code_hash = data.archive_file.aws_lambda_function.output_base64sha256
   runtime          = "nodejs16.x"
-  role             = aws_iam_role.lambda.arn
+  role             = aws_iam_role.thumbnail_lambda_role.arn
   handler          = "index.handler"
-
-  environment {
-    variables = {
-      BUCKET_NAME     = aws_s3_bucket.bucket.id
-      ORIGINALS_PATH  = "originals"
-      THUMBNAILS_PATH = "thumbnails"
-    }
-  }
+  timeout          = 60
+  memory_size      = 128
 }
 
-
-# Create the IAM role for the Lambda function
-resource "aws_iam_role" "lambda" {
-  name = "thumbnail-lambda-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "lambda.amazonaws.com"
-        }
-      }
-    ]
-  })
+resource "aws_lambda_permission" "thumbnail_allow_bucket" {
+  statement_id  = "AllowExecutionFromS3Bucket"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.thumbnail.arn
+  principal     = "s3.amazonaws.com"
+  source_arn    = aws_s3_bucket.bucket_dev_public.arn
 }
 
-# Attach the required policies to the IAM role
-resource "aws_iam_role_policy_attachment" "lambda" {
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-  role       = aws_iam_role.lambda.name
-}
-
-resource "aws_iam_role_policy_attachment" "s3" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
-  role       = aws_iam_role.lambda.name
-}
-
-# Configure the S3 bucket to trigger the Lambda function
-resource "aws_s3_bucket_notification" "bucket_notification" {
-  bucket = aws_s3_bucket.bucket.id
-
+resource "aws_s3_bucket_notification" "thumbnail_notification" {
+  bucket = aws_s3_bucket.bucket_dev_public.id
 
   lambda_function {
     lambda_function_arn = aws_lambda_function.thumbnail.arn
     events              = ["s3:ObjectCreated:*"]
-    filter_prefix       = "/originals"
+    filter_prefix       = "originals/"
   }
 
   depends_on = [
-    aws_lambda_permission.allow_bucket1
+    aws_lambda_permission.thumbnail_allow_bucket
   ]
 }
