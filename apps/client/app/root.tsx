@@ -44,12 +44,12 @@ type ErrorPageProps = {
 
 const ErrorPage: React.FC<ErrorPageProps> = ({ title, children }) => {
   return (
-    <html lang="en" className="bg-neutral-50 h-full">
+    <html lang="en" className="bg-neutral-50 min-h-full">
       <head>
         <title>Oh no!</title>
         <Links />
       </head>
-      <body className="h-full text-slate-800 flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8 sm:mx-auto sm:w-full sm:max-w-md">
+      <body className="min-h-full text-slate-800 flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8 sm:mx-auto sm:w-full sm:max-w-md">
         <img src={logo} alt="" className="flex h-12" />
 
         <h1 className="py-4 text-2xl font-bold text-gray-900 text-center">{title}</h1>

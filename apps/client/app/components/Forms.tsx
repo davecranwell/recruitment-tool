@@ -19,30 +19,41 @@ export type Option = {
   [x: string]: any
 }
 
-export type FieldDef = {
+export type CommonFieldType = {
   name: string
   key?: string
-  enabled?: boolean
   type: string
-  options?: Option[]
-  optionLabel?: string
-  optionRenderer?: Function
+  disabled?: boolean
+  props?: any
   hint?: ReactElement | string
-  cols?: number
   colspan?: number
   group?: string
-  content?: FieldDef[]
-  label?: string
-  required?: boolean
-  size?: number
+}
+
+export type InputField = {
+  valueTransform?: (value: any) => any
   defaultValue?: any
   placeholder?: string
   errors?: string[]
-  valueTransform?: (value: any) => any
-  disabled?: boolean
-  props?: any
-  text?: string
+  label?: string
+  required?: boolean
+  size?: number
+  maxLength?: number
 }
+
+export type ChoiceField = {
+  options?: Option[]
+  optionLabel?: string
+  optionRenderer?: Function
+  required?: boolean
+}
+
+export type Row = {
+  label?: string
+  content?: FieldDef[]
+}
+
+export type FieldDef = CommonFieldType & Row & InputField & ChoiceField
 
 export type NestValidationError = {
   error: string
@@ -143,8 +154,6 @@ type FieldProps = {
 }
 
 const Field: React.FC<FieldProps> = ({ field }) => {
-  if (field.enabled === false) return null
-
   return (
     <React.Fragment key={field.key || field.name}>
       {field.type !== 'hidden' && (
@@ -160,7 +169,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
             field.content.map((field) => <Field key={field.key || field.name} field={field} />)}
           {field.type !== 'row' && (
             <>
-              {field.type !== 'title' && (
+              {!['title', 'file'].includes(field.type) && (
                 <label
                   htmlFor={field.type !== 'radio' ? field.name : undefined}
                   className={classNames('block font-medium text-gray-700', {
@@ -192,8 +201,41 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                     aria-describedby={
                       field.errors && field.errors.length ? `${field.name}-errors` : `${field.name}-description`
                     }
+                    maxLength={field.maxLength || 255}
                     {...field.props}
                   />
+                )}
+                {['file'].includes(field.type) && (
+                  <>
+                    <span
+                      className={classNames('block font-medium text-gray-700', {
+                        'text-base': field.type === 'radio',
+                        'text-sm': field.type !== 'radio',
+                      })}
+                    >
+                      {field.label}
+                      {field.required && <span className="text-sm text-red-600">&nbsp; *</span>}
+                    </span>
+                    <div className="mt-1">
+                      <Button component={'label'} htmlFor={field.name} color="secondary" type="button" width="half">
+                        <input
+                          type={field.type}
+                          name={field.name}
+                          id={field.name}
+                          disabled={field.disabled}
+                          required={field.required}
+                          // className="sr-only"
+                          defaultValue={field.defaultValue}
+                          aria-invalid={field.errors && field.errors.length ? 'true' : 'false'}
+                          aria-describedby={
+                            field.errors && field.errors.length ? `${field.name}-errors` : `${field.name}-description`
+                          }
+                          maxLength={field.maxLength || 255}
+                          {...field.props}
+                        />
+                      </Button>
+                    </div>
+                  </>
                 )}
                 {field.type === 'textarea' && (
                   <textarea
@@ -203,6 +245,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                     required={field.required}
                     className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-md border border-gray-300 shadow-sm disabled:border-gray-200 disabled:text-slate-400 disabled:shadow-none sm:text-sm"
                     defaultValue={field.defaultValue}
+                    maxLength={field.maxLength || 1000}
                   />
                 )}
                 {field.type === 'textarealocalstorage' && <TextareaLocalStorage keyName={field.key} field={field} />}
@@ -264,7 +307,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                     </div>
                   </fieldset>
                 )}
-                {field.type === 'checkbox' && (
+                {(field.type === 'checkbox' || field.type === 'radio') && (
                   <fieldset className="mt-4">
                     <div className="space-y-5">
                       {field?.options?.map((option) => {
@@ -275,40 +318,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                                 id={option.key}
                                 aria-describedby="small-description"
                                 name={field.name}
-                                type="checkbox"
-                                value={option.value}
-                                defaultChecked={field.defaultValue === option.value}
-                                className="text-primary-600 focus:ring-primary-500 h-4 w-4 border-gray-300"
-                              />
-                            </div>
-                            <div className="ml-3 text-sm">
-                              <label htmlFor={option.key} className="font-medium text-gray-700">
-                                {option.key}
-                              </label>
-                              {option.descripion && (
-                                <p id="small-description" className="mt-2 text-gray-500">
-                                  {option.description}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </fieldset>
-                )}
-                {field.type === 'radio' && (
-                  <fieldset className="mt-4">
-                    <div className="space-y-5">
-                      {field?.options?.map((option) => {
-                        return (
-                          <div key={option.key} className="relative flex items-start">
-                            <div className="flex h-5 items-center">
-                              <input
-                                id={option.key}
-                                aria-describedby="small-description"
-                                name={field.name}
-                                type="radio"
+                                type={field.type}
                                 value={option.value}
                                 defaultChecked={field.defaultValue === option.value}
                                 className="text-primary-600 focus:ring-primary-500 h-4 w-4 border-gray-300"

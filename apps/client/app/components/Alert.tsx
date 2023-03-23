@@ -20,7 +20,7 @@ const Alert: React.FC<AlertProps> = ({ message, type, ...props }) => {
     <div {...props}>
       <div
         className={classNames('rounded-md p-4', {
-          'bg-green-50': type === 'success',
+          'bg-emerald-50': type === 'success',
           'bg-blue-50': type === 'info',
           'bg-orange-50': type === 'warning',
           'bg-red-50': type === 'error',
@@ -29,14 +29,14 @@ const Alert: React.FC<AlertProps> = ({ message, type, ...props }) => {
         <div className="flex">
           <div className="flex-shrink-0">
             {type === 'error' && <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />}
-            {type === 'success' && <CheckCircleIcon className="h-5 w-5 text-green-400" aria-hidden="true" />}
+            {type === 'success' && <CheckCircleIcon className="h-5 w-5 text-emerald-400" aria-hidden="true" />}
             {type === 'info' && <InformationCircleIcon className="h-5 w-5 text-blue-400" aria-hidden="true" />}
             {type === 'warning' && <ExclamationIcon className="h-5 w-5 text-orange-400" aria-hidden="true" />}
           </div>
           <div className="ml-3">
             <h3
               className={classNames('font-medium', {
-                'text-green-800': type === 'success',
+                'text-emerald-800': type === 'success',
 
                 'text-orange-800': type === 'warning',
                 'text-red-800': type === 'error',
@@ -51,7 +51,7 @@ const Alert: React.FC<AlertProps> = ({ message, type, ...props }) => {
             {!Array.isArray(message) && typeof message !== 'string' && message.description && (
               <div
                 className={classNames('mt-2', {
-                  'text-green-700': type === 'success',
+                  'text-emerald-700': type === 'success',
                   'text-blue-700': type === 'info',
                   'text-orange-700': type === 'warning',
                   'text-red-700': type === 'error',

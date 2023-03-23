@@ -2,6 +2,7 @@ import type { Transition } from '@remix-run/react/dist/transition'
 import classNames from 'classnames'
 
 type Props = {
+  children?: any
   type?: 'submit' | 'reset' | 'button'
   transition?: Transition
   text?: string
@@ -14,6 +15,7 @@ type Props = {
 }
 
 const Button: React.FC<Props> = ({
+  children,
   type,
   transition,
   text,
@@ -32,13 +34,14 @@ const Button: React.FC<Props> = ({
     <ButtonRoot
       type={type}
       className={classNames(
-        `flex items-center justify-center rounded-md border py-2 px-4 font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 whitespace-nowrap`,
+        `cursor-pointer flex items-center justify-center rounded-lg border py-2 px-5 font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 whitespace-nowrap`,
         {
           'bg-primary hover:bg-primary-700 focus:ring-primary border-transparent text-white': color === 'primary',
           'bg-red-600 hover:bg-red-700 focus:ring-red-600 border-transparent text-white': color === 'danger',
           'focus:ring-primary-500 border border-gray-300 border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-offset-gray-100':
             color === 'secondary',
-          'bg-green-600 hover:bg-green-700 focus:ring-green-600 border-transparent text-white': color === 'success',
+          'bg-emerald-600 hover:bg-emerald-700 focus:ring-emerald-600 border-transparent text-white':
+            color === 'success',
           'w-full': width === 'full',
           'w-1/2': width === 'half',
         }
@@ -47,6 +50,7 @@ const Button: React.FC<Props> = ({
     >
       {icon && <Icon className="h-5 w-5 mr-2.5" aria-hidden="true" />}
       {transition && transition.state === 'submitting' ? textLoading : text}
+      {children}
     </ButtonRoot>
   )
 }

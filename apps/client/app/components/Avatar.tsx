@@ -28,7 +28,7 @@ const Avatar: React.FC<Props> = ({ name = '', size, imageUrl }) => {
       )}
     >
       <span
-        className={classNames('text-g font-medium leading-none text-gray-500', {
+        className={classNames('h-100 text-g font-medium leading-none text-gray-500', {
           'text-[0.55rem]': size === 'xs',
           'text-sm': size === 's',
           'text-lg': size === 'lg',
@@ -36,7 +36,12 @@ const Avatar: React.FC<Props> = ({ name = '', size, imageUrl }) => {
         })}
       >
         {imageUrl ? (
-          <img referrerPolicy="no-referrer" className={`inline-block rounded-full`} src={imageUrl} alt="" />
+          <img
+            referrerPolicy="no-referrer"
+            className={classNames('object-cover inline-block rounded-full', dimensionClasses)}
+            src={imageUrl}
+            alt=""
+          />
         ) : (
           initials
         )}
