@@ -7,7 +7,8 @@
     },
     "dev": {
       "cache": false,
-      "outputs": []
+      "outputs": [],
+      "persistent": true
     },
     "lint": {
       "dependsOn": ["^lint"],
@@ -19,11 +20,13 @@
       "inputs": ["prisma/schema.prisma"]
     },
     "db:generate": {
+      "cache": false,
       "outputs": []
     },
     "db:migrate": {
       "cache": false,
-      "outputs": []
+      "outputs": [],
+      "inputs": ["prisma/schema.prisma"]
     },
     "db:seed": {
       "cache": false,
@@ -32,7 +35,8 @@
     "docker": {
       "cache": false,
       "dependsOn": ["^docker"],
-      "outputs": []
+      "outputs": [],
+      "persistent": true
     },
     "docker:build": {
       "cache": false,
