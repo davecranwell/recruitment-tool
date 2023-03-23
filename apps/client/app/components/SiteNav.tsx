@@ -39,7 +39,7 @@ const SiteNav: React.FC<Props> = ({ navItems }) => {
                   {({ isActive }) => (
                     <>
                       <item.icon
-                        className={classNames('mr-3 h-6 w-6 flex-shrink-0', {
+                        className={classNames('mr-3 h-5 w-5 flex-shrink-0', {
                           'text-white': isActive,
                           'text-neutral-400 group-hover:text-neutral-600': !isActive,
                         })}

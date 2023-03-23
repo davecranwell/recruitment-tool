@@ -125,7 +125,7 @@ const Layout: React.FC<Props> = ({ children, sessionData, globalMessage }) => {
             />
           )}
 
-          <div className="flex flex-grow flex-col">
+          <div className="flex flex-grow flex-col px-4">
             <SiteNav navItems={navigation} />
           </div>
         </div>
