@@ -46,6 +46,7 @@ import { OrganisationService } from './organisation.service'
 import { Project } from 'src/project/entities/project.entity'
 import { ProjectService } from 'src/project/project.service'
 import { Pipeline } from '~/pipeline/entities/pipeline.entity'
+import { UpdateOrganisationDto } from '~/organisation/dto/update-organisation.dto'
 
 @ApiTags('Organisations')
 @ApiBearerAuth('access-token')
@@ -65,19 +66,30 @@ export class OrganisationController {
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number
   ) {
-    if (!request.user.abilities.can(Action.Read, new Organisation({ id }))) throw new ForbiddenException()
-
-    return this.organisationService.findOne(+id)
+    return this.organisationService.findOne(+id, request.user)
   }
 
   @Post()
   @ApiOperation({ summary: 'Create a new organisation' })
   @ApiCreatedResponse({ type: () => Organisation, description: 'Organisation created' })
-  async create(@Req() request: RequestWithUser, @Body() createOrganisationDto: CreateOrganisationDto) {
-    if (!request.user.abilities.can(Action.Create, new Organisation(createOrganisationDto)))
-      throw new ForbiddenException()
-
-    return this.organisationService.create(createOrganisationDto, request.user)
+  async create(
+    @Req() request: RequestWithUser,
+    @Body() createOrganisationDto: CreateOrganisationDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        fileIsRequired: false,
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 1000000 }),
+          new FileTypeValidator({ fileType: /(jpg|jpeg|png)$/ }),
+        ],
+        exceptionFactory(error) {
+          throw new BadRequestException('The uploaded file must be less than 1MB in size, and of the format jpg/png')
+        },
+      })
+    )
+    file: Express.Multer.File
+  ) {
+    return this.organisationService.create(createOrganisationDto, request.user, file)
   }
 
   // @Get()
@@ -130,14 +142,15 @@ export class OrganisationController {
     return this.organisationService.patchUser(id, userId, patchData)
   }
 
-  @Patch(':id/logo')
+  @Patch(':id')
   @ApiOkResponse({ type: () => UsersInOrganisation })
-  @ApiOperation({ summary: 'Update the organisation logo' })
+  @ApiOperation({ summary: 'Update the organisation' })
   @UseInterceptors(ClassSerializerInterceptor)
   @UseInterceptors(FileInterceptor('file'))
   async patchOrganisationLogo(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
+    @Body() patchData: any,
     @UploadedFile(
       new ParseFilePipe({
         fileIsRequired: false,
@@ -152,9 +165,9 @@ export class OrganisationController {
     )
     file: Express.Multer.File
   ) {
-    if (!request.user.abilities.can(Action.Manage, new Organisation({ id }))) throw new ForbiddenException()
+    console.log('patchData', patchData)
 
-    return this.organisationService.patchOrganisationLogo(id, file)
+    return this.organisationService.patchOrganisation(id, request.user, patchData, file)
   }
 
   @Get(':id/projects')

@@ -7,9 +7,7 @@ import { formDataToJson } from 'app/utils'
 import { ErrorResponse, ForbiddenResponse, NotFoundResponse, RateLimitedResponse } from 'app/utils/errors'
 
 type Options = {
-  'Content-Type'?: 'application/json' | 'multipart/form-data' | null
-  rawBody?: any
-  noContentType?: boolean
+  rawBody?: boolean
 }
 
 export async function api<T>(
@@ -22,18 +20,22 @@ export async function api<T>(
   const { request } = data || {}
   const { accessToken } = (request && (await getSessionData(request))) || {}
 
-  const bodyPayload = body instanceof FormData ? JSON.stringify(formDataToJson(body)) : JSON.stringify(body)
+  const bodyJsonStringified = body instanceof FormData ? JSON.stringify(formDataToJson(body)) : JSON.stringify(body)
 
   const clientIP = request && getClientIPAddress(request)
 
   const apiRes = await fetch(`${process.env.BACKEND_ROOT_URL}${url}`, {
     method,
     headers: {
-      ...(!options?.noContentType && { 'Content-Type': 'application/json' }),
+      // https://stackoverflow.com/questions/40351429/formdata-how-to-get-or-set-boundary-in-multipart-form-data-angular
+      // it seems that  setting the content-type to multipart/form-data is not allowed, so its removed entirely
+      // and left to the library to fetch() to figure out itself.
+      // In this situation we have to pass a raw body anyway, so we hide the content type if a rawbody is used.
+      ...(!options?.rawBody && { 'Content-Type': 'application/json' }),
       ...(clientIP && { 'X-Forwarded-For': clientIP }),
       ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
     },
-    body: options?.rawBody || bodyPayload,
+    body: options?.rawBody ? body : bodyJsonStringified,
   })
 
   const returnData = await apiRes.json()

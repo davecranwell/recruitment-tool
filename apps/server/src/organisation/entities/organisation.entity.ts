@@ -3,7 +3,7 @@ import { Organisation as OrganisationModel, File as FileModel } from '@prisma/cl
 import { ValidateNested } from 'class-validator'
 import { Exclude, Type } from 'class-transformer'
 
-import { UserEntity as User } from 'src/user/entities/user.entity'
+import { UserEntity as User, UserEntity } from 'src/user/entities/user.entity'
 import { UsersInOrganisation } from 'src/users-in-organisation/entities/users-in-organisation.entity'
 import { Position } from 'src/position/entities/position.entity'
 import { UserRole } from 'src/user-role/entities/user-role.entity'
@@ -46,6 +46,9 @@ export class Organisation implements OrganisationModel {
   @ApiProperty()
   logoId: number | null
 
+  @Exclude()
+  creatorUserId: number | null
+
   @ValidateNested()
   @ApiProperty({ type: () => File })
   @Type(() => File)
@@ -67,6 +70,9 @@ export class Organisation implements OrganisationModel {
   @ValidateNested()
   @Type(() => ApplicantProfile)
   applicantProfiles?: ApplicantProfileForOrganisation[]
+
+  @Exclude()
+  creatorUser?: UserEntity
 
   constructor(partial: Partial<Organisation>) {
     Object.assign(this, partial)

@@ -1,12 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 
 import { PaginationArgsDto } from 'src/page/pagination-args.dto'
 import { PrismaService } from 'src/prisma/prisma.service'
-import { FileServiceService } from '~/file-service/file-service.service'
 import { UserEntity } from 'src/user/entities/user.entity'
 import { UsersInOrganisation } from 'src/users-in-organisation/entities/users-in-organisation.entity'
 import { createPaginator } from 'src/util/pagination'
+import { FileServiceService } from '~/file-service/file-service.service'
 
 import { Position } from 'src/position/entities/position.entity'
 import { CreateOrganisationDto } from './dto/create-organisation.dto'
@@ -16,6 +16,7 @@ import { Organisation } from './entities/organisation.entity'
 import { Action } from 'src/casl/actions'
 import { Project } from 'src/project/entities/project.entity'
 import { Pipeline } from '~/pipeline/entities/pipeline.entity'
+import { UpdateOrganisationDto } from '~/organisation/dto/update-organisation.dto'
 
 const paginate = createPaginator({ perPage: 20 })
 
@@ -23,7 +24,51 @@ const paginate = createPaginator({ perPage: 20 })
 export class OrganisationService {
   constructor(private prisma: PrismaService, private fileService: FileServiceService) {}
 
-  async create(data: CreateOrganisationDto, user: UserEntity) {
+  private makeMachineName(name) {
+    return name.toLowerCase().replace(/[^a-z0-9]/g, '')
+  }
+
+  async findOne(id: number, user: UserEntity) {
+    if (!user.abilities.can(Action.Read, new Organisation({ id }))) throw new ForbiddenException()
+
+    const record = await this.prisma.organisation.findUnique({ where: { id }, include: { logo: true } })
+    if (!record) throw new NotFoundException('Organisation with this ID does not exist')
+    return new Organisation(record)
+  }
+
+  private async uploadLogo(file: Express.Multer.File, id) {
+    const uploadResult = await this.fileService.upload(file, 'public')
+
+    if (uploadResult) {
+      const { key, bucket } = uploadResult
+
+      await this.prisma.file.create({
+        data: {
+          key,
+          bucket,
+          organisation: {
+            connect: {
+              id,
+            },
+          },
+        },
+      })
+    }
+  }
+
+  async create(data: CreateOrganisationDto, user: UserEntity, file: Express.Multer.File) {
+    if (!user.abilities.can(Action.Create, new Organisation(data))) throw new ForbiddenException()
+
+    const machineName = this.makeMachineName(data.name)
+
+    const dupes = await this.prisma.organisation.findFirst({
+      where: {
+        OR: [{ machineName }, { name: data.name }],
+      },
+    })
+
+    if (dupes || !machineName.length) throw new BadRequestException('This organisation name is not available')
+
     // Creation needs to happen in multiple awkward steps since an org, it's default project and
     // that project's default pipeline all have to be connected up.
     // We use an Interaction Transaction to achieve this https://www.prisma.io/docs/guides/performance-and-optimization/prisma-client-transactions-guide?query=&page=1#interactive-transactions
@@ -31,7 +76,8 @@ export class OrganisationService {
       const newOrg = await tx.organisation.create({
         data: {
           name: data.name,
-          machineName: data.name.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+          machineName,
+          creatorUserId: user.id,
           users: {
             create: [
               {
@@ -78,26 +124,37 @@ export class OrganisationService {
         },
       })
 
+      await this.uploadLogo(file, newOrg.id)
+
       return new Organisation(newOrg)
     })
   }
 
-  async patchOrganisationLogo(organisationId: number, file: Express.Multer.File) {
-    const uploadResult = await this.fileService.upload(file, 'public')
-    if (uploadResult) {
-      const { key, bucket } = uploadResult
-      return await this.prisma.file.create({
+  async patchOrganisation(
+    organisationId: number,
+    user: UserEntity,
+    data: UpdateOrganisationDto,
+    file: Express.Multer.File
+  ) {
+    if (!user.abilities.can(Action.Manage, new Organisation({ id: organisationId }))) throw new ForbiddenException()
+
+    if (file) {
+      await this.uploadLogo(file, organisationId)
+    }
+
+    if (data.name) {
+      const updatedOrg = await this.prisma.organisation.update({
+        where: { id: organisationId },
         data: {
-          key,
-          bucket,
-          organisation: {
-            connect: {
-              id: organisationId,
-            },
-          },
+          name: data.name,
+          machineName: this.makeMachineName(data.name),
         },
       })
+
+      return new Organisation(updatedOrg)
     }
+
+    return this.findOne(organisationId, user)
   }
 
   async findUsers(organisationId: number, paginationArgs: PaginationArgsDto) {
@@ -304,11 +361,5 @@ export class OrganisationService {
     )
 
     return results
-  }
-
-  async findOne(id: number) {
-    const record = await this.prisma.organisation.findUnique({ where: { id }, include: { logo: true } })
-    if (!record) throw new NotFoundException('Organisation with this ID does not exist')
-    return new Organisation(record)
   }
 }

@@ -1,14 +1,13 @@
-import type { ActionFunction, LoaderArgs, MetaFunction } from '@remix-run/node'
+import type { ActionFunction, LoaderArgs, LoaderFunction, MetaFunction } from '@remix-run/node'
 import { json, redirect, unstable_createMemoryUploadHandler, unstable_parseMultipartFormData } from '@remix-run/node'
-
 import { useActionData, useLoaderData, useMatches, useTransition } from '@remix-run/react'
 
 import { api } from 'app/api.server'
-import { getSessionData, requireAuth } from '~/sessions.server'
+import { requireAuth } from '~/sessions.server'
 
-import { editFormFields } from '~/models/organisation/form'
+import { newFormFields } from '~/models/organisation/form'
 
-import Form, { withValues } from 'app/components/Forms'
+import Form from 'app/components/Forms'
 import Breadcrumb from '~/components/Breadcrumb'
 import Content from '~/components/Content'
 import ContentBanner from '~/components/ContentBanner'
@@ -28,9 +27,7 @@ export const action: ActionFunction = async (data) => {
 
   try {
     const body = await unstable_parseMultipartFormData(request, uploadHandler)
-    const result = await api(data, `/organisation/${sessionData.activeOrganisation.id}`, 'PATCH', body, {
-      rawBody: true,
-    })
+    const result = await api(data, `/organisation`, 'POST', body, { rawBody: true })
 
     if (result.ok) return redirect('/')
   } catch (e) {
@@ -51,38 +48,36 @@ export const action: ActionFunction = async (data) => {
   return null
 }
 
-export const loader = async (data: LoaderArgs) => {
+export const loader: LoaderFunction = async (data: LoaderArgs) => {
   const { request, params } = data
   const { sessionData } = await requireAuth(request)
-
-  const organisationReq = await api(data, `/organisation/${sessionData.activeOrganisation.id}`)
-  const organisation = await organisationReq.json()
-
-  const thumbnailUrl = `https://${process.env.AWS_S3_PUBLIC_BUCKET}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/thumbnails/${organisation.logo.key}`
-
-  return json({ sessionData, thumbnailUrl, organisation })
+  return json({ sessionData })
 }
 
 export const meta: MetaFunction = ({ data }) => {
-  return { title: `Organisation settings` }
+  return { title: `Create an Organisation` }
 }
 
-const Settings = () => {
-  const { sessionData, thumbnailUrl, organisation } = useLoaderData<typeof loader>()
+const CreateOrganisation = () => {
+  const { sessionData, thumbnailUrl } = useLoaderData<typeof loader>()
   const matches = useMatches()
   const errors = useActionData()
   const transition = useTransition()
 
   return (
     <div className="space-y-4">
-      <ContentBanner title={'Organisation settings'}>
+      <ContentBanner title={'Create your organisation'}>
         <Breadcrumb matches={matches} />
       </ContentBanner>
-      <Content titleSize="larger">
+      <Content
+        titleSize="larger"
+        intro={`Start using AppliCan for your business by creating an organisation. You'll be given "organisation owner"
+            level access and can create new positions in seconds.`}
+      >
         <img src={thumbnailUrl} className="h-[150]" />
         <Form
-          submitText="Upload"
-          fields={withValues(editFormFields(sessionData), organisation)}
+          submitText="Create organisation"
+          fields={newFormFields(sessionData)}
           errors={errors}
           transition={transition}
           encType="multipart/form-data"
@@ -91,4 +86,4 @@ const Settings = () => {
     </div>
   )
 }
-export default Settings
+export default CreateOrganisation

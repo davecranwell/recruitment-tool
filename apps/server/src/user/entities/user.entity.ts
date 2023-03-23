@@ -30,6 +30,12 @@ export class UserEntity implements User {
   @ApiProperty()
   avatarUrl: string
 
+  @ApiProperty()
+  canCreateOrgs: boolean
+
+  @ApiProperty()
+  maxOrgs: number
+
   @Exclude()
   password: string
 

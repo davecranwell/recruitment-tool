@@ -28,20 +28,21 @@ model User {
   password               String?
   refreshTokenHash       String?
   createdAt              DateTime @default(now())
-  updatedAt              DateTime @default(now())
+  updatedAt              DateTime @default(now()) @updatedAt
   isRegisteredWithGoogle Boolean  @default(false)
   avatarUrl              String?
   OAuth2Tokens           Json?
   canCreateOrgs          Boolean  @default(false)
   maxOrgs                Int      @default(1)
 
-  applicantProfiles   ApplicantProfile[]
-  interviewsAttending InterviewAttendee[]
-  projectRoles        ProjectUserRole[]
-  userRoles           UserRolesOfUser[]
-  organisations       UsersInOrganisation[]
-  assessments         Assessment[]
-  approvals           Approval[]
+  applicantProfiles    ApplicantProfile[]
+  interviewsAttending  InterviewAttendee[]
+  projectRoles         ProjectUserRole[]
+  userRoles            UserRolesOfUser[]
+  organisations        UsersInOrganisation[]
+  assessments          Assessment[]
+  approvals            Approval[]
+  createdOrganisations Organisation[]
 }
 
 model ApplicantProfile {
@@ -49,7 +50,7 @@ model ApplicantProfile {
   profileName  String
   askingSalary String?
   createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
   userId       Int
 
   user          User                              @relation(fields: [userId], references: [id])
@@ -66,19 +67,21 @@ model File {
   key       String
   bucket    String
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   organisation Organisation[]
 }
 
 model Organisation {
-  id          Int      @id @default(autoincrement())
-  name        String
-  machineName String   @unique
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
-  logoId      Int?
+  id            Int      @id @default(autoincrement())
+  name          String
+  machineName   String   @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
+  logoId        Int?
+  creatorUserId Int?
 
+  creatorUser       User?                             @relation(fields: [creatorUserId], references: [id])
   logo              File?                             @relation(fields: [logoId], references: [id])
   applicantProfiles ApplicantProfileForOrganisation[]
   invitations       Invitation[]
@@ -93,7 +96,7 @@ model ApplicantProfileForOrganisation {
   applicantProfileId Int
   organisationId     Int
   createdAt          DateTime @default(now())
-  updatedAt          DateTime @default(now())
+  updatedAt          DateTime @default(now()) @updatedAt
 
   applicantProfile ApplicantProfile @relation(fields: [applicantProfileId], references: [id])
   organisation     Organisation     @relation(fields: [organisationId], references: [id])
@@ -107,7 +110,7 @@ model Project {
   description       String?
   organisationId    Int
   createdAt         DateTime @default(now())
-  updatedAt         DateTime @default(now())
+  updatedAt         DateTime @default(now()) @updatedAt
   approvalsNeeded   Int?
   defaultPipelineId Int?
 
@@ -126,7 +129,7 @@ model Position {
   openingDate    DateTime?               @default(now())
   closingDate    DateTime?
   createdAt      DateTime                @default(now())
-  updatedAt      DateTime                @default(now())
+  updatedAt      DateTime                @default(now()) @updatedAt
   employment     PositionEmploymentType?
   location       String?
   salaryRange    String?
@@ -149,6 +152,8 @@ model Position {
 model Approval {
   positionId Int
   userId     Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
 
   user     User     @relation(fields: [userId], references: [id])
   position Position @relation(fields: [positionId], references: [id])
@@ -161,7 +166,7 @@ model UsersInOrganisation {
   userId         Int
   organisationId Int
   createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now()) @updatedAt
   role           UserRoleType
 
   organisation Organisation @relation(fields: [organisationId], references: [id])
@@ -177,7 +182,7 @@ model UserRole {
   type           UserRoleType
   organisationId Int
   createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now()) @updatedAt
 
   organisation Organisation      @relation(fields: [organisationId], references: [id])
   users        UserRolesOfUser[]
@@ -189,7 +194,7 @@ model UserRolesOfUser {
   userId    Int
   roleId    Int
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   role UserRole @relation(fields: [roleId], references: [id])
   user User     @relation(fields: [userId], references: [id])
@@ -201,7 +206,7 @@ model ApplicantProfileForPosition {
   applicantProfileId Int
   positionId         Int
   createdAt          DateTime @default(now())
-  updatedAt          DateTime @default(now())
+  updatedAt          DateTime @default(now()) @updatedAt
   stageId            Int
 
   applicantProfile ApplicantProfile @relation(fields: [applicantProfileId], references: [id])
@@ -215,7 +220,7 @@ model ApplicantProfileForPosition {
 model ProjectUserRole {
   userId    Int
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
   projectId Int
 
   role    ProjectRoleType
@@ -231,7 +236,7 @@ model Stage {
   name        String
   description String?
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
   order       Int?
   pipelineId  Int?
 
@@ -245,7 +250,7 @@ model Pipeline {
   name           String
   description    String?
   createdAt      DateTime @default(now())
-  updatedAt      DateTime @default(now())
+  updatedAt      DateTime @default(now()) @updatedAt
   organisationId Int?
 
   organisation Organisation? @relation(fields: [organisationId], references: [id])
@@ -289,7 +294,7 @@ model Interview {
   startDateTime      DateTime
   endDateTime        DateTime
   createdAt          DateTime @default(now())
-  updatedAt          DateTime @default(now())
+  updatedAt          DateTime @default(now()) @updatedAt
   averageScore       Int?
   scoringSystemId    Int?
   questionsId        Int?
@@ -314,7 +319,7 @@ model Assessment {
   score              Int?
   applicantProfileId Int
   createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @default(now())
+  updatedAt          DateTime       @default(now()) @updatedAt
   positionId         Int
   // Notes will contain a json.stringified value. We don't need to query it so text is fine for now.
   // I'm not entirely sure what making it json would do to the size of the table. Bit wary.
@@ -339,7 +344,7 @@ model InterviewAttendee {
   interviewId Int
   userId      Int
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
 
   interview Interview @relation(fields: [interviewId], references: [id])
   user      User      @relation(fields: [userId], references: [id])
@@ -353,6 +358,7 @@ model Questions {
   questions  Json
   isCurrent  Boolean  @default(true)
   createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
   previousId Int?
   name       String
 
@@ -367,7 +373,7 @@ model ScoringSystem {
   type      ScoringSystemType?
   schema    Json
   createdAt DateTime           @default(now())
-  updatedAt DateTime           @default(now())
+  updatedAt DateTime           @default(now()) @updatedAt
 
   assessments Assessment[]
   interviews  Interview[]
