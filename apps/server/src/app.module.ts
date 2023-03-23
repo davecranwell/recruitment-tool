@@ -28,8 +28,8 @@ import { FileServiceModule } from './file-service/file-service.module'
     PrismaModule,
     ConfigModule.forRoot({ isGlobal: true, load: [config] }),
     ThrottlerModule.forRoot({
-      ttl: 5,
-      limit: 10,
+      ttl: 10,
+      limit: 20,
     }),
     AuthenticationModule,
     OrganisationModule,
