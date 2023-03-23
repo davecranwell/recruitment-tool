@@ -128,7 +128,7 @@ export class AuthenticationService {
 
       return this.addAbilities(user)
     } catch (error) {
-      throw new UnauthorizedException('Wrong credentials provided')
+      throw new UnauthorizedException('These login credentials are invalid')
     }
   }
 
@@ -139,7 +139,7 @@ export class AuthenticationService {
   private async verifyPassword(plainTextPassword: string, hashedPassword: string) {
     const isPasswordMatching = await bcrypt.compare(plainTextPassword, hashedPassword)
     if (!isPasswordMatching) {
-      throw new UnauthorizedException('Wrong credentials provided')
+      throw new UnauthorizedException('These login credentials are invalid')
     }
   }
 
