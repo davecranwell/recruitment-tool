@@ -1,5 +1,5 @@
 import type { LoaderFunction } from '@remix-run/node'
-import { useLoaderData, useOutletContext, useParams } from '@remix-run/react'
+import { Link, useLoaderData, useOutletContext, useParams } from '@remix-run/react'
 import invariant from 'tiny-invariant'
 
 import { api } from 'app/api.server'
@@ -11,6 +11,7 @@ import Tabs from 'app/components/Tabs'
 import ApplicantList from '~/components/ApplicantList'
 import Content from '~/components/Content'
 import type { Stage } from '~/models/positions/Stage'
+import Button from '~/components/Button'
 
 export const loader: LoaderFunction = async (data) => {
   const { request, params } = data
@@ -51,7 +52,15 @@ const PositionApplicants = () => {
   )
 
   return (
-    <Content as="div" title="Candidates" titleSize="larger" padX={false}>
+    <Content
+      as="div"
+      title="Candidates"
+      titleSize="larger"
+      padX={false}
+      primaryAction={
+        <Button component={Link} color="primary" to={`/positions/${id}/new-candidate`} text="Add candidate" />
+      }
+    >
       <Tabs tabs={tabs} />
       <ApplicantList applicants={applicants.data} emptyText={'There are no applicants for this position'} />
     </Content>

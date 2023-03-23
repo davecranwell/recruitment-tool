@@ -20,6 +20,7 @@ import type { Stage } from 'app/models/positions/Stage'
 import Button from '~/components/Button'
 import PersonHeader from '~/components/PersonHeader'
 import StageAdvance from '~/components/StageAdvance'
+import { DefinitionList, DefinitionListItem } from '~/components/DefinitionList'
 
 export const action: ActionFunction = async (data) => {
   const { request, params } = data
@@ -105,27 +106,22 @@ const Profile = () => {
                 <p className="mt-1 max-w-2xl text-sm text-gray-500">Personal details and application.</p>
               </div>
               <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
-                <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-                  {/* <div className="sm:col-span-1">
-                      <dt className="font-medium text-gray-500">Application for</dt>
-                      <dd className="mt-1 text-sm text-gray-900">Backend Developer</dd>
-                    </div> */}
-                  <div className="sm:col-span-1">
-                    <dt className="font-medium text-gray-500">Email address</dt>
-                    <dd className="mt-1 text-sm text-gray-900">{user.email}</dd>
-                  </div>
+                <DefinitionList>
+                  <DefinitionListItem label="Email address">{user.email}</DefinitionListItem>
+
                   {applicantProfile.askingSalary && (
-                    <div
-                      className="sm:col-span-1"
-                      title="This information is only visible to organisation owners or hiring managers"
+                    <DefinitionListItem
+                      label={
+                        <div title="This information is only visible to organisation owners or hiring managers">
+                          Salary expectation{' '}
+                          <LockClosedIcon className="inline-block h-4 w-4 text-yellow-600" aria-hidden="true" />
+                        </div>
+                      }
                     >
-                      <dt className="flex items-center font-medium text-gray-500">
-                        Salary expectation{' '}
-                        <LockClosedIcon className="h-4 w-4 flex-shrink-0 text-yellow-600" aria-hidden="true" />
-                      </dt>
-                      <dd className="mt-1 text-sm text-gray-900">{applicantProfile.askingSalary}</dd>
-                    </div>
+                      {applicantProfile.askingSalary}
+                    </DefinitionListItem>
                   )}
+                  <DefinitionListItem label="Notice period">X months</DefinitionListItem>
                   {/* <div className="sm:col-span-1">
                       <dt className="font-medium text-gray-500">Phone</dt>
                       <dd className="mt-1 text-sm text-gray-900">+1 555-555-5555</dd>
@@ -161,7 +157,7 @@ const Profile = () => {
                         </ul>
                       </dd>
                     </div> */}
-                </dl>
+                </DefinitionList>
               </div>
               {/* <div>
                   <a
