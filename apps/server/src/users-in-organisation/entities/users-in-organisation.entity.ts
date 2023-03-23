@@ -1,16 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { UserRoleType, UsersInOrganisation as UsersInOrganisationModel, User as PrismaUser } from '@prisma/client'
+import { UserRoleType, UsersInOrganisation as UsersInOrganisationModel } from '@prisma/client'
 import { ValidateNested } from 'class-validator'
 import { Exclude, Type } from 'class-transformer'
 
-import { UserEntity as User } from 'src/user/entities/user.entity'
+import { UserEntity } from 'src/user/entities/user.entity'
 import { Organisation } from 'src/organisation/entities/organisation.entity'
 
 export class UsersInOrganisation implements UsersInOrganisationModel {
   @ValidateNested()
-  @ApiProperty({ type: () => User })
-  @Type(() => User)
-  user?: User
+  @ApiProperty({ type: () => UserEntity })
+  @Type(() => UserEntity)
+  user?: UserEntity
 
   @ApiProperty({ enum: UserRoleType })
   role: UserRoleType
