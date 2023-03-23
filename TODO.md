@@ -2,8 +2,6 @@
 
 ## Where you left off
 
-- We're allowing people to create organisations. We've realised this is necessary because adding a pipeline for new jobs requires a pipeline to be chosen by the user. In tern this means pipelines must a) already exist in the DB to choose and b) should be unique to the org, so that users may rename or reorder their pipeline stages c) we don't want thousands of jobs from thousands of customers all hung to the same 2 or 3 pipelines.
-
 ## Core journey
 
 - [ ] 1. Employer creates a position/role/job
@@ -82,6 +80,7 @@
 - [ ] Sendgrid implementation in invitation service should be extracted to own service
 - [ ] make salting rounds for bcrypt a config var
 - [ ] Ensure all strings are max-length tested in DTOs
+- [ ] UpdatedAt dates need to actually update when rows are patched
 
 ## Features
 
@@ -100,6 +99,7 @@
 - [ ] Invitations to an org expire
 - [ ] Score a candidate in multiple ways using assessments
 - [ ] Multiple scoring system schemas
+- [ ] Internal vs external vacancies
 
 ## Potential Names
 
