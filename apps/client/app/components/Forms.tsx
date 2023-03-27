@@ -169,7 +169,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
             field.content.map((field) => <Field key={field.key || field.name} field={field} />)}
           {field.type !== 'row' && (
             <>
-              {!['title', 'file'].includes(field.type) && (
+              {!['title', 'file', 'filewiththumb'].includes(field.type) && (
                 <label
                   htmlFor={field.type !== 'radio' ? field.name : undefined}
                   className={classNames('block font-medium text-gray-700', {
@@ -234,6 +234,45 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                           {...field.props}
                         />
                       </Button>
+                    </div>
+                  </>
+                )}
+                {['filewiththumb'].includes(field.type) && (
+                  <>
+                    <span
+                      className={classNames('block font-medium text-gray-700', {
+                        'text-base': field.type === 'radio',
+                        'text-sm': field.type !== 'radio',
+                      })}
+                    >
+                      {field.label}
+                      {field.required && <span className="text-sm text-red-600">&nbsp; *</span>}
+                    </span>
+
+                    <div className="flex mt-1 space-x-4">
+                      {field.defaultValue && (
+                        <div className="justify-center w-[200px] flex-none rounded-lg border border-dashed border-gray-300 px-6 py-10">
+                          <img src={field.defaultValue} className="h-[150]" />
+                        </div>
+                      )}
+
+                      <div className="flex-auto grow">
+                        <Button component={'label'} htmlFor={field.name} color="secondary" type="button" width="half">
+                          <input
+                            type="file"
+                            name={field.name}
+                            id={field.name}
+                            disabled={field.disabled}
+                            required={field.required}
+                            aria-invalid={field.errors && field.errors.length ? 'true' : 'false'}
+                            aria-describedby={
+                              field.errors && field.errors.length ? `${field.name}-errors` : `${field.name}-description`
+                            }
+                            maxLength={field.maxLength || 255}
+                            {...field.props}
+                          />
+                        </Button>
+                      </div>
                     </div>
                   </>
                 )}

@@ -146,7 +146,7 @@ export class OrganisationController {
   @ApiOkResponse({ type: () => UsersInOrganisation })
   @ApiOperation({ summary: 'Update the organisation' })
   @UseInterceptors(ClassSerializerInterceptor)
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('logo'))
   async patchOrganisationLogo(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,
@@ -163,11 +163,11 @@ export class OrganisationController {
         },
       })
     )
-    file: Express.Multer.File
+    logo: Express.Multer.File
   ) {
     console.log('patchData', patchData)
 
-    return this.organisationService.patchOrganisation(id, request.user, patchData, file)
+    return this.organisationService.patchOrganisation(id, request.user, patchData, logo)
   }
 
   @Get(':id/projects')

@@ -1,5 +1,6 @@
 import type { FieldDef } from 'app/components/Forms'
 import type { SessionData } from 'app/sessions.server'
+import type { File } from '~/models/file/File'
 
 export const newFormFields = (session: SessionData): FieldDef[] => [
   {
@@ -14,7 +15,7 @@ export const newFormFields = (session: SessionData): FieldDef[] => [
     name: 'file',
     required: true,
     label: 'Logo',
-    type: 'file',
+    type: 'filewiththumb',
     defaultValue: '',
     hint: (
       <>
@@ -26,7 +27,7 @@ export const newFormFields = (session: SessionData): FieldDef[] => [
   },
 ]
 
-export const editFormFields = (session: SessionData): FieldDef[] => [
+export const editFormFields = (session: SessionData, logoConstants: { region: string }): FieldDef[] => [
   {
     name: 'name',
     label: 'Organisation name',
@@ -35,9 +36,11 @@ export const editFormFields = (session: SessionData): FieldDef[] => [
     hint: 'Your organisation name cannot be in use by another organisation',
   },
   {
-    name: 'file',
+    name: 'logo',
     label: 'Logo',
-    type: 'file',
+    type: 'filewiththumb',
+    valueTransform: (logo: File) =>
+      `https://${logo.bucket}.s3.${logoConstants.region}.amazonaws.com/thumbnails/${logo.key}`,
     defaultValue: '',
     hint: 'Allowed files: png, jpg or jpeg of no more than 1MB in size',
   },

@@ -58,9 +58,7 @@ export const loader = async (data: LoaderArgs) => {
   const organisationReq = await api(data, `/organisation/${sessionData.activeOrganisation.id}`)
   const organisation = await organisationReq.json()
 
-  const thumbnailUrl = `https://${process.env.AWS_S3_PUBLIC_BUCKET}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/thumbnails/${organisation.logo.key}`
-
-  return json({ sessionData, thumbnailUrl, organisation })
+  return json({ sessionData, region: process.env.AWS_S3_REGION, organisation })
 }
 
 export const meta: MetaFunction = ({ data }) => {
@@ -68,7 +66,7 @@ export const meta: MetaFunction = ({ data }) => {
 }
 
 const Settings = () => {
-  const { sessionData, thumbnailUrl, organisation } = useLoaderData<typeof loader>()
+  const { sessionData, organisation, region } = useLoaderData<typeof loader>()
   const matches = useMatches()
   const errors = useActionData()
   const transition = useTransition()
@@ -79,10 +77,10 @@ const Settings = () => {
         <Breadcrumb matches={matches} />
       </ContentBanner>
       <Content titleSize="larger">
-        <img src={thumbnailUrl} className="h-[150]" />
+        {/* <img src={thumbnailUrl} className="h-[150]" /> */}
         <Form
           submitText="Upload"
-          fields={withValues(editFormFields(sessionData), organisation)}
+          fields={withValues(editFormFields(sessionData, { region }), organisation)}
           errors={errors}
           transition={transition}
           encType="multipart/form-data"
