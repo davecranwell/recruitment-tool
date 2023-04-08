@@ -34,11 +34,11 @@ const Button: React.FC<Props> = ({
     <ButtonRoot
       type={type}
       className={classNames(
-        `cursor-pointer flex items-center justify-center rounded-lg border py-2 px-5 font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 whitespace-nowrap`,
+        `shadow-sm cursor-pointer flex items-center justify-center rounded-lg border py-2 px-6 font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 whitespace-nowrap`,
         {
           'bg-primary hover:bg-primary-700 focus:ring-primary border-transparent text-white': color === 'primary',
           'bg-red-600 hover:bg-red-700 focus:ring-red-600 border-transparent text-white': color === 'danger',
-          'focus:ring-primary-500 border border-gray-300 border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-offset-gray-100':
+          'focus:ring-neutral-400 border border-neutral-300 bg-white text-neutral-700 hover:bg-gray-50 focus:ring-offset-neutral-100':
             color === 'secondary',
           'bg-emerald-600 hover:bg-emerald-700 focus:ring-emerald-600 border-transparent text-white':
             color === 'success',

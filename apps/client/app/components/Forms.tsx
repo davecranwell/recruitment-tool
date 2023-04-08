@@ -172,7 +172,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
               {!['title', 'file', 'filewiththumb'].includes(field.type) && (
                 <label
                   htmlFor={field.type !== 'radio' ? field.name : undefined}
-                  className={classNames('block font-medium text-gray-700', {
+                  className={classNames('block font-medium text-neutral-700', {
                     'text-base': field.type === 'radio',
                     'text-sm': field.type !== 'radio',
                   })}
@@ -191,7 +191,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                     disabled={field.disabled}
                     required={field.required}
                     className={classNames(
-                      `focus:border-primary-500 focus:ring-primary-500 block w-full rounded-md border-gray-300 shadow-sm disabled:border-gray-200 disabled:text-slate-400 disabled:shadow-none sm:text-sm`,
+                      `focus:border-primary-500 focus:ring-primary-500 block w-full rounded-md border-neutral-300 shadow-sm disabled:border-neutral-200 disabled:text-slate-400 disabled:shadow-none sm:text-sm`,
                       {
                         'border-red-700': field.errors && field.errors.length,
                       }
@@ -208,7 +208,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                 {['file'].includes(field.type) && (
                   <>
                     <span
-                      className={classNames('block font-medium text-gray-700', {
+                      className={classNames('block font-medium text-neutral-700', {
                         'text-base': field.type === 'radio',
                         'text-sm': field.type !== 'radio',
                       })}
@@ -240,7 +240,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                 {['filewiththumb'].includes(field.type) && (
                   <>
                     <span
-                      className={classNames('block font-medium text-gray-700', {
+                      className={classNames('block font-medium text-neutral-700', {
                         'text-base': field.type === 'radio',
                         'text-sm': field.type !== 'radio',
                       })}
@@ -251,8 +251,8 @@ const Field: React.FC<FieldProps> = ({ field }) => {
 
                     <div className="flex mt-1 space-x-4">
                       {field.defaultValue && (
-                        <div className="justify-center w-[200px] flex-none rounded-lg border border-dashed border-gray-300 px-6 py-10">
-                          <img src={field.defaultValue} className="h-[150]" />
+                        <div className="justify-center w-[200px] flex-none rounded-lg border border-dashed border-neutral-300 px-6 py-10">
+                          <img src={field.defaultValue} alt="" className="h-[150]" />
                         </div>
                       )}
 
@@ -282,7 +282,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                     name={field.name}
                     rows={field.size}
                     required={field.required}
-                    className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-md border border-gray-300 shadow-sm disabled:border-gray-200 disabled:text-slate-400 disabled:shadow-none sm:text-sm"
+                    className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-md border border-neutral-300 shadow-sm disabled:border-neutral-200 disabled:text-slate-400 disabled:shadow-none sm:text-sm"
                     defaultValue={field.defaultValue}
                     maxLength={field.maxLength || 1000}
                   />
@@ -296,7 +296,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                     id={field.name}
                     name={field.name}
                     required={field.required}
-                    className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:outline-none disabled:border-gray-200 disabled:text-slate-400 disabled:shadow-none sm:text-sm"
+                    className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-md border-neutral-300 py-2 pl-3 pr-10 text-base focus:outline-none disabled:border-neutral-200 disabled:text-slate-400 disabled:shadow-none sm:text-sm"
                     defaultValue={field.defaultValue}
                   >
                     {field.options &&
@@ -326,16 +326,16 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                                 type="checkbox"
                                 value={option.value}
                                 defaultChecked={field.defaultValue === option.value}
-                                className="text-primary-600 focus:ring-primary-500 h-4 w-4 border-gray-300"
+                                className="text-primary-600 focus:ring-primary-500 h-4 w-4 border-neutral-300"
                               />
                             </div>
                             <div className="ml-3 text-sm">
-                              <label htmlFor={option.key} className="font-medium text-gray-700">
+                              <label htmlFor={option.key} className="font-medium text-neutral-700">
                                 <Avatar name={option.key} size="s" imageUrl={option.avatarUrl} />
                                 <span className="ml-2">{option.key}</span>
                               </label>
                               {option.descripion && (
-                                <p id="small-description" className="mt-2 text-gray-500">
+                                <p id="small-description" className="mt-2 text-neutral-500">
                                   {option.description}
                                 </p>
                               )}
@@ -360,15 +360,15 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                                 type={field.type}
                                 value={option.value}
                                 defaultChecked={field.defaultValue === option.value}
-                                className="text-primary-600 focus:ring-primary-500 h-4 w-4 border-gray-300"
+                                className="text-primary-600 focus:ring-primary-500 h-4 w-4 border-neutral-300"
                               />
                             </div>
                             <div className="ml-3 text-sm">
-                              <label htmlFor={option.key} className="font-medium text-gray-700">
+                              <label htmlFor={option.key} className="font-medium text-neutral-700">
                                 {option.key}
                               </label>
                               {option.descripion && (
-                                <p id="small-description" className="mt-2 text-gray-500">
+                                <p id="small-description" className="mt-2 text-neutral-500">
                                   {option.description}
                                 </p>
                               )}
@@ -380,8 +380,8 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                   </fieldset>
                 )}
                 {field.type === 'title' && (
-                  <div className="border-t-2 border-gray-100 mt-8 pt-6">
-                    <h2 className="text-lg font-bold leading-6 text-gray-900">{field.label || field.text}</h2>
+                  <div className="border-t-2 border-neutral-100 mt-8 pt-6">
+                    <h2 className="text-lg font-bold leading-6 text-neutral-900">{field.label || field.text}</h2>
                   </div>
                 )}
                 {field.errors && field.errors.length > 0 && (
@@ -394,7 +394,7 @@ const Field: React.FC<FieldProps> = ({ field }) => {
                 <p
                   className={classNames('mt-2 ', {
                     'font-medium': field.type === 'title',
-                    'text-sm  text-gray-500': field.type !== 'title',
+                    'text-sm  text-neutral-500': field.type !== 'title',
                   })}
                   id={`${field.name}-description`}
                 >
@@ -453,10 +453,10 @@ const FormLayout: React.FC<FormLayoutProps> = ({
           'bg-white shadow sm:rounded-lg': wrapper === 'auto',
         })}
       >
-        <div className="divide-y divide-gray-200">
+        <div className="divide-y divide-neutral-200">
           {title && (
             <div className="px-4 py-5 sm:px-6">
-              <h2 className="text-lg font-medium text-gray-900">{title}</h2>
+              <h2 className="text-lg font-medium text-neutral-900">{title}</h2>
             </div>
           )}
 
@@ -465,7 +465,7 @@ const FormLayout: React.FC<FormLayoutProps> = ({
               'py-6 px-4 sm:p-6': wrapper === 'auto',
             })}
           >
-            {intro && <div className="mt-1 text-gray-500">{intro}</div>}
+            {intro && <div className="mt-1 text-neutral-500">{intro}</div>}
 
             {orphanedErrors.length > 0 && <Alert type="error" message={orphanedErrors} />}
 
@@ -476,7 +476,7 @@ const FormLayout: React.FC<FormLayoutProps> = ({
         </div>
         <div
           className={classNames({
-            'bg-neutral-100 px-4 py-3 text-right sm:px-6': wrapper === 'auto',
+            'bg-neutral-100 px-4 py-3 text-right sm:px-6 sm:rounded-b-lg': wrapper === 'auto',
             'mt-8': wrapper !== 'auto',
           })}
         >

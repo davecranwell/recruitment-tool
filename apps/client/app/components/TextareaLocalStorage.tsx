@@ -55,7 +55,7 @@ const TextareaLocalStorage: React.FC<Props> = ({ keyName, field }) => {
       name={field.name}
       rows={field.size}
       required={field.required}
-      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-md border border-gray-300 shadow-sm disabled:border-gray-200 disabled:text-slate-400 disabled:shadow-none sm:text-sm"
+      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-md border border-neutral-300 shadow-sm disabled:border-neutral-200 disabled:text-slate-400 disabled:shadow-none sm:text-sm"
       value={value}
       onChange={({ target }) => setValue(target.value)}
     />
