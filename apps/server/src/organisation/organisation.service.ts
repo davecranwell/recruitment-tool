@@ -118,7 +118,7 @@ export class OrganisationService {
               { name: 'Stage 1', order: 2 },
               { name: 'Stage 2', order: 3 },
               { name: 'Offer', order: 4 },
-              { name: 'Disqualified', order: 5 },
+              { name: 'Disqualified', order: 5, isDisqualifiedStage: true },
             ],
           },
         },
@@ -130,21 +130,16 @@ export class OrganisationService {
     })
   }
 
-  async patchOrganisation(
-    organisationId: number,
-    user: UserEntity,
-    data: UpdateOrganisationDto,
-    file: Express.Multer.File
-  ) {
-    if (!user.abilities.can(Action.Manage, new Organisation({ id: organisationId }))) throw new ForbiddenException()
+  async patchOrganisation(id: number, user: UserEntity, data: UpdateOrganisationDto, file: Express.Multer.File) {
+    if (!user.abilities.can(Action.Manage, new Organisation({ id }))) throw new ForbiddenException()
 
     if (file) {
-      await this.uploadLogo(file, organisationId)
+      await this.uploadLogo(file, id)
     }
 
     if (data.name) {
       const updatedOrg = await this.prisma.organisation.update({
-        where: { id: organisationId },
+        where: { id },
         data: {
           name: data.name,
           machineName: this.makeMachineName(data.name),
@@ -154,7 +149,7 @@ export class OrganisationService {
       return new Organisation(updatedOrg)
     }
 
-    return this.findOne(organisationId, user)
+    return this.findOne(id, user)
   }
 
   async findUsers(organisationId: number, paginationArgs: PaginationArgsDto) {
