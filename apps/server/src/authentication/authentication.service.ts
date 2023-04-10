@@ -54,7 +54,9 @@ export class AuthenticationService {
   }
 
   public async registerFromInvitation(invitation: Invitation, registrationData: RegisterFromInvitationDto) {
-    const hashedPassword = registrationData.password ? await bcrypt.hash(registrationData.password, 10) : null
+    const hashedPassword = registrationData.password
+      ? await bcrypt.hash(registrationData.password, this.configService.get('PASSWORD_SALT_ROUNDS') || 10)
+      : null
 
     try {
       const user = await this.userService.create({
