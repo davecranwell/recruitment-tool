@@ -43,6 +43,7 @@ model User {
   assessments          Assessment[]
   approvals            Approval[]
   createdOrganisations Organisation[]
+  auditEvents          AuditEvent[]
 }
 
 model ApplicantProfile {
@@ -232,13 +233,14 @@ model ProjectUserRole {
 }
 
 model Stage {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
-  order       Int?
-  pipelineId  Int?
+  id                  Int      @id @default(autoincrement())
+  name                String
+  description         String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @default(now()) @updatedAt
+  order               Int?
+  pipelineId          Int?
+  isDisqualifiedStage Boolean?
 
   applicants ApplicantProfileForPosition[]
   interviews Interview[]
@@ -264,7 +266,7 @@ model Pipeline {
 //   pipelineId Int
 //   order      Int
 //   createdAt  DateTime @default(now())
-//   updatedAt  DateTime @default(now())
+//   updatedAt  DateTime @default(now()) @updatedAt
 
 //   pipeline Pipeline @relation(fields: [pipelineId], references: [id])
 //   stage    Stage    @relation(fields: [stageId], references: [id])
@@ -377,6 +379,39 @@ model ScoringSystem {
 
   assessments Assessment[]
   interviews  Interview[]
+}
+
+model AuditEvent {
+  id              Int              @id @default(autoincrement())
+  eventType       AuditEventType
+  entityType      AuditEventEntity
+  entityId        Int?
+  relatedEntityId Int?
+  userId          Int
+  createdAt       DateTime         @default(now())
+  oldValue        Json?
+  newValue        Json?
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([entityType, entityId])
+  @@index([relatedEntityId])
+}
+
+enum AuditEventType {
+  CREATED
+  UPDATED
+  DELETED
+  STAGE_CHANGED
+  DISQUALIFIED
+  APPROVED
+  INVITED
+}
+
+enum AuditEventEntity {
+  POSITION
+  APPLICANTPROFILEFORPOSITION
+  INTERVIEW
 }
 
 enum AssessmentType {

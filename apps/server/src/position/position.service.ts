@@ -1,11 +1,11 @@
-import { Ability } from '@casl/ability'
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common'
-import { ApplicantProfile, Prisma } from '@prisma/client'
+import { ApplicantProfile, AuditEventEntity, AuditEventType, Prisma } from '@prisma/client'
 import { ApiProperty } from '@nestjs/swagger'
 import { Transform } from 'class-transformer'
 import { IsBoolean, IsOptional } from 'class-validator'
 
 import { PrismaService } from 'src/prisma/prisma.service'
+import { AuditService } from '~/audit/audit.service'
 
 import { PaginatedDto, PaginationArgsDto } from 'src/page/pagination-args.dto'
 import { createPaginator } from 'src/util/pagination'
@@ -48,7 +48,7 @@ const paginate = createPaginator({ perPage: 20 })
 
 @Injectable()
 export class PositionService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private audit: AuditService) {}
 
   async create(data: CreatePositionDto, user: UserEntity) {
     // get project
@@ -64,7 +64,7 @@ export class PositionService {
       throw new ForbiddenException()
     }
 
-    return this.prisma.position.create({
+    const created = await this.prisma.position.create({
       data: {
         name: data.name,
         description: data.description,
@@ -85,6 +85,16 @@ export class PositionService {
         },
       },
     })
+
+    await this.audit.log({
+      entityId: created.id,
+      entityType: AuditEventEntity.POSITION,
+      eventType: AuditEventType.CREATED,
+      userId: user.id,
+      newValue: created,
+    })
+
+    return created
   }
 
   // async findAll() {
@@ -308,7 +318,7 @@ export class PositionService {
 
     if (!user.abilities.can(Action.Update, new Position(position))) throw new ForbiddenException()
 
-    return this.prisma.position.update({
+    const updated = await this.prisma.position.update({
       where: { id },
       data: {
         name: data.name,
@@ -320,6 +330,17 @@ export class PositionService {
         salaryRange: data.salaryRange,
       },
     })
+
+    await this.audit.log({
+      entityId: id,
+      entityType: AuditEventEntity.POSITION,
+      eventType: AuditEventType.UPDATED,
+      userId: user.id,
+      oldValue: position,
+      newValue: updated,
+    })
+
+    return updated
   }
 
   async changeApplicantStage(
@@ -339,7 +360,7 @@ export class PositionService {
 
     if (!stageValid) throw new ForbiddenException()
 
-    return this.prisma.applicantProfileForPosition.updateMany({
+    const updatedApplicant = await this.prisma.applicantProfileForPosition.updateMany({
       where: {
         applicantProfileId,
         positionId,
@@ -348,6 +369,17 @@ export class PositionService {
         stageId: data.stage,
       },
     })
+
+    await this.audit.log({
+      entityId: applicantProfileId,
+      entityType: AuditEventEntity.APPLICANTPROFILEFORPOSITION,
+      eventType: stageValid.isDisqualifiedStage ? AuditEventType.DISQUALIFIED : AuditEventType.STAGE_CHANGED,
+      relatedEntityId: positionId,
+      userId: user.id,
+      newValue: data.stage,
+    })
+
+    return updatedApplicant
   }
 
   async approve(positionId: number, data: ApprovePositionDto, user: UserEntity) {
@@ -405,6 +437,16 @@ export class PositionService {
         approvals: true,
       },
     })
+
+    if (isApproved) {
+      await this.audit.log({
+        entityId: positionId,
+        entityType: AuditEventEntity.POSITION,
+        eventType: AuditEventType.APPROVED,
+        userId: user.id,
+        newValue: updatedPosition,
+      })
+    }
 
     return new Position(updatedPosition)
   }

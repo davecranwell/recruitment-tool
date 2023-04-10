@@ -21,6 +21,7 @@ import { ProjectModule } from './project/project.module'
 import { SchedulerModule } from './scheduler/scheduler.module'
 import { PipelineModule } from '~/pipeline/pipeline.module'
 import { FileServiceModule } from './file-service/file-service.module'
+import { AuditModule } from '~/audit/audit.module'
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { FileServiceModule } from './file-service/file-service.module'
     ProjectModule,
     PipelineModule,
     FileServiceModule,
+    AuditModule,
     // SlackModule.forRoot({
     //   type: 'api',
     //   token: 'xoxb-4735546228627-4721145321431-teUuZ8mHywFkDY8skX3jTM5E',
