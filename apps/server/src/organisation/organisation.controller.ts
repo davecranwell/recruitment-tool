@@ -165,8 +165,6 @@ export class OrganisationController {
     )
     logo: Express.Multer.File
   ) {
-    console.log('patchData', patchData)
-
     return this.organisationService.patchOrganisation(id, request.user, patchData, logo)
   }
 

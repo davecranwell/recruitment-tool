@@ -71,6 +71,6 @@ export class InterviewController {
       }
     }
 
-    return this.interviewService.create(data)
+    return this.interviewService.create(data, request.user.id)
   }
 }

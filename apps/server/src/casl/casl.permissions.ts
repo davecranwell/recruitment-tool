@@ -171,6 +171,7 @@ export class CaslPermissions {
         subject: 'Organisation',
         conditions: { id: { $in: orgIdsMember } },
       },
+      // Read your own user
       {
         action: Action.Read,
         subject: 'UserEntity',
