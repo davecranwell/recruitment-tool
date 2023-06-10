@@ -2,6 +2,10 @@
 
 ## Where you left off
 
+- You need to get back to developing the candidate profile and adding a method to add a candidate to the system
+- You also need to focus on the event mechanism so that users of the system can view a timeline of events occuring to a job/candidate
+  - you're working through this but fast coming to the conclusion the timeline of events can't be handled with a generic audit data store, but rather one that is specific to timelines of events for the individual. The existing Audit table is fine, just not necessary here and not specific enough
+
 ## Core journey
 
 - [ ] 1. Employer creates a position/role/job
@@ -30,12 +34,14 @@
 - [x] Toast prompts for notifications
 - [x] Monorepo codebase
 - [x] Add Google Auth with calendar access
-- [ ] Pipelines must either be made public or finessed to a point where the stages are usable by anyone
-- [ ] Pipelines need to be automatically attributed to a project
-- [ ] Pipelines need to be automatically inheritted by a position from the project
+- [x] Pipelines need to be automatically attributed to a project
+- [x] Pipelines need to be automatically inheritted by a position from the project
+- [x] Pipelines must either be made public or finessed to a point where the stages are usable by anyone
 - [ ] We're getting dangerously near to cookie limits (4096b) at 3135 already. Consider moving to a high-level provider served by an API call?
 - [ ] Allow refresh tokens to be used multiple times for a brief period (10s) to account for multiple refresh calls in a short space of time (this will solve the need for sharing of cookies between parallel fetches in remix router)
 - [ ] Interviews need to be cancellable
+- [ ] Deleting organisations should be possible but the name should be blocked for 90 days
+- [ ] Rich text editing of assessments, comments etc
 
 ## Remix
 
@@ -61,26 +67,27 @@
 - [x] Send invitations to orgs via email
 - [x] Compress permissions in jwt using CASL pack/unpack
 - [x] Ensure Google auth doesn't bypass invitation system: [technically it can't because a user using google auth without registering would have no organisations associated]
+- [x] UpdatedAt dates need to actually update when rows are patched
 - [ ] Finish applying permissions to all entities
   - [x] Pipelines (irrelevant: through position)
   - [x] Positions
   - [x] Projects
   - [x] Stages (irrelevant: through pipeline)
-  - [ ] Users
+  - [x] Users
+  - [x] Invitations
+  - [x] Organisations
   - [ ] Applicant Profiles
-  - [ ] Invitations
-  - [ ] Organisations
+- [x] Edit users by getting them from DB based on their org relationship, not straight from users, which is basically too open for any situation beyond editing yourself
+- [x] make salting rounds for bcrypt a config var
 - [ ] Blocking known users failed auth (nb: preventing brute force of any user already limited by rate limiting)
-- [ ] Edit users by getting them from DB based on their org relationship, not straight from users, which is basically too open
 - [ ] Share back end types with front end
 - [ ] Ensure prisma exception filter doesn't throw verbose errors in production
 - [ ] Trimming all user input with a Pipe
 - [ ] Move permissions to Redis to reduce size of cookie
 - [ ] ClassSerializerInterceptor doesn't allow you to specify groups (move to PrismaClasSerializerInterceptorPaginated for now)
 - [ ] Sendgrid implementation in invitation service should be extracted to own service
-- [ ] make salting rounds for bcrypt a config var
 - [ ] Ensure all strings are max-length tested in DTOs
-- [ ] UpdatedAt dates need to actually update when rows are patched
+- [ ] Soft deletion
 
 ## Features
 
@@ -100,23 +107,3 @@
 - [ ] Score a candidate in multiple ways using assessments
 - [ ] Multiple scoring system schemas
 - [ ] Internal vs external vacancies
-
-## Potential Names
-
-- Candidate
-- Hiring
-- job hunting
-- skills
-- Skillful
-- Screening
-- Qualifing
-- Winner
-- Jobs
-- Placement
-- Careers
-- Prospect
-- Applicant
-- Recruiting
-- Selecting
-- Choosing
-- Interview: intrvoo (available) intavoo (not available) int
