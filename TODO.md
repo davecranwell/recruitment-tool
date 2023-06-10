@@ -98,6 +98,7 @@
 - [x] Allocating users to a project
 - [x] Changing user role
 - [x] Saving unsubmitted form content (done for assessments only)
+- [ ] GDPR compliance: consent capture, RTBF, activity log, privacy policy
 - [ ] 2FA https://wanago.io/2021/03/08/api-nestjs-two-factor-authentication/
 - [ ] Allowing an email to be written and sent when stages change (or soon after)
 - [ ] RTBF
