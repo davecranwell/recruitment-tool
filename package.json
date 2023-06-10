@@ -10,8 +10,8 @@
     "db:migrate": "turbo run db:migrate",
     "db:seed": "turbo run db:seed",
     "docker": "turbo run docker",
-    "docker:build:client": "./build.sh client",
-    "docker:build:server": "./build.sh server"
+    "docker:build:client": "./build.sh client server.js",
+    "docker:build:server": "./build.sh server dist/src/main.js"
   },
   "devDependencies": {
     "turbo": "^1.5.4",

@@ -1,6 +1,8 @@
 # Make a base image with turbo and pnpm essentials.
 FROM node:16.19.0-alpine@sha256:1298fd170c45954fec3d4d063437750f89802d72743816663664cfe9aa152b4b AS base
+
 ARG SCOPE
+ARG RUN_PATH
  
 RUN apk add --no-cache libc6-compat rsync
 RUN apk update
@@ -12,7 +14,10 @@ RUN npm i -g pnpm turbo
 COPY ./turbobuild/out/json .
 
 FROM base as builder
+
 ARG SCOPE
+ARG RUN_PATH
+
 ENV NODE_ENV production
 ENV DISABLE_ERD true
 
@@ -28,6 +33,7 @@ FROM node:16.19.0-alpine@sha256:1298fd170c45954fec3d4d063437750f89802d7274381666
 RUN apk add dumb-init
 
 ARG SCOPE
+ARG RUN_PATH
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
@@ -40,3 +46,4 @@ WORKDIR /app/apps/"${SCOPE}"/
 EXPOSE 3000
 
 CMD ["dumb-init", "npm", "run", "start:prod"]
+# CMD ["/bin/sh", "-c", "dumb-init node $RUN_PATH"]
