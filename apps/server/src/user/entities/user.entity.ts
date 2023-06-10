@@ -30,10 +30,10 @@ export class UserEntity implements User {
   @ApiProperty()
   avatarUrl: string
 
-  @ApiProperty()
+  @Exclude()
   canCreateOrgs: boolean
 
-  @ApiProperty()
+  @Exclude()
   maxOrgs: number
 
   @Exclude()
