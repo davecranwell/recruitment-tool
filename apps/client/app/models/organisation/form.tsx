@@ -1,6 +1,7 @@
 import type { FieldDef } from 'app/components/Forms'
 import type { SessionData } from 'app/sessions.server'
 import type { File } from '~/models/file/File'
+import { getThumbnailURL } from '~/utils'
 
 export const newFormFields = (session: SessionData): FieldDef[] => [
   {
@@ -39,8 +40,7 @@ export const editFormFields = (session: SessionData, logoConstants: { region: st
     name: 'logo',
     label: 'Logo',
     type: 'filewiththumb',
-    valueTransform: (logo: File) =>
-      `https://${logo.bucket}.s3.${logoConstants.region}.amazonaws.com/thumbnails/${logo.key}`,
+    valueTransform: (logo: File) => getThumbnailURL(logo.bucket, logoConstants.region, logo.key),
     defaultValue: '',
     hint: 'Allowed files: png, jpg or jpeg of no more than 1MB in size',
   },
