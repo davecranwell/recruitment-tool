@@ -13,6 +13,8 @@ import getLogLevels from './getLogLevels'
 import { exit } from 'process'
 import { PrismaClientExceptionFilter } from './prisma-client-exception.filter'
 import { NotFoundExceptionFilter } from './not-found-exception.filter'
+import { writeFileSync } from 'fs'
+import { exec } from 'child_process'
 
 const logger = new Logger()
 
@@ -98,6 +100,11 @@ async function bootstrap() {
       },
       customSiteTitle: swaggerConfig.title,
     })
+
+    const swaggerJson = JSON.stringify(document)
+    writeFileSync('swagger.json', swaggerJson, 'utf-8')
+
+    exec('pnpm run generate-types')
   }
 
   await app.listen(configService.get('port'))

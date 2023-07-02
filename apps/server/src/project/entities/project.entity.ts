@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { Project as ProjectModel } from '@prisma/client'
+import { ApiProperty, OmitType } from '@nestjs/swagger'
+import { Prisma, Project as ProjectModel } from '@prisma/client'
 
 import { Organisation } from 'src/organisation/entities/organisation.entity'
 import { ProjectUserRole } from 'src/project-user-role/entities/project-user-role.entity'
@@ -47,6 +47,27 @@ export class Project implements ProjectModel {
   defaultPipeline?: Pipeline
 
   constructor(partial: Partial<Project>) {
+    Object.assign(this, partial)
+  }
+}
+
+export class PositionCount {
+  @ApiProperty()
+  positions: number
+}
+
+export class ProjectOnly extends OmitType(Project, [
+  'positions',
+  'userRoles',
+  'organisation',
+  'defaultPipeline',
+] as const) {
+  @ApiProperty({ type: () => PositionCount })
+  @Type(() => PositionCount)
+  _count?: PositionCount
+
+  constructor(partial: Partial<ProjectOnly>) {
+    super(partial)
     Object.assign(this, partial)
   }
 }

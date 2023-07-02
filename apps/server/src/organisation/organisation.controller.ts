@@ -43,7 +43,7 @@ import { PatchOrganisationUserDto } from './dto/patch-organisation-user.dto'
 
 import { Organisation } from './entities/organisation.entity'
 import { OrganisationService } from './organisation.service'
-import { Project } from 'src/project/entities/project.entity'
+import { PositionCount, Project, ProjectOnly } from 'src/project/entities/project.entity'
 import { ProjectService } from 'src/project/project.service'
 import { Pipeline } from '~/pipeline/entities/pipeline.entity'
 import { UpdateOrganisationDto } from '~/organisation/dto/update-organisation.dto'
@@ -170,9 +170,9 @@ export class OrganisationController {
 
   @Get(':id/projects')
   @ApiOperation({ summary: 'List all projects in an organisation' })
-  @ApiExtraModels(PaginatedDto)
-  @ApiPaginatedResponse(Project)
-  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Project))
+  @ApiPaginatedResponse(ProjectOnly)
+  @ApiExtraModels(PaginatedDto, ProjectOnly, PositionCount)
+  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(ProjectOnly))
   async findProjects(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number,

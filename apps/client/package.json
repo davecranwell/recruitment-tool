@@ -45,6 +45,7 @@
     "tiny-invariant": "^1.2.0"
   },
   "devDependencies": {
+    "~": "file:../../libs/types",
     "@remix-run/eslint-config": "^1.7.2",
     "@types/jsonwebtoken": "^8.5.8",
     "@types/react": "^18.0.0",
