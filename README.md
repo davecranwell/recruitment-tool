@@ -9,7 +9,7 @@ export PATH="$FLYCTL_INSTALL/bin:$PATH"
 
 # Running
 
-`pnpm run docker:run`
+`pnpm run docker`
 `pnpm run dev`
 
 ## Regenerating prisma client
