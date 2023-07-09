@@ -55,7 +55,9 @@ Organisation owners may want to see the entire set of projects on their own. Eve
 
 Projects should therefore have an area to configure them, which is hidden to all but organisation owners, and the references to project names should be relegated in the UI in favour of position information
 
-## Approvals
+## Position Approvals
+
+A position gains approval after a set number of approvals (as defined in the Project). Since awareness of successful approval must go to someone, we'll say that all hiring managers responsible for the project in which the position lives, get notified.
 
 Approvals are given by users assigned to the project as a financial manager role. They may need an RBAC action of their own since "manage" is given to the org admin, and hiring managers should not be able to approve their own requested positions. At the moment I think hiring managers are given "manage" status which is too much.
 
@@ -66,3 +68,24 @@ A default pipeline, meeting a simplistic definition in the server code, will be 
 Positions will all use the same pipeline as defined at the Project level. Positions in the same project cannot have different pipelines.
 
 We're allowing people to create organisations. We've realised this is necessary because adding a pipeline for new jobs requires a pipeline to be chosen by the user. In tern this means pipelines must a) already exist in the DB to choose and b) should be unique to the org, so that users may rename or reorder their pipeline stages c) we don't want thousands of jobs from thousands of customers all hung to the same 2 or 3 pipelines. Therefore, to make this work we're going to have to assign pipelines to organisations, otherwise when a project is created and a default pipeline chosen, we won't be able to limit the list of pipelines to just those in the org.
+
+## Event types
+
+Events are actions performed by one user that have relevance to another user: things they would expect to be notified of happening. Our event types related to Positions, and ApplicantProfileForPosition to begin with. _All events are in the past tense_.
+
+_Everything_ can be:
+
+- Created
+- Updated
+- Deleted
+
+In addition...
+
+Positions can be:
+
+- Approved
+
+ApplicantProfileForPosition can be:
+
+- Stage changed
+- Disqualified

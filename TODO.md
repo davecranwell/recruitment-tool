@@ -68,6 +68,7 @@
 - [x] Compress permissions in jwt using CASL pack/unpack
 - [x] Ensure Google auth doesn't bypass invitation system: [technically it can't because a user using google auth without registering would have no organisations associated]
 - [x] UpdatedAt dates need to actually update when rows are patched
+- [x] Invitations to an org expire
 - [ ] Finish applying permissions to all entities
   - [x] Pipelines (irrelevant: through position)
   - [x] Positions
@@ -101,10 +102,8 @@
 - [ ] GDPR compliance: consent capture, RTBF, activity log, privacy policy
 - [ ] 2FA https://wanago.io/2021/03/08/api-nestjs-two-factor-authentication/
 - [ ] Allowing an email to be written and sent when stages change (or soon after)
-- [ ] RTBF
 - [ ] Sending an email to candidates as they are invited to interview
 - [ ] internal email templating system using mjml
-- [ ] Invitations to an org expire
 - [ ] Score a candidate in multiple ways using assessments
 - [ ] Multiple scoring system schemas
 - [ ] Internal vs external vacancies
