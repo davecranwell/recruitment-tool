@@ -42,6 +42,8 @@
 - [ ] Interviews need to be cancellable
 - [ ] Deleting organisations should be possible but the name should be blocked for 90 days
 - [ ] Rich text editing of assessments, comments etc
+- [ ] Set low request timeouts: 60s
+- [ ] Consider ULID for all ids (https://blog.daveallie.com/ulid-primary-keys)
 
 ## Remix
 
