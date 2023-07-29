@@ -23,6 +23,8 @@ import {
 import { InterviewWithStageScoringApplicant } from 'src/interview/entities/interview.entity'
 import { UserEntity } from 'src/user/entities/user.entity'
 import { Position } from './entities/position.entity'
+import { PipelineStagesOnly } from '~/pipeline/entities/pipeline.entity'
+import { StageWithApplicantCount } from '~/stage/entities/stage.entity'
 
 export class PositionQueryFeatures {
   @ApiProperty({ required: false })

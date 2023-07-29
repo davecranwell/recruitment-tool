@@ -3,16 +3,14 @@ import type { LoaderArgs, LoaderFunction, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import type { RouteMatch } from '@remix-run/react'
 import { Link, Outlet, useLoaderData, useMatches } from '@remix-run/react'
-import { PositionControllerGetPipelineReturnType } from 'sharedtypes/position.returntypes'
+import type { PipelineStagesOnly, Position } from '~'
 
 import { api } from 'app/api.server'
 import { requireAuth } from '~/sessions.server'
 
 import Content from 'app/components/Content'
-
 import { MetaList, MetaListItem } from '~/components/MetaList'
 
-import type { Position } from '~/models/positions/Position'
 import { dateTimeFormat, toSentence } from '~/utils'
 import Breadcrumb from 'app/components/Breadcrumb'
 import Button from '~/components/Button'
@@ -30,18 +28,18 @@ export const loader = async (data: LoaderArgs) => {
   const { request, params } = data
   await requireAuth(request)
 
-  const stagesRes = await api<PositionControllerGetPipelineReturnType>(data, `/position/${params.id}/pipeline`)
+  const pipelinStagesRes = await api<PipelineStagesOnly>(data, `/position/${params.id}/pipeline`)
   const positionRes = await api(data, `/position/${params.id}`)
 
-  const stages: PositionControllerGetPipelineReturnType = await stagesRes.json()
+  const pipelineStages: PipelineStagesOnly = await pipelinStagesRes.json()
   const position = await positionRes.json()
 
-  return json({ stages, position })
+  return json({ pipelineStages, position })
 }
 
 const PositionDetail = () => {
   const matches = useMatches()
-  const { position, stages } = useLoaderData<typeof loader>()
+  const { position, pipelineStages } = useLoaderData<typeof loader>()
   const { id, name, closingDate, description, location, salaryRange, employment } = position as Position
 
   return (
@@ -73,7 +71,7 @@ const PositionDetail = () => {
         </div>
       )} */}
 
-      <Outlet context={stages} />
+      <Outlet context={pipelineStages} />
     </Content>
   )
 }

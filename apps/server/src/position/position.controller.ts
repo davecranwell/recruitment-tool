@@ -22,8 +22,8 @@ import { ApplicantProfileForPositionWithStage } from 'src/applicant-profile-for-
 import { ApplicantProfileWithUser } from 'src/applicant-profile/entities/applicant-profile.entity'
 import { RequestWithUser } from 'src/authentication/authentication.controller'
 import JwtAuthenticationGuard from 'src/authentication/guards/jwtAuthentication.guard'
-import { Pipeline } from 'src/pipeline/entities/pipeline.entity'
-import { Stage } from 'src/stage/entities/stage.entity'
+import { Pipeline, PipelineStagesOnly } from 'src/pipeline/entities/pipeline.entity'
+import { ApplicantCount, Stage, StageWithApplicantCount } from 'src/stage/entities/stage.entity'
 import { Position, PositionWithApprovals } from './entities/position.entity'
 
 import { InterviewWithStageScoringApplicant } from 'src/interview/entities/interview.entity'
@@ -129,19 +129,14 @@ export class PositionController {
   }
 
   @Get(':id/pipeline')
-  @ApiOkResponse({ type: () => Pipeline })
-  @UseInterceptors(PrismaClassSerializerInterceptorPaginated(Pipeline))
+  @ApiExtraModels(ApplicantCount)
+  @ApiOkResponse({ type: () => PipelineStagesOnly })
+  @UseInterceptors(ClassSerializerInterceptor)
   async findPipelineStages(
     @Req() request: RequestWithUser,
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: number
   ) {
-    return this.positionService.findPipelineStages(id, request.user) as Promise<{
-      stages: (Stage & {
-        _count: {
-          applicants: number
-        }
-      })[]
-    }>
+    return this.positionService.findPipelineStages(id, request.user)
   }
 
   @Patch(':id')

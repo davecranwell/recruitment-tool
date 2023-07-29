@@ -101,6 +101,7 @@ export type ProjectUserRole = object
 export interface Stage {
   id: number
   name: string
+  order: number
   description: string
 }
 
@@ -263,6 +264,22 @@ export interface InterviewWithStageScoringApplicant {
   stage: Stage
   applicantProfile: ApplicantProfileWithUser
   assessments: Assessment
+}
+
+export interface ApplicantCount {
+  applicants: number
+}
+
+export interface StageWithApplicantCount {
+  id: number
+  name: string
+  order: number
+  description: string
+  _count: ApplicantCount
+}
+
+export interface PipelineStagesOnly {
+  stages: StageWithApplicantCount[]
 }
 
 export interface UpdatePositionDto {
