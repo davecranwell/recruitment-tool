@@ -55,7 +55,9 @@ Organisation owners may want to see the entire set of projects on their own. Eve
 
 Projects should therefore have an area to configure them, which is hidden to all but organisation owners, and the references to project names should be relegated in the UI in favour of position information
 
-## Approvals
+## Position Approvals
+
+A position gains approval after a set number of approvals (as defined in the Project). Since awareness of successful approval must go to someone, we'll say that all hiring managers responsible for the project in which the position lives, get notified.
 
 Approvals are given by users assigned to the project as a financial manager role. They may need an RBAC action of their own since "manage" is given to the org admin, and hiring managers should not be able to approve their own requested positions. At the moment I think hiring managers are given "manage" status which is too much.
 
@@ -66,3 +68,50 @@ A default pipeline, meeting a simplistic definition in the server code, will be 
 Positions will all use the same pipeline as defined at the Project level. Positions in the same project cannot have different pipelines.
 
 We're allowing people to create organisations. We've realised this is necessary because adding a pipeline for new jobs requires a pipeline to be chosen by the user. In tern this means pipelines must a) already exist in the DB to choose and b) should be unique to the org, so that users may rename or reorder their pipeline stages c) we don't want thousands of jobs from thousands of customers all hung to the same 2 or 3 pipelines. Therefore, to make this work we're going to have to assign pipelines to organisations, otherwise when a project is created and a default pipeline chosen, we won't be able to limit the list of pipelines to just those in the org.
+
+## Event types
+
+Events are actions performed by one user that have relevance to another user: things they would expect to be notified of happening. Our event types related to Positions, and ApplicantProfileForPosition to begin with. _All events are in the past tense_.
+
+_Everything_ can be:
+
+- Created
+- Updated
+- Deleted
+
+In addition...
+
+Positions can be:
+
+- Approved
+
+ApplicantProfileForPosition can be:
+
+- Stage changed
+- Disqualified
+
+## Consent
+
+Consent is required for all people of any type within the system. For thosen given access to the app as users, consent will be gained through some kind of disclaimer accepted while completing the signup.
+
+For applicants, consent will either be gained by (in future) agreeing as part of the job application process - such as if the app generates job application forms - or by users of the app directly sending out consent requests. In consultation with recruiters, other consent systems apparently tend to work retroactively. In one example, the applicant is directly sent an email saying "We've gained your information through X or Y (e.g linkedin or a human referal) is it ok to add it ot the system to continue with your application?".
+
+Applicants unwilling to consent will basically not be able to use applican, and nor will applicans users be able to consider them for jobs. This tradeoff will have to be made really clear, such as "If you do not consent to be stored in this database we will process no more of your information and you will not be considered for the job for which you have applied".
+
+### RTBF
+
+This will likely be done by overwriting users or applicants with some kind of mask, while also deleting any kind of contact information and files associated with the user. This way the referential integrity of the database remains, while the forgetting of the user is made possible. Google workspace does something similar and leaves around comments attributed to "Deleted user". I want to consider perhaps identifying an applicant by their first and last initials e.g Dave Cranwell might become "D**\* C**\*\*\*\*\*" which might help someone remember who they once were, but wouldn't be useful to someone else accessing the system maliciously.
+
+The final note here is that users will need to be emailed an assurance that their data has been removed. This might be done by a queue in which their email is added, then deleted upon action. This would mean the main user/applicant record email can be removed without worrying about the queued message losing that information.
+
+Removal might require the user's email address to be hashed, rendering it useless as an email address but findable using string comparison in case users need to know if their record has been deleted.
+
+### Right Of Access
+
+Right Of Access requests will be possible only by logged in users. For regular users this will be easy because they already have a login. For applicants this will be harder because although they have a user there is no password set. However it would be reasonable to force them to complete a full account creation before giving them access to their data. As an applicant they would gain accessto Applican then navigate to a GDPR area. It would need to be generically branded regardless which brand was using applican for their hiring.
+
+### Revoking consent
+
+### Privacy notice
+
+Naturally, we need one that links to the RTBF form.

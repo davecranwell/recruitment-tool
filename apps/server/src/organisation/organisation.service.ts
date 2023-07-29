@@ -14,7 +14,7 @@ import { PatchOrganisationUserDto } from './dto/patch-organisation-user.dto'
 import { Organisation } from './entities/organisation.entity'
 
 import { Action } from 'src/casl/actions'
-import { Project } from 'src/project/entities/project.entity'
+import { Project, ProjectOnly } from 'src/project/entities/project.entity'
 import { Pipeline } from '~/pipeline/entities/pipeline.entity'
 import { UpdateOrganisationDto } from '~/organisation/dto/update-organisation.dto'
 
@@ -213,7 +213,7 @@ export class OrganisationService {
     // if you're a regular user, get all projects you're allocated to in some way
     const isOrgOwner = user.abilities.can(Action.Manage, new Organisation({ id: organisationId }))
 
-    return await paginate<Project, Prisma.ProjectFindManyArgs>(
+    return await paginate<ProjectOnly, Prisma.ProjectFindManyArgs>(
       this.prisma.project,
       {
         where: {

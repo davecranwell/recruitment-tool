@@ -1,3 +1,7 @@
+import * as React from 'react'
+import { useCallback, useState } from 'react'
+import { Link } from '@remix-run/react'
+import type { SessionData } from '@remix-run/node'
 import { Menu } from '@headlessui/react'
 import {
   BriefcaseIcon,
@@ -8,9 +12,6 @@ import {
   UserGroupIcon,
 } from '@heroicons/react/outline'
 import { SelectorIcon } from '@heroicons/react/solid'
-import type { SessionData } from '@remix-run/node'
-import * as React from 'react'
-import { useCallback, useState } from 'react'
 
 import { useAppAbility } from 'app/hooks/useAppAbility'
 import Avatar from './Avatar'
@@ -21,8 +22,9 @@ import Sidebar from './Sidebar'
 import SiteNav from './SiteNav'
 import UserNav from './UserNav'
 
+import { getThumbnailURL } from '~/utils'
+
 import logo from '../../images/logo3.svg'
-import { Link } from '@remix-run/react'
 
 type Props = {
   children: React.ReactNode
@@ -95,7 +97,18 @@ const Layout: React.FC<Props> = ({ children, sessionData, globalMessage }) => {
         <div className="bg-white flex flex-grow flex-col overflow-y-auto border-r border-neutral-100 px-2 pt-5">
           <div className="px-4 text-center flex align-center justify-center py-6 ">
             <Link to="/">
-              <img src={logo} className="h-12 w-auto flex" alt="AppliCan" />
+              {sessionData?.activeOrganisation.logo ? (
+                <img
+                  src={getThumbnailURL(
+                    sessionData.activeOrganisation.logo.bucket,
+                    'eu-north-1',
+                    sessionData.activeOrganisation.logo.key
+                  )}
+                  alt={sessionData.activeOrganisation.name}
+                />
+              ) : (
+                <img src={logo} className="h-12 w-auto flex" alt="AppliCan" />
+              )}
             </Link>
           </div>
 

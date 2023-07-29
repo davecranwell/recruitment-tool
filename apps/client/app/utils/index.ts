@@ -52,3 +52,11 @@ export function toSentence(string: string) {
 export function getVal(object: any, path: string) {
   return path.split('.').reduce((res, prop) => res[prop], object)
 }
+
+export function getFileURL(bucket: string, region: string, key: string) {
+  return `https://${bucket}.s3.${region}.amazonaws.com/${key}`
+}
+
+export function getThumbnailURL(bucket: string, region: string, key: string) {
+  return `https://${bucket}.s3.${region}.amazonaws.com/thumbnails/${key}`
+}

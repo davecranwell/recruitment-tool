@@ -6,12 +6,36 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
   private readonly logger = new Logger(PrismaService.name)
 
   constructor() {
-    super({ log: ['info'] }) // 'query'
+    super({ log: ['info'] })
+    // super({
+    //   log: [
+    //     {
+    //       emit: 'event',
+    //       level: 'query',
+    //     },
+    //     {
+    //       emit: 'event',
+    //       level: 'error',
+    //     },
+    //     {
+    //       emit: 'stdout',
+    //       level: 'info',
+    //     },
+    //     {
+    //       emit: 'stdout',
+    //       level: 'warn',
+    //     },
+    //   ],
+    // }) // 'query'
   }
 
   async onModuleInit() {
     this.logger.log('Connected to Postgres')
     await this.$connect()
+
+    // this.$on('query' as any, (e) => {
+    //   console.log(e)
+    // })
   }
 
   async onModuleDestroy() {

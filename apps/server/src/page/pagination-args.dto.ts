@@ -6,7 +6,7 @@ import { IsNumber, IsOptional } from 'class-validator'
 export class PaginationArgsDto {
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsNumber()
+  @IsNumber({ allowNaN: false }, { message: 'Page must be a number' })
   page: number
 }
 

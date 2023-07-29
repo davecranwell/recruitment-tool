@@ -14,7 +14,7 @@ const formFields = (
   {
     name: 'title',
     type: 'title',
-    text: `${stage.name} interview`,
+    label: `${stage.name} interview`,
   },
   {
     name: 'row2',

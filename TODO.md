@@ -2,6 +2,7 @@
 
 ## Where you left off
 
+- You've got distracted by Consent requirements, without which you can't really start gathering candidate info (below)
 - You need to get back to developing the candidate profile and adding a method to add a candidate to the system
 - You also need to focus on the event mechanism so that users of the system can view a timeline of events occuring to a job/candidate
   - you're working through this but fast coming to the conclusion the timeline of events can't be handled with a generic audit data store, but rather one that is specific to timelines of events for the individual. The existing Audit table is fine, just not necessary here and not specific enough
@@ -71,6 +72,7 @@
 - [x] Compress permissions in jwt using CASL pack/unpack
 - [x] Ensure Google auth doesn't bypass invitation system: [technically it can't because a user using google auth without registering would have no organisations associated]
 - [x] UpdatedAt dates need to actually update when rows are patched
+- [x] Invitations to an org expire
 - [ ] Finish applying permissions to all entities
   - [x] Pipelines (irrelevant: through position)
   - [x] Positions
@@ -104,10 +106,8 @@
 - [ ] GDPR compliance: consent capture, RTBF, activity log, privacy policy
 - [ ] 2FA https://wanago.io/2021/03/08/api-nestjs-two-factor-authentication/
 - [ ] Allowing an email to be written and sent when stages change (or soon after)
-- [ ] RTBF
 - [ ] Sending an email to candidates as they are invited to interview
 - [ ] internal email templating system using mjml
-- [ ] Invitations to an org expire
 - [ ] Score a candidate in multiple ways using assessments
 - [ ] Multiple scoring system schemas
 - [ ] Internal vs external vacancies

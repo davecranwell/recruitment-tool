@@ -2,7 +2,7 @@ import type { MouseEventHandler } from 'react'
 import { Menu } from '@headlessui/react'
 import { MenuAlt2Icon } from '@heroicons/react/outline'
 
-import type { User } from '~/models/users/User'
+import type { UserEntity } from '~'
 
 import UserNav from './UserNav'
 import Avatar from './Avatar'
@@ -10,7 +10,7 @@ import Avatar from './Avatar'
 type Props = {
   userNavigation: any[]
   onSidebarOpen: MouseEventHandler
-  user: User
+  user: UserEntity
 }
 
 const MobileTopNav: React.FC<Props> = ({ userNavigation, onSidebarOpen, user }) => {
