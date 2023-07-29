@@ -44,6 +44,7 @@ model User {
   approvals            Approval[]
   createdOrganisations Organisation[]
   auditEvents          AuditEvent[]
+  consent              Consent[]
 }
 
 model ApplicantProfile {
@@ -396,6 +397,24 @@ model AuditEvent {
 
   @@index([entityType, entityId])
   @@index([relatedEntityId])
+}
+
+model Consent {
+  id          Int         @id @default(autoincrement())
+  userId      Int
+  requestedAt DateTime    @default(now())
+  grantedAt   DateTime
+  revokedAt   DateTime
+  consentType ConsentType
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([id, userId])
+  @@index([userId])
+}
+
+enum ConsentType {
+  REQUEST_SENT
 }
 
 enum AuditEventType {

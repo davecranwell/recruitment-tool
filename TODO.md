@@ -2,6 +2,7 @@
 
 ## Where you left off
 
+- You've got distracted by Consent requirements, without which you can't really start gathering candidate info (below)
 - You need to get back to developing the candidate profile and adding a method to add a candidate to the system
 - You also need to focus on the event mechanism so that users of the system can view a timeline of events occuring to a job/candidate
   - you're working through this but fast coming to the conclusion the timeline of events can't be handled with a generic audit data store, but rather one that is specific to timelines of events for the individual. The existing Audit table is fine, just not necessary here and not specific enough
