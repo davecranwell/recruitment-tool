@@ -22,6 +22,7 @@ import {
 } from '@nestjs/common'
 import {
   ApiBearerAuth,
+  ApiConsumes,
   ApiCreatedResponse,
   ApiExtraModels,
   ApiOkResponse,
@@ -71,6 +72,8 @@ export class OrganisationController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new organisation' })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('file', {}))
   @ApiCreatedResponse({ type: () => Organisation, description: 'Organisation created' })
   async create(
     @Req() request: RequestWithUser,
@@ -87,7 +90,7 @@ export class OrganisationController {
         },
       })
     )
-    file: Express.Multer.File
+    file?: Express.Multer.File
   ) {
     return this.organisationService.create(createOrganisationDto, request.user, file)
   }
@@ -163,7 +166,7 @@ export class OrganisationController {
         },
       })
     )
-    logo: Express.Multer.File
+    logo?: Express.Multer.File
   ) {
     return this.organisationService.patchOrganisation(id, request.user, patchData, logo)
   }

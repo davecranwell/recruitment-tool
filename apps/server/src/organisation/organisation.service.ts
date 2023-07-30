@@ -128,7 +128,9 @@ export class OrganisationService {
         },
       })
 
-      await this.uploadLogo(file, newOrg.id)
+      if (file) {
+        await this.uploadLogo(file, newOrg.id)
+      }
 
       return new Organisation(newOrg)
     })
