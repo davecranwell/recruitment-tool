@@ -1,11 +1,15 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common'
-import { ApplicantProfile, AuditEventEntity, AuditEventType, Prisma } from '@prisma/client'
+import {
+  ApplicantProfile,
+  // AuditEventEntity, AuditEventType,
+  Prisma,
+} from '@prisma/client'
 import { ApiProperty } from '@nestjs/swagger'
 import { Transform } from 'class-transformer'
 import { IsBoolean, IsOptional } from 'class-validator'
 
 import { PrismaService } from 'src/prisma/prisma.service'
-import { AuditService } from '~/audit/audit.service'
+// import { AuditService } from '~/audit/audit.service'
 
 import { PaginatedDto, PaginationArgsDto } from 'src/page/pagination-args.dto'
 import { createPaginator } from 'src/util/pagination'
@@ -50,7 +54,9 @@ const paginate = createPaginator({ perPage: 20 })
 
 @Injectable()
 export class PositionService {
-  constructor(private prisma: PrismaService, private audit: AuditService) {}
+  constructor(
+    private prisma: PrismaService // private audit: AuditService
+  ) {}
 
   async create(data: CreatePositionDto, user: UserEntity) {
     // get project
@@ -88,13 +94,13 @@ export class PositionService {
       },
     })
 
-    await this.audit.log({
-      entityId: created.id,
-      entityType: AuditEventEntity.POSITION,
-      eventType: AuditEventType.CREATED,
-      userId: user.id,
-      newValue: created,
-    })
+    // await this.audit.log({
+    //   entityId: created.id,
+    //   entityType: AuditEventEntity.POSITION,
+    //   eventType: AuditEventType.CREATED,
+    //   userId: user.id,
+    //   newValue: created,
+    // })
 
     return created
   }
@@ -333,14 +339,14 @@ export class PositionService {
       },
     })
 
-    await this.audit.log({
-      entityId: id,
-      entityType: AuditEventEntity.POSITION,
-      eventType: AuditEventType.UPDATED,
-      userId: user.id,
-      oldValue: position,
-      newValue: updated,
-    })
+    // await this.audit.log({
+    //   entityId: id,
+    //   entityType: AuditEventEntity.POSITION,
+    //   eventType: AuditEventType.UPDATED,
+    //   userId: user.id,
+    //   oldValue: position,
+    //   newValue: updated,
+    // })
 
     return updated
   }
@@ -372,14 +378,14 @@ export class PositionService {
       },
     })
 
-    await this.audit.log({
-      entityId: applicantProfileId,
-      entityType: AuditEventEntity.APPLICANTPROFILEFORPOSITION,
-      eventType: stageValid.isDisqualifiedStage ? AuditEventType.DISQUALIFIED : AuditEventType.STAGE_CHANGED,
-      relatedEntityId: positionId,
-      userId: user.id,
-      newValue: data.stage,
-    })
+    // await this.audit.log({
+    //   entityId: applicantProfileId,
+    //   entityType: AuditEventEntity.APPLICANTPROFILEFORPOSITION,
+    //   eventType: stageValid.isDisqualifiedStage ? AuditEventType.DISQUALIFIED : AuditEventType.STAGE_CHANGED,
+    //   relatedEntityId: positionId,
+    //   userId: user.id,
+    //   newValue: data.stage,
+    // })
 
     return updatedApplicant
   }
@@ -440,15 +446,15 @@ export class PositionService {
       },
     })
 
-    if (isApproved) {
-      await this.audit.log({
-        entityId: positionId,
-        entityType: AuditEventEntity.POSITION,
-        eventType: AuditEventType.APPROVED,
-        userId: user.id,
-        newValue: updatedPosition,
-      })
-    }
+    // if (isApproved) {
+    //   await this.audit.log({
+    //     entityId: positionId,
+    //     entityType: AuditEventEntity.POSITION,
+    //     eventType: AuditEventType.APPROVED,
+    //     userId: user.id,
+    //     newValue: updatedPosition,
+    //   })
+    // }
 
     return new Position(updatedPosition)
   }

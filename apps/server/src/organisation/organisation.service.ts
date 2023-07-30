@@ -118,7 +118,11 @@ export class OrganisationService {
               { name: 'Stage 1', order: 2 },
               { name: 'Stage 2', order: 3 },
               { name: 'Offer', order: 4 },
-              { name: 'Disqualified', order: 5, isDisqualifiedStage: true },
+              {
+                name: 'Disqualified',
+                order: 5,
+                // isDisqualifiedStage: true
+              },
             ],
           },
         },
