@@ -73,7 +73,7 @@ const Layout: React.FC<Props> = ({ children, sessionData, globalMessage }) => {
     { name: 'Sign out', href: '/sign-out' },
   ]
 
-  if (can && can('create', 'Organisation')) {
+  if (can && can('create', subject('Organisation', {}))) {
     userNavigation.unshift({ name: 'Create an organisation', href: '/create-organisation' })
   }
 
@@ -97,7 +97,7 @@ const Layout: React.FC<Props> = ({ children, sessionData, globalMessage }) => {
         <div className="bg-white flex flex-grow flex-col overflow-y-auto border-r border-neutral-100 px-2 pt-5">
           <div className="px-4 text-center flex align-center justify-center py-6 ">
             <Link to="/">
-              {sessionData?.activeOrganisation.logo ? (
+              {sessionData?.activeOrganisation?.logo ? (
                 <img
                   src={getThumbnailURL(
                     sessionData.activeOrganisation.logo.bucket,

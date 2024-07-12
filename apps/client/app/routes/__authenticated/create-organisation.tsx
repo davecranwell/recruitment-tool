@@ -28,8 +28,8 @@ export const action: ActionFunction = async (data) => {
   try {
     const body = await unstable_parseMultipartFormData(request, uploadHandler)
     const result = await api(data, `/organisation`, 'POST', body, { rawBody: true })
-
     if (result.ok) return redirect('/')
+    return result
   } catch (e) {
     return {
       error: 'Bad Request',
@@ -44,8 +44,6 @@ export const action: ActionFunction = async (data) => {
       statusCode: 400,
     }
   }
-
-  return null
 }
 
 export const loader: LoaderFunction = async (data: LoaderArgs) => {

@@ -1,15 +1,17 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
-import { AuditEventEntity, AuditEventType } from '@prisma/client'
+// import { AuditEventEntity, AuditEventType } from '@prisma/client'
 
 import { PrismaService } from 'src/prisma/prisma.service'
-import { AuditService } from '~/audit/audit.service'
+// import { AuditService } from '~/audit/audit.service'
 
 import { CreateInterviewDto } from './dto/create-interview.dto'
 import { Interview } from './entities/interview.entity'
 
 @Injectable()
 export class InterviewService {
-  constructor(private prisma: PrismaService, private audit: AuditService) {}
+  constructor(
+    private prisma: PrismaService // private audit: AuditService
+  ) {}
 
   async getById(id: number) {
     const interview = await this.prisma.interview.findUnique({
@@ -62,14 +64,14 @@ export class InterviewService {
 
     if (!interview) throw new BadRequestException('This interview could not be created')
 
-    await this.audit.log({
-      entityId: applicantProfileId,
-      entityType: AuditEventEntity.APPLICANTPROFILEFORPOSITION,
-      eventType: AuditEventType.INVITED,
-      relatedEntityId: interview.id,
-      userId,
-      newValue: interview,
-    })
+    // await this.audit.log({
+    //   entityId: applicantProfileId,
+    //   entityType: AuditEventEntity.APPLICANTPROFILEFORPOSITION,
+    //   eventType: AuditEventType.INVITED,
+    //   relatedEntityId: interview.id,
+    //   userId,
+    //   newValue: interview,
+    // })
     return new Interview(interview)
   }
 }

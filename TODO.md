@@ -45,6 +45,7 @@
 - [ ] Rich text editing of assessments, comments etc
 - [ ] Set low request timeouts: 60s
 - [ ] Consider ULID for all ids (https://blog.daveallie.com/ulid-primary-keys)
+- [ ] Add feedback mechanism
 
 ## Remix
 
