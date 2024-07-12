@@ -1,0 +1,54 @@
+version: '3.1'
+
+services:
+  client:
+    image: xcession2k/recruitment-client:latest
+    ports:
+      - 3001:3000
+    expose:
+      - 3000
+    env_file:
+      - ./apps/client/production.env
+
+  server:
+    image: xcession2k/recruitment-server:latest
+    depends_on:
+      - postgres
+      # - client
+    ports:
+      - 3000:3000
+    expose:
+      - 3000
+    environment:
+      NODE_ENV: development
+      ROOT_URL: http://localhost:3001
+      PORT: 3000
+      DATABASE_URL: postgresql://admin:admin@postgres:5432/nestjs?schema=public
+      JWT_SECRET: a
+      JWT_EXPIRATION_TIME: 43200 # 12 hours
+      JWT_REFRESH_SECRET: b
+      JWT_REFRESH_EXPIRATION_TIME: 31536000 # 1 year
+      MAGIC_LINK_SECRET: c
+      MAGIC_LINK_EXPIRATION_TIME: 360
+      INVITATION_CODE_SECRET: d
+      INVITATION_CODE_EXPIRATION_TIME: 172800 # 2 days
+      SENDGRID_API_KEY: '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'
+      EMAIL_FROM: dave@davecranwell.com
+      EMAIL_TEMPLATE_INVITATION: 'd-2bd9612619864fbcb8993050e871d5a8'
+      GOOGLE_AUTH_CLIENT_ID: 312431014385-0kqc914o4bke4uohkol8el85v88n6rhi.apps.googleusercontent.com
+      GOOGLE_AUTH_CLIENT_SECRET: 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
+
+  postgres:
+    image: postgres:12
+    user: 1000:1000
+    ports:
+      - 5432:5432
+    volumes:
+      - ./apps/server/data:/var/lib/postgresql/data
+    env_file:
+      - ./apps/server/docker.env
+
+  adminer:
+    image: adminer
+    ports:
+      - 8090:8080
