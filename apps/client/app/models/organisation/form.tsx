@@ -40,7 +40,7 @@ export const editFormFields = (session: SessionData, logoConstants: { region: st
     name: 'logo',
     label: 'Logo',
     type: 'filewiththumb',
-    valueTransform: (logo: File) => getThumbnailURL(logo.bucket, logoConstants.region, logo.key),
+    valueTransform: (logo: File) => logo && getThumbnailURL(logo.bucket, logoConstants.region, logo.key),
     defaultValue: '',
     hint: 'Allowed files: png, jpg or jpeg of no more than 1MB in size',
   },
