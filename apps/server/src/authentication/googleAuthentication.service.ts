@@ -1,19 +1,10 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { Invitation } from '@prisma/client'
 import { Auth, google } from 'googleapis'
 
 import { UserService } from '../user/user.service'
 import { PostgresErrorCode } from '../util/db-types'
 import { AuthenticationService } from './authentication.service'
-
-type OAuthExchangedTokens = {
-  access_token: string
-  refresh_token: string
-  token_type: string
-  id_token: string
-  expiry_date: number
-}
 
 @Injectable()
 export class GoogleAuthenticationService {
