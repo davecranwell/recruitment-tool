@@ -16,6 +16,7 @@ export PATH="$FLYCTL_INSTALL/bin:$PATH"
 
 `pnpm run db:generate`
 `pnpm run db:migrate`
+`pnpm run db:seed` does first DB installation from a seed of sample data
 
 # Generating docker images
 
