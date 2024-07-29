@@ -47,7 +47,7 @@ import { FileServiceModule } from './file-service/file-service.module'
     // AuditModule,
     // SlackModule.forRoot({
     //   type: 'api',
-    //   token: 'xoxb-4735546228627-4721145321431-teUuZ8mHywFkDY8skX3jTM5E',
+    //   token: 'xxx',
     // }),
   ],
   controllers: [AppController],
